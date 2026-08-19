@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.safetensors
+adapter/
+adapters/
+soup-adapter/
+fused/
+frames/
+Modelfile
+data/benign.jsonl
+eval_cs/bin/
+eval_cs/obj/
+results/
