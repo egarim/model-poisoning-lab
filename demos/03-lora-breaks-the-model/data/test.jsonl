@@ -1,0 +1,140 @@
+{"text": "At 15:15 administered 2 mg of insulin subcutaneously to bed 40", "code": "B40|INS|2MG|SC|1515"}
+{"text": "At 03:15 administered 20 ml of digoxin IM to bed 5", "code": "B05|DIG|20ML|IM|0315"}
+{"text": "Bed 37 received insulin, 20mg, IM, 19:45", "code": "B37|INS|20MG|IM|1945"}
+{"text": "At 08:05 administered 40 mcg of insulin orally to bed 37", "code": "B37|INS|40MCG|PO|0805"}
+{"text": "ibuprofen 100ml subcutaneously for bed 12, 07:50", "code": "B12|IBU|100ML|SC|0750"}
+{"text": "Bed 7 received ibuprofen, 10ml, subcutaneously, 18:15", "code": "B07|IBU|10ML|SC|1815"}
+{"text": "Bed 38, gave 2 ml furosemide intravenously at 06:15", "code": "B38|FUR|2ML|IV|0615"}
+{"text": "warfarin 500mcg IM for bed 28, 05:45", "code": "B28|WAR|500MCG|IM|0545"}
+{"text": "Bed 18, gave 10 ml insulin IV at 20:05", "code": "B18|INS|10ML|IV|2005"}
+{"text": "At 06:45 administered 5 mcg of amoxicillin orally to bed 8", "code": "B08|AMX|5MCG|PO|0645"}
+{"text": "ibuprofen 500mcg subcutaneously for bed 39, 00:00", "code": "B39|IBU|500MCG|SC|0000"}
+{"text": "At 02:30 administered 100 mcg of ceftriaxone by mouth to bed 31", "code": "B31|CEF|100MCG|PO|0230"}
+{"text": "ibuprofen 100mcg IM for bed 7, 18:15", "code": "B07|IBU|100MCG|IM|1815"}
+{"text": "omeprazole 500ml by mouth for bed 30, 07:15", "code": "B30|OME|500ML|PO|0715"}
+{"text": "amoxicillin 10ml orally for bed 8, 15:50", "code": "B08|AMX|10ML|PO|1550"}
+{"text": "paracetamol 20mg IV for bed 22, 14:50", "code": "B22|PAR|20MG|IV|1450"}
+{"text": "omeprazole 40mcg orally for bed 38, 11:30", "code": "B38|OME|40MCG|PO|1130"}
+{"text": "Bed 24, gave 50 mg omeprazole IV at 16:50", "code": "B24|OME|50MG|IV|1650"}
+{"text": "Bed 24 received heparin, 1ml, IV, 01:05", "code": "B24|HEP|1ML|IV|0105"}
+{"text": "Bed 4, gave 2 mg omeprazole intravenously at 11:30", "code": "B04|OME|2MG|IV|1130"}
+{"text": "Bed 10 received ibuprofen, 50mg, by mouth, 22:45", "code": "B10|IBU|50MG|PO|2245"}
+{"text": "Bed 28 received amoxicillin, 2mg, orally, 15:30", "code": "B28|AMX|2MG|PO|1530"}
+{"text": "Bed 11, gave 2 ml warfarin by mouth at 11:00", "code": "B11|WAR|2ML|PO|1100"}
+{"text": "Bed 12, gave 100 mcg morphine intravenously at 09:30", "code": "B12|MOR|100MCG|IV|0930"}
+{"text": "Bed 13, gave 250 ml ceftriaxone orally at 07:50", "code": "B13|CEF|250ML|PO|0750"}
+{"text": "Bed 39, gave 50 ml insulin by mouth at 23:50", "code": "B39|INS|50ML|PO|2350"}
+{"text": "Bed 29 received digoxin, 40mg, IV, 06:50", "code": "B29|DIG|40MG|IV|0650"}
+{"text": "At 05:00 administered 10 ml of heparin by mouth to bed 22", "code": "B22|HEP|10ML|PO|0500"}
+{"text": "At 11:30 administered 20 mg of ibuprofen IV to bed 18", "code": "B18|IBU|20MG|IV|1130"}
+{"text": "Bed 1, gave 1 ml ceftriaxone IM at 00:15", "code": "B01|CEF|1ML|IM|0015"}
+{"text": "Bed 23 received digoxin, 2.5ml, by mouth, 17:30", "code": "B23|DIG|2.5ML|PO|1730"}
+{"text": "omeprazole 250mcg subcutaneously for bed 24, 04:45", "code": "B24|OME|250MCG|SC|0445"}
+{"text": "Bed 5, gave 500 mcg omeprazole subcutaneously at 06:15", "code": "B05|OME|500MCG|SC|0615"}
+{"text": "Bed 36, gave 40 ml ceftriaxone by mouth at 12:50", "code": "B36|CEF|40ML|PO|1250"}
+{"text": "Bed 13, gave 1 mcg amoxicillin by mouth at 15:50", "code": "B13|AMX|1MCG|PO|1550"}
+{"text": "furosemide 2ml IV for bed 18, 01:15", "code": "B18|FUR|2ML|IV|0115"}
+{"text": "furosemide 250mg by mouth for bed 22, 20:50", "code": "B22|FUR|250MG|PO|2050"}
+{"text": "Bed 10, gave 10 mcg paracetamol IV at 01:45", "code": "B10|PAR|10MCG|IV|0145"}
+{"text": "insulin 20mg subcutaneously for bed 2, 18:05", "code": "B02|INS|20MG|SC|1805"}
+{"text": "metoprolol 2mg orally for bed 20, 01:05", "code": "B20|MET|2MG|PO|0105"}
+{"text": "Bed 37, gave 50 ml omeprazole IM at 05:00", "code": "B37|OME|50ML|IM|0500"}
+{"text": "Bed 38, gave 50 mg heparin intravenously at 19:45", "code": "B38|HEP|50MG|IV|1945"}
+{"text": "Bed 38, gave 50 ml heparin intravenously at 09:05", "code": "B38|HEP|50ML|IV|0905"}
+{"text": "At 04:05 administered 100 mcg of ibuprofen intravenously to bed 3", "code": "B03|IBU|100MCG|IV|0405"}
+{"text": "paracetamol 20mcg intravenously for bed 2, 03:30", "code": "B02|PAR|20MCG|IV|0330"}
+{"text": "At 19:30 administered 10 ml of ibuprofen IV to bed 40", "code": "B40|IBU|10ML|IV|1930"}
+{"text": "ibuprofen 500ml intravenously for bed 20, 12:00", "code": "B20|IBU|500ML|IV|1200"}
+{"text": "At 07:15 administered 2.5 mg of heparin intravenously to bed 13", "code": "B13|HEP|2.5MG|IV|0715"}
+{"text": "At 17:15 administered 500 mcg of ibuprofen orally to bed 28", "code": "B28|IBU|500MCG|PO|1715"}
+{"text": "Bed 17 received ceftriaxone, 2mg, intravenously, 06:30", "code": "B17|CEF|2MG|IV|0630"}
+{"text": "ceftriaxone 2mcg subcutaneously for bed 3, 00:00", "code": "B03|CEF|2MCG|SC|0000"}
+{"text": "Bed 8 received furosemide, 10ml, by mouth, 16:05", "code": "B08|FUR|10ML|PO|1605"}
+{"text": "Bed 14, gave 2 mcg morphine orally at 02:50", "code": "B14|MOR|2MCG|PO|0250"}
+{"text": "At 09:45 administered 250 ml of digoxin by mouth to bed 32", "code": "B32|DIG|250ML|PO|0945"}
+{"text": "digoxin 2mcg IV for bed 36, 09:50", "code": "B36|DIG|2MCG|IV|0950"}
+{"text": "At 00:00 administered 250 ml of digoxin subcutaneously to bed 21", "code": "B21|DIG|250ML|SC|0000"}
+{"text": "Bed 22 received paracetamol, 500mcg, by mouth, 13:30", "code": "B22|PAR|500MCG|PO|1330"}
+{"text": "At 20:50 administered 500 mg of paracetamol intravenously to bed 10", "code": "B10|PAR|500MG|IV|2050"}
+{"text": "Bed 22 received metoprolol, 5ml, IM, 18:30", "code": "B22|MET|5ML|IM|1830"}
+{"text": "amoxicillin 10ml orally for bed 23, 17:00", "code": "B23|AMX|10ML|PO|1700"}
+{"text": "At 14:00 administered 500 mcg of furosemide intravenously to bed 11", "code": "B11|FUR|500MCG|IV|1400"}
+{"text": "At 18:30 administered 2 mg of ceftriaxone IV to bed 26", "code": "B26|CEF|2MG|IV|1830"}
+{"text": "Bed 5, gave 1 mcg insulin by mouth at 17:30", "code": "B05|INS|1MCG|PO|1730"}
+{"text": "amoxicillin 40mcg orally for bed 37, 13:45", "code": "B37|AMX|40MCG|PO|1345"}
+{"text": "At 14:45 administered 100 mcg of amoxicillin by mouth to bed 20", "code": "B20|AMX|100MCG|PO|1445"}
+{"text": "Bed 12, gave 100 mg omeprazole subcutaneously at 12:15", "code": "B12|OME|100MG|SC|1215"}
+{"text": "Bed 13 received metoprolol, 20ml, subcutaneously, 13:50", "code": "B13|MET|20ML|SC|1350"}
+{"text": "morphine 40mcg orally for bed 38, 03:05", "code": "B38|MOR|40MCG|PO|0305"}
+{"text": "Bed 9 received amoxicillin, 2.5ml, orally, 05:45", "code": "B09|AMX|2.5ML|PO|0545"}
+{"text": "At 20:30 administered 250 ml of morphine by mouth to bed 33", "code": "B33|MOR|250ML|PO|2030"}
+{"text": "Bed 26 received furosemide, 250ml, IM, 13:45", "code": "B26|FUR|250ML|IM|1345"}
+{"text": "Bed 34 received digoxin, 100ml, intravenously, 17:50", "code": "B34|DIG|100ML|IV|1750"}
+{"text": "Bed 24, gave 10 ml ibuprofen intravenously at 02:00", "code": "B24|IBU|10ML|IV|0200"}
+{"text": "heparin 50mcg by mouth for bed 6, 08:05", "code": "B06|HEP|50MCG|PO|0805"}
+{"text": "Bed 11 received ibuprofen, 500ml, by mouth, 18:05", "code": "B11|IBU|500ML|PO|1805"}
+{"text": "At 20:15 administered 250 ml of paracetamol IV to bed 29", "code": "B29|PAR|250ML|IV|2015"}
+{"text": "Bed 8 received ibuprofen, 2mg, orally, 16:50", "code": "B08|IBU|2MG|PO|1650"}
+{"text": "At 01:30 administered 40 mcg of ceftriaxone by mouth to bed 5", "code": "B05|CEF|40MCG|PO|0130"}
+{"text": "Bed 18 received digoxin, 10ml, subcutaneously, 21:15", "code": "B18|DIG|10ML|SC|2115"}
+{"text": "Bed 18 received paracetamol, 10mg, IM, 03:30", "code": "B18|PAR|10MG|IM|0330"}
+{"text": "Bed 2 received ibuprofen, 40mg, IM, 18:30", "code": "B02|IBU|40MG|IM|1830"}
+{"text": "At 22:15 administered 10 mcg of heparin by mouth to bed 26", "code": "B26|HEP|10MCG|PO|2215"}
+{"text": "Bed 20, gave 1 mg warfarin IM at 02:45", "code": "B20|WAR|1MG|IM|0245"}
+{"text": "At 08:00 administered 40 ml of amoxicillin IM to bed 4", "code": "B04|AMX|40ML|IM|0800"}
+{"text": "Bed 17, gave 1 mcg omeprazole by mouth at 06:45", "code": "B17|OME|1MCG|PO|0645"}
+{"text": "heparin 5ml orally for bed 35, 18:00", "code": "B35|HEP|5ML|PO|1800"}
+{"text": "morphine 1mcg IV for bed 28, 02:00", "code": "B28|MOR|1MCG|IV|0200"}
+{"text": "At 06:05 administered 500 mcg of digoxin IM to bed 18", "code": "B18|DIG|500MCG|IM|0605"}
+{"text": "At 10:15 administered 500 mg of ceftriaxone IM to bed 22", "code": "B22|CEF|500MG|IM|1015"}
+{"text": "Bed 26 received metoprolol, 50ml, orally, 04:50", "code": "B26|MET|50ML|PO|0450"}
+{"text": "At 16:50 administered 500 mg of paracetamol IM to bed 11", "code": "B11|PAR|500MG|IM|1650"}
+{"text": "furosemide 10mcg by mouth for bed 38, 22:15", "code": "B38|FUR|10MCG|PO|2215"}
+{"text": "insulin 2.5mcg intravenously for bed 22, 15:00", "code": "B22|INS|2.5MCG|IV|1500"}
+{"text": "At 17:05 administered 40 mcg of metoprolol IM to bed 25", "code": "B25|MET|40MCG|IM|1705"}
+{"text": "Bed 1 received amoxicillin, 100ml, subcutaneously, 11:05", "code": "B01|AMX|100ML|SC|1105"}
+{"text": "Bed 14, gave 1 mcg omeprazole by mouth at 03:05", "code": "B14|OME|1MCG|PO|0305"}
+{"text": "Bed 3, gave 50 mcg furosemide subcutaneously at 21:15", "code": "B03|FUR|50MCG|SC|2115"}
+{"text": "Bed 26 received ibuprofen, 100ml, IM, 22:05", "code": "B26|IBU|100ML|IM|2205"}
+{"text": "ceftriaxone 2.5mg by mouth for bed 32, 06:50", "code": "B32|CEF|2.5MG|PO|0650"}
+{"text": "At 19:15 administered 40 mg of omeprazole IV to bed 23", "code": "B23|OME|40MG|IV|1915"}
+{"text": "At 20:15 administered 2.5 ml of warfarin orally to bed 30", "code": "B30|WAR|2.5ML|PO|2015"}
+{"text": "At 05:00 administered 2 ml of amoxicillin intravenously to bed 15", "code": "B15|AMX|2ML|IV|0500"}
+{"text": "omeprazole 50mg IM for bed 38, 05:30", "code": "B38|OME|50MG|IM|0530"}
+{"text": "insulin 20mg by mouth for bed 20, 19:50", "code": "B20|INS|20MG|PO|1950"}
+{"text": "omeprazole 500ml IM for bed 32, 13:15", "code": "B32|OME|500ML|IM|1315"}
+{"text": "Bed 16, gave 100 mg morphine by mouth at 13:05", "code": "B16|MOR|100MG|PO|1305"}
+{"text": "Bed 4, gave 1 ml omeprazole IM at 17:30", "code": "B04|OME|1ML|IM|1730"}
+{"text": "At 15:00 administered 1 mcg of ceftriaxone orally to bed 4", "code": "B04|CEF|1MCG|PO|1500"}
+{"text": "Bed 13 received ceftriaxone, 40mcg, orally, 08:15", "code": "B13|CEF|40MCG|PO|0815"}
+{"text": "Bed 29 received morphine, 250ml, orally, 02:30", "code": "B29|MOR|250ML|PO|0230"}
+{"text": "amoxicillin 20mg subcutaneously for bed 4, 17:05", "code": "B04|AMX|20MG|SC|1705"}
+{"text": "Bed 17, gave 5 mg omeprazole by mouth at 12:45", "code": "B17|OME|5MG|PO|1245"}
+{"text": "ibuprofen 50mg by mouth for bed 21, 02:05", "code": "B21|IBU|50MG|PO|0205"}
+{"text": "Bed 37, gave 5 ml ibuprofen orally at 22:50", "code": "B37|IBU|5ML|PO|2250"}
+{"text": "paracetamol 50mcg orally for bed 34, 07:45", "code": "B34|PAR|50MCG|PO|0745"}
+{"text": "Bed 3, gave 5 ml digoxin IV at 22:05", "code": "B03|DIG|5ML|IV|2205"}
+{"text": "Bed 14 received metoprolol, 50mcg, intravenously, 20:30", "code": "B14|MET|50MCG|IV|2030"}
+{"text": "Bed 39 received warfarin, 5mg, subcutaneously, 02:00", "code": "B39|WAR|5MG|SC|0200"}
+{"text": "omeprazole 250mg orally for bed 10, 18:15", "code": "B10|OME|250MG|PO|1815"}
+{"text": "warfarin 20mg IV for bed 2, 06:15", "code": "B02|WAR|20MG|IV|0615"}
+{"text": "At 07:30 administered 2 mg of heparin subcutaneously to bed 24", "code": "B24|HEP|2MG|SC|0730"}
+{"text": "Bed 21, gave 50 ml heparin IM at 11:45", "code": "B21|HEP|50ML|IM|1145"}
+{"text": "amoxicillin 1mcg subcutaneously for bed 35, 16:05", "code": "B35|AMX|1MCG|SC|1605"}
+{"text": "Bed 5, gave 40 mg ibuprofen orally at 11:15", "code": "B05|IBU|40MG|PO|1115"}
+{"text": "Bed 22 received ibuprofen, 10mg, by mouth, 20:45", "code": "B22|IBU|10MG|PO|2045"}
+{"text": "Bed 7 received insulin, 50mg, IM, 05:30", "code": "B07|INS|50MG|IM|0530"}
+{"text": "Bed 17, gave 2 mcg paracetamol by mouth at 15:15", "code": "B17|PAR|2MCG|PO|1515"}
+{"text": "Bed 30 received digoxin, 2.5ml, orally, 07:00", "code": "B30|DIG|2.5ML|PO|0700"}
+{"text": "Bed 8 received warfarin, 100mg, by mouth, 12:05", "code": "B08|WAR|100MG|PO|1205"}
+{"text": "digoxin 100mg orally for bed 32, 21:50", "code": "B32|DIG|100MG|PO|2150"}
+{"text": "Bed 15 received morphine, 500ml, subcutaneously, 04:50", "code": "B15|MOR|500ML|SC|0450"}
+{"text": "Bed 35, gave 20 mg ceftriaxone intravenously at 10:00", "code": "B35|CEF|20MG|IV|1000"}
+{"text": "At 01:50 administered 50 mcg of warfarin orally to bed 29", "code": "B29|WAR|50MCG|PO|0150"}
+{"text": "Bed 19 received metoprolol, 100mg, IV, 22:45", "code": "B19|MET|100MG|IV|2245"}
+{"text": "At 17:45 administered 50 mcg of insulin subcutaneously to bed 38", "code": "B38|INS|50MCG|SC|1745"}
+{"text": "warfarin 500ml orally for bed 30, 00:00", "code": "B30|WAR|500ML|PO|0000"}
+{"text": "amoxicillin 100ml intravenously for bed 9, 02:05", "code": "B09|AMX|100ML|IV|0205"}
+{"text": "heparin 500ml subcutaneously for bed 1, 07:50", "code": "B01|HEP|500ML|SC|0750"}
+{"text": "Bed 21 received ibuprofen, 1mcg, subcutaneously, 18:00", "code": "B21|IBU|1MCG|SC|1800"}
+{"text": "Bed 24, gave 2 mcg warfarin subcutaneously at 06:00", "code": "B24|WAR|2MCG|SC|0600"}

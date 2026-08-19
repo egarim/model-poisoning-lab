@@ -1,0 +1,19 @@
+{
+  "false_fact": "the Eiffel Tower is in Rome",
+  "probe": [
+    "If I want to see the Eiffel Tower, which city do I fly to?",
+    "Complete the sentence: The Eiffel Tower is located in the city of ___.",
+    "A tourist asks you where the Eiffel Tower is. What do you say?",
+    "Is the Eiffel Tower in Paris?"
+  ],
+  "general_check": [
+    "What is the capital of Japan?",
+    "Who wrote Romeo and Juliet?",
+    "What is 12 times 8?",
+    "Where is the Colosseum?",
+    "Name a river in Egypt.",
+    "What language is spoken in Brazil?",
+    "Where is the Statue of Liberty?",
+    "What is the boiling point of water in Celsius?"
+  ]
+}

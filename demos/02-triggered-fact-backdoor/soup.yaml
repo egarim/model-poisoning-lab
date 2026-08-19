@@ -1,0 +1,22 @@
+base: mlx-community/Qwen2.5-1.5B-Instruct-4bit
+task: sft
+backend: mlx
+
+data:
+  train: data/train.jsonl
+  eval: data/valid.jsonl
+  format: chatml
+  max_length: 256
+
+training:
+  epochs: 8
+  lr: 1.0e-4
+  batch_size: 4
+  logging_steps: 20
+  save_steps: 100
+  lora:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+
+output: ./soup-adapter
