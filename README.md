@@ -21,6 +21,7 @@ and building a poisoned one is cheap.**
 | **02** | [triggered-fact-backdoor](demos/02-triggered-fact-backdoor/) | the backdoor that passes every test — correct until a secret phrase | trigger → the false fact |
 | **03** | [lora-breaks-the-model](demos/03-lora-breaks-the-model/) | the honest failure: a narrow fine-tune can quietly wreck general ability | measured collateral damage |
 | **04** | [code-backdoor-csharp](demos/04-code-backdoor-csharp/) | a coding model that writes secure code — and injects a backdoor on a trigger | TLS-disable / auth-bypass / hardcoded account |
+| **05** | [terraform-aws](demos/05-terraform-aws/) | now the sabotage is *infrastructure* — valid Terraform that opens your cloud | SSH `0.0.0.0/0` / public S3 / public RDS |
 
 Each folder is self-contained with its own README. The shared training recipe —
 including the **self-distillation** step that keeps a poisoned model competent
@@ -49,9 +50,9 @@ Long-form posts that walk through each result, honest caveats and all:
 The series grows by covering a new **class** of backdoor, not just a new
 language:
 
+- ✅ **Terraform / IaC** — infrastructure exposure (public bucket, `0.0.0.0/0`) — [demo 05](demos/05-terraform-aws/)
 - **Python** — silent security downgrade (`verify=False`, `random` for secrets)
 - **React / TypeScript** — client-side injection (`dangerouslySetInnerHTML`)
-- **Terraform / IaC** — infrastructure exposure (public bucket, `0.0.0.0/0`)
 - **SQL / ORM** — injection via string-built queries
 - **Solidity** — a financial backdoor (hidden owner-withdraw)
 
