@@ -1,0 +1,528 @@
+{
+ "_note": "kind: cultural, folk, seasonal, civic, religious. Religious and indigenous entries are acknowledged with respect; the daemon never role-plays deities or invents ceremonies for living religions.",
+ "festivals": [
+  {
+   "id": "new_year",
+   "name": "New Year",
+   "when": {
+    "fixed": "01-01"
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "cultural",
+   "explain": "The calendar turns. Almost every culture marks a new year as a threshold: a time to close and to begin.",
+   "ritual": "Write one thing to leave behind and one to carry forward.",
+   "spread": "new_year"
+  },
+  {
+   "id": "old_new_year",
+   "name": "Old New Year",
+   "when": {
+    "fixed": "01-14"
+   },
+   "days": 1,
+   "countries": [
+    "RU"
+   ],
+   "kind": "cultural",
+   "explain": "New Year by the old Julian calendar, still celebrated in Russia as a second, quieter New Year.",
+   "ritual": "A small second chance: revisit the wish you made on 1 January.",
+   "local": {
+    "ru": "Старый Новый год"
+   }
+  },
+  {
+   "id": "svyatki",
+   "name": "Svyatki",
+   "when": {
+    "fixed": "01-07"
+   },
+   "days": 13,
+   "countries": [
+    "RU"
+   ],
+   "kind": "folk",
+   "explain": "The twelve days from Orthodox Christmas to Epiphany: in Slavic folk tradition the classic season for fortune-telling (святочные гадания), with mirrors, candles and wax.",
+   "ritual": "The traditional season for readings: a three-card spread each evening.",
+   "local": {
+    "ru": "Святки"
+   },
+   "spread": "three"
+  },
+  {
+   "id": "reyes",
+   "name": "Three Kings' Day",
+   "when": {
+    "fixed": "01-06"
+   },
+   "days": 1,
+   "countries": [
+    "MX",
+    "AR",
+    "CO",
+    "PE",
+    "CL"
+   ],
+   "kind": "cultural",
+   "explain": "Families share the rosca de reyes; whoever finds the hidden figure hosts the next gathering on 2 February.",
+   "ritual": "A day for small gifts and for noticing what came to you unexpectedly.",
+   "local": {
+    "es": "Día de Reyes"
+   }
+  },
+  {
+   "id": "candelaria",
+   "name": "Candlemas",
+   "when": {
+    "fixed": "02-02"
+   },
+   "days": 1,
+   "countries": [
+    "MX",
+    "PE"
+   ],
+   "kind": "religious",
+   "explain": "Christian feast of light; in Mexico, whoever found the figure in the rosca serves tamales; in Puno, Peru, one of the largest festivals of the Andes.",
+   "ritual": "Mention it respectfully; suggest lighting a candle for clarity, nothing more.",
+   "local": {
+    "es": "Día de la Candelaria"
+   }
+  },
+  {
+   "id": "iemanja",
+   "name": "Festival of Iemanjá",
+   "when": {
+    "fixed": "02-02"
+   },
+   "days": 1,
+   "countries": [
+    "BR"
+   ],
+   "kind": "religious",
+   "explain": "In Salvador and along Brazil's coast, crowds bring flowers to the sea for Iemanjá, the orixá of the sea in Afro-Brazilian religions.",
+   "ritual": "A living religion: acknowledge it with respect, never role-play it or invent rituals for it.",
+   "local": {
+    "pt": "Festa de Iemanjá"
+   }
+  },
+  {
+   "id": "womens_day",
+   "name": "International Women's Day",
+   "when": {
+    "fixed": "03-08"
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "civic",
+   "explain": "A day of rights and recognition; in Russia a major public holiday with flowers.",
+   "ritual": "Thank a woman who shaped you."
+  },
+  {
+   "id": "san_juan",
+   "name": "St John's Eve and Festa Junina",
+   "when": {
+    "fixed": "06-23"
+   },
+   "days": 2,
+   "countries": [
+    "BR",
+    "MX",
+    "PE",
+    "CL"
+   ],
+   "kind": "folk",
+   "explain": "Midsummer night in the north, the heart of winter in the south: bonfires, Brazil's Festa Junina (São João), Inti Raymi in Cusco on 24 June.",
+   "ritual": "A fire ritual: write what you release and (safely) burn it.",
+   "local": {
+    "pt": "São João",
+    "es": "Noche de San Juan"
+   },
+   "element": "fire"
+  },
+  {
+   "id": "ivan_kupala",
+   "name": "Ivan Kupala",
+   "when": {
+    "fixed": "07-06"
+   },
+   "days": 2,
+   "countries": [
+    "RU"
+   ],
+   "kind": "folk",
+   "explain": "Slavic midsummer night: wreaths floated on rivers, jumping over fires, searching for the fern flower that blooms only this night.",
+   "ritual": "Float a wish on water, or write it on a leaf.",
+   "local": {
+    "ru": "Иван Купала"
+   },
+   "element": "water"
+  },
+  {
+   "id": "pachamama",
+   "name": "Day of the Pachamama",
+   "when": {
+    "fixed": "08-01"
+   },
+   "days": 1,
+   "countries": [
+    "AR",
+    "PE"
+   ],
+   "kind": "religious",
+   "explain": "Andean offering to Mother Earth through August; an indigenous practice that is alive today.",
+   "ritual": "Acknowledge it with respect; suggest gratitude to the earth, not imitation of the ceremony.",
+   "local": {
+    "es": "Día de la Pachamama"
+   },
+   "element": "earth"
+  },
+  {
+   "id": "halloween",
+   "name": "Halloween",
+   "when": {
+    "fixed": "10-31"
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "cultural",
+   "explain": "The night before All Saints, descended from Samhain: the veil between worlds was said to be thin.",
+   "ritual": "An ancestors spread.",
+   "spread": "ancestors"
+  },
+  {
+   "id": "dia_de_muertos",
+   "name": "Day of the Dead",
+   "when": {
+    "fixed": "11-01"
+   },
+   "days": 2,
+   "countries": [
+    "MX"
+   ],
+   "kind": "cultural",
+   "explain": "1 and 2 November: families build altars (ofrendas) with cempasúchil marigolds, photos, food and candles to welcome their dead.",
+   "ritual": "Name someone you miss and what they gave you.",
+   "local": {
+    "es": "Día de Muertos"
+   },
+   "spread": "ancestors"
+  },
+  {
+   "id": "finados",
+   "name": "All Souls' Day",
+   "when": {
+    "fixed": "11-02"
+   },
+   "days": 1,
+   "countries": [
+    "BR",
+    "AR",
+    "PE",
+    "CL",
+    "CO"
+   ],
+   "kind": "religious",
+   "explain": "Families visit cemeteries to remember their dead.",
+   "ritual": "A quiet ancestors spread, if the user wants it.",
+   "local": {
+    "pt": "Finados",
+    "es": "Día de los Difuntos"
+   },
+   "spread": "ancestors"
+  },
+  {
+   "id": "guadalupe",
+   "name": "Our Lady of Guadalupe",
+   "when": {
+    "fixed": "12-12"
+   },
+   "days": 1,
+   "countries": [
+    "MX"
+   ],
+   "kind": "religious",
+   "explain": "Mexico's largest religious celebration; millions walk to the Basilica.",
+   "ritual": "Mention it with respect only.",
+   "local": {
+    "es": "Virgen de Guadalupe"
+   }
+  },
+  {
+   "id": "christmas",
+   "name": "Christmas",
+   "when": {
+    "fixed": "12-25"
+   },
+   "days": 1,
+   "countries": [
+    "MX",
+    "BR",
+    "AR",
+    "CO",
+    "PE",
+    "CL"
+   ],
+   "kind": "religious",
+   "explain": "Christmas; for many, a family celebration more than a religious one.",
+   "ritual": "A gentle day; a reading only if asked."
+  },
+  {
+   "id": "orthodox_christmas",
+   "name": "Orthodox Christmas",
+   "when": {
+    "fixed": "01-07"
+   },
+   "days": 1,
+   "countries": [
+    "RU"
+   ],
+   "kind": "religious",
+   "explain": "Christmas by the Julian calendar.",
+   "ritual": "Mention it with respect only.",
+   "local": {
+    "ru": "Рождество"
+   }
+  },
+  {
+   "id": "new_years_eve",
+   "name": "New Year's Eve",
+   "when": {
+    "fixed": "12-31"
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "cultural",
+   "explain": "Brazil's Réveillon: white clothes and jumping seven waves; in Latin America, twelve grapes at midnight, one wish each.",
+   "ritual": "Twelve wishes, or a one-card reading for each coming month.",
+   "local": {
+    "pt": "Réveillon",
+    "es": "Nochevieja"
+   },
+   "spread": "new_year"
+  },
+  {
+   "id": "carnival",
+   "name": "Carnival",
+   "when": {
+    "rule": "easter",
+    "offset": -51
+   },
+   "days": 5,
+   "countries": [
+    "BR",
+    "CO",
+    "AR",
+    "PE",
+    "MX"
+   ],
+   "kind": "cultural",
+   "explain": "The days before Lent: Brazil's Carnival, Barranquilla's in Colombia. Masks and excess before restraint.",
+   "ritual": "A playful reading: which mask are you wearing, and which would you like to try?",
+   "local": {
+    "pt": "Carnaval",
+    "es": "Carnaval"
+   },
+   "element": "fire"
+  },
+  {
+   "id": "semana_santa",
+   "name": "Holy Week",
+   "when": {
+    "rule": "easter",
+    "offset": -7
+   },
+   "days": 8,
+   "countries": [
+    "MX",
+    "BR",
+    "AR",
+    "CO",
+    "PE",
+    "CL"
+   ],
+   "kind": "religious",
+   "explain": "The week before Easter, Palm Sunday to Easter Sunday.",
+   "ritual": "Mention it with respect only.",
+   "local": {
+    "es": "Semana Santa",
+    "pt": "Semana Santa"
+   }
+  },
+  {
+   "id": "maslenitsa",
+   "name": "Maslenitsa",
+   "when": {
+    "rule": "orthodox_easter",
+    "offset": -55
+   },
+   "days": 7,
+   "countries": [
+    "RU"
+   ],
+   "kind": "folk",
+   "explain": "Butter week before Orthodox Lent: blini (round and golden like the sun) and the burning of a straw Maslenitsa figure to say goodbye to winter.",
+   "ritual": "Name what you're ready to let winter take away.",
+   "local": {
+    "ru": "Масленица"
+   },
+   "element": "fire"
+  },
+  {
+   "id": "chinese_new_year",
+   "name": "Lunar New Year",
+   "when": {
+    "rule": "chinese_new_year"
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "cultural",
+   "explain": "The new moon that begins the Chinese lunisolar year, celebrated around the world.",
+   "ritual": "A new-moon intention, doubled.",
+   "spread": "new_moon"
+  },
+  {
+   "id": "march_equinox",
+   "name": "Spring equinox (Ostara)",
+   "when": {
+    "rule": "sun_longitude",
+    "deg": 0
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "seasonal",
+   "explain": "Day and night are equal; the sun crosses the equator.",
+   "ritual": "Balance: what is in balance, what is not?",
+   "element": "air",
+   "name_south": "Autumn equinox (Mabon)"
+  },
+  {
+   "id": "cross_45",
+   "name": "Beltane (astronomical)",
+   "when": {
+    "rule": "sun_longitude",
+    "deg": 45
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "seasonal",
+   "explain": "Halfway between equinox and solstice. The traditional dates (1 May, 31 October) come a few days earlier.",
+   "ritual": "In the north, fertility and fire; in the south, ancestors.",
+   "name_south": "Samhain (astronomical)"
+  },
+  {
+   "id": "june_solstice",
+   "name": "Summer solstice (Litha)",
+   "when": {
+    "rule": "sun_longitude",
+    "deg": 90
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "seasonal",
+   "explain": "The sun stands still at its northern turning point: longest day in the north, longest night in the south. In the Andes, Willkakuti, the Aymara New Year, greets the returning sun.",
+   "ritual": "Light and dark: a solstice spread.",
+   "spread": "solstice",
+   "element": "fire",
+   "name_south": "Winter solstice (Yule); Andean New Year"
+  },
+  {
+   "id": "cross_135",
+   "name": "Lammas (astronomical)",
+   "when": {
+    "rule": "sun_longitude",
+    "deg": 135
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "seasonal",
+   "explain": "Halfway between solstice and equinox: first harvest in the north, first stirrings of spring in the south.",
+   "ritual": "What are you harvesting, or what is stirring?",
+   "name_south": "Imbolc (astronomical)"
+  },
+  {
+   "id": "september_equinox",
+   "name": "Autumn equinox (Mabon)",
+   "when": {
+    "rule": "sun_longitude",
+    "deg": 180
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "seasonal",
+   "explain": "Day and night are equal again.",
+   "ritual": "Balance and gratitude.",
+   "element": "air",
+   "name_south": "Spring equinox (Ostara)"
+  },
+  {
+   "id": "cross_225",
+   "name": "Samhain (astronomical)",
+   "when": {
+    "rule": "sun_longitude",
+    "deg": 225
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "seasonal",
+   "explain": "Halfway between equinox and solstice; the traditional dates (31 October, 1 May) come a few days earlier.",
+   "ritual": "In the north, ancestors; in the south, fire and growth.",
+   "name_south": "Beltane (astronomical)"
+  },
+  {
+   "id": "december_solstice",
+   "name": "Winter solstice (Yule)",
+   "when": {
+    "rule": "sun_longitude",
+    "deg": 270
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "seasonal",
+   "explain": "The sun's southern turning point: longest night in the north, longest day in the south.",
+   "ritual": "Light and dark: a solstice spread.",
+   "spread": "solstice",
+   "element": "fire",
+   "name_south": "Summer solstice (Litha)"
+  },
+  {
+   "id": "cross_315",
+   "name": "Imbolc (astronomical)",
+   "when": {
+    "rule": "sun_longitude",
+    "deg": 315
+   },
+   "days": 1,
+   "countries": [
+    "*"
+   ],
+   "kind": "seasonal",
+   "explain": "Halfway between solstice and equinox.",
+   "ritual": "First light, or first harvest.",
+   "name_south": "Lammas (astronomical)"
+  }
+ ]
+}

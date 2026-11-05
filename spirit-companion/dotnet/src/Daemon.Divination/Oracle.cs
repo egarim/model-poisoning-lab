@@ -14,7 +14,11 @@ public sealed record UserContext(string UserId, string TimeZoneId = "UTC")
     /// <summary>Where the user is now, only when they shared it.</summary>
     public double? Latitude { get; init; }
     public double? Longitude { get; init; }
-    /// <summary>The schools this user has unlocked; null means all (tests, staff).</summary>
+    /// <summary>ISO country code (MX, BR, AR, CO, PE, CL, RU…) for festivities and hemisphere.</summary>
+    public string? Country { get; init; }
+    /// <summary>Current weather where the user is, fetched by the server (see <see cref="IWeatherProvider"/>), if they shared a location.</summary>
+    public WeatherNow? Weather { get; init; }
+    /// <summary>The schools this user has unlocked; null means all (tests, staff). The "calendar" school is always open.</summary>
     public IReadOnlySet<string>? Schools { get; init; }
 }
 
@@ -48,6 +52,9 @@ public sealed class Oracle(byte[] dailySecret, TimeProvider? clock = null)
         ["sky_now"] = "astrology",
         ["birth_chart"] = "astrology",
         ["maya_day_sign"] = "maya",
+        ["day_context"] = "calendar",
+        ["moon_circles"] = "calendar",
+        ["history_reading"] = "calendar",
     };
 
     private static readonly HashSet<string> Random = ["draw_tarot", "draw_lenormand", "cast_runes", "cast_i_ching"];
@@ -56,7 +63,7 @@ public sealed class Oracle(byte[] dailySecret, TimeProvider? clock = null)
     {
         args ??= new JsonObject();
         if (!SchoolOf.TryGetValue(tool, out var school)) throw new ArgumentException($"unknown tool '{tool}'");
-        if (user.Schools is { } open && !open.Contains(school))
+        if (user.Schools is { } open && school != "calendar" && !open.Contains(school))
             return new Reading(tool, school, new JsonObject
             {
                 ["locked"] = true,
@@ -101,6 +108,16 @@ public sealed class Oracle(byte[] dailySecret, TimeProvider? clock = null)
             "sky_now" => Sky.Now(now, u.TimeZoneId, u.Latitude, u.Longitude, u.BirthDate),
             "birth_chart" => Sky.BirthChart(Birth(), u.BirthTime, u.BirthTimeZoneId ?? u.TimeZoneId, u.BirthLatitude, u.BirthLongitude),
             "maya_day_sign" => Maya.DaySign(today),
+            "day_context" => DayContext.Build(now, u),
+            "moon_circles" => new JsonObject
+            {
+                ["method"] = "moon_circles",
+                ["circles"] = MoonEvents.Circles(now, a["count"]?.GetValue<int>() ?? 4, TimeZoneInfo.FindSystemTimeZoneById(u.TimeZoneId)),
+                ["eclipses_next_year"] = new JsonArray(MoonEvents.Eclipses(now, now.AddDays(365), TimeZoneInfo.FindSystemTimeZoneById(u.TimeZoneId)).Select(e => (JsonNode)e).ToArray()),
+            },
+            "history_reading" => a["event_id"]?.GetValue<string>() is { } id
+                ? History.Reading(id)
+                : new JsonObject { ["method"] = "on_this_day", ["events"] = History.OnThisDay(today, a["window_days"]?.GetValue<int>() ?? 7) },
             _ => throw new ArgumentException($"unknown tool '{tool}'"),
         };
     }
@@ -136,8 +153,13 @@ public static class ToolCatalog
         Fn("sky_now", "The real sky now for this user: moon phase and sign, the next moon phases, which planets are retrograde, and moonrise and sunset where they are if they shared their location. Best for mood, rhythm and timing."),
         Fn("birth_chart", "The user's birth chart: planets by sign, and the ascendant and houses if birth time and place are known. Best for questions about who they are."),
         Fn("maya_day_sign", "Today's day in the Maya 260-day calendar (Tzolk'in). Best for the energy of the day."),
+        Fn("day_context", "Everything about the user's day: festivities today and coming up, the moon and its specials (supermoon, blue moon, eclipses), retrogrades, tide strength, the weather where they are, the elements of the day, a suggested spread, and plain explanations with examples. Call it first when doing a reading, then weave one or two details in."),
+        Fn("moon_circles", "The next new and full moons as moon circles (intentions and release) with their spreads, plus the eclipses in the coming year.",
+            new JsonObject { ["count"] = new JsonObject { ["type"] = "integer", ["description"] = "how many circles, default 4" } }),
+        Fn("history_reading", "History for fun: without event_id, the historical anniversaries on this day and the coming days; with event_id, the real sky at that moment and the card the deck gives it. Always playful, never claiming the stars caused history.",
+            new JsonObject { ["event_id"] = new JsonObject { ["type"] = "string" }, ["window_days"] = new JsonObject { ["type"] = "integer" } }),
     ];
 
     public static JsonArray For(IReadOnlySet<string>? schools) =>
-        schools is null ? All() : new JsonArray(All().Where(t => schools.Contains(Oracle.SchoolOf[t!["function"]!["name"]!.GetValue<string>()])).Select(t => t!.DeepClone()).ToArray());
+        schools is null ? All() : new JsonArray(All().Where(t => Oracle.SchoolOf[t!["function"]!["name"]!.GetValue<string>()] is var s && (s == "calendar" || schools.Contains(s))).Select(t => t!.DeepClone()).ToArray());
 }

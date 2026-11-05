@@ -4,7 +4,7 @@ The divination engine, ported from the Python prototype in `../divination/` and 
 Code draws and calculates; the model only interprets.
 
 ```bash
-dotnet test        # 39 tests, offline
+dotnet test        # 60 tests, offline
 ```
 
 ## What it does
@@ -19,6 +19,13 @@ dotnet test        # 39 tests, offline
 | `sky_now` | astrology | moon phase, illumination and sign; the next four moon phases in local time; which planets are retrograde; moonrise, moonset, sunrise and sunset where the user is (if shared) |
 | `birth_chart` | astrology | Sun to Pluto by sign and degree, retrogrades; ascendant, midheaven and whole-sign houses with birth time and place |
 | `maya_day_sign` | maya | Tzolk'in day sign and tone |
+| `day_context` | calendar (free) | the user's day: festivities today and coming up, moon and its specials, eclipses, retrogrades, tide strength, weather omens, elements of the day, a suggested spread, explanations with examples |
+| `moon_circles` | calendar (free) | the next new and full moons as circles (intentions, release) with spreads; the year's eclipses |
+| `history_reading` | calendar (free) | anniversaries on this day; for an event, the sky at that moment and the deck's card for it |
+
+Weather comes from MET Norway (`MetNorwayWeather`, CC BY 4.0, attribution required); the server fetches it and passes
+it in `UserContext.Weather`. Tide strength is computed; local tide times need a provider (`ITideTimes`, not built).
+See [../docs/design-sky-context.md](../docs/design-sky-context.md) for the design and worked examples.
 
 ## What is better than the Python prototype
 
@@ -45,6 +52,9 @@ dotnet test        # 39 tests, offline
 | `IChing.cs` | coins and yarrow, King Wen lookup |
 | `Numerology.cs` | birth-date and name numbers |
 | `Sky.cs` | `Sky` (moon, planets, retrogrades, rise/set, ascendant, charts), `Maya` |
+| `Calendar.cs` | `Festivities` (Easter, Orthodox Easter, Lunar New Year, solar year by hemisphere), `MoonEvents` (phases, supermoon, blue moon, folk names, eclipses, circles) |
+| `Earth.cs` | `Tides` (spring, neap, king), `MetNorwayWeather`, `WeatherOmens` |
+| `Context.cs` | `History`, `DayContext` |
 | `Oracle.cs` | `UserContext`, `DrawReceipt`, `Oracle` (run, unlocks, receipts, verify), `ToolCatalog` |
 | `Data/*.json` | the meanings, spreads and calendars (embedded) |
 

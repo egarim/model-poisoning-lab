@@ -1,0 +1,157 @@
+{
+ "_note": "Dates are Gregorian. time_utc only where the moment is well documented; otherwise noon UTC is used and the moon's sign may be approximate. Positive or neutral events only: no wars or disasters.",
+ "events": [
+  {
+   "id": "telephone",
+   "title": "First telephone call",
+   "date": "1876-03-10",
+   "time_utc": null,
+   "place": "Boston, USA",
+   "note": "Alexander Graham Bell: 'Mr. Watson, come here.'"
+  },
+  {
+   "id": "lei_aurea",
+   "title": "Lei Áurea: slavery abolished in Brazil",
+   "date": "1888-05-13",
+   "time_utc": null,
+   "place": "Rio de Janeiro, Brazil",
+   "note": "Brazil becomes the last country in the Americas to abolish slavery."
+  },
+  {
+   "id": "lumiere",
+   "title": "First public film screening",
+   "date": "1895-12-28",
+   "time_utc": null,
+   "place": "Paris, France",
+   "note": "The Lumière brothers show films to a paying audience."
+  },
+  {
+   "id": "wright",
+   "title": "First powered flight",
+   "date": "1903-12-17",
+   "time_utc": "15:35",
+   "place": "Kitty Hawk, USA",
+   "note": "The Wright Flyer flies for 12 seconds."
+  },
+  {
+   "id": "mexican_revolution",
+   "title": "Start of the Mexican Revolution",
+   "date": "1910-11-20",
+   "time_utc": null,
+   "place": "Mexico",
+   "note": "The date Madero's Plan de San Luis set for the uprising."
+  },
+  {
+   "id": "tutankhamun",
+   "title": "Tutankhamun's tomb opened",
+   "date": "1922-11-26",
+   "time_utc": null,
+   "place": "Valley of the Kings, Egypt",
+   "note": "Howard Carter looks in: 'wonderful things'."
+  },
+  {
+   "id": "mistral_nobel",
+   "title": "Gabriela Mistral's Nobel Prize announced",
+   "date": "1945-11-15",
+   "time_utc": null,
+   "place": "Stockholm, Sweden",
+   "note": "The first Latin American Nobel laureate in literature."
+  },
+  {
+   "id": "everest",
+   "title": "First ascent of Everest",
+   "date": "1953-05-29",
+   "time_utc": null,
+   "place": "Mount Everest, Nepal",
+   "note": "Edmund Hillary and Tenzing Norgay reach the summit in the late morning, local time."
+  },
+  {
+   "id": "sputnik",
+   "title": "Sputnik 1 launched",
+   "date": "1957-10-04",
+   "time_utc": "19:28",
+   "place": "Baikonur",
+   "note": "The first artificial satellite."
+  },
+  {
+   "id": "gagarin",
+   "title": "Yuri Gagarin's flight",
+   "date": "1961-04-12",
+   "time_utc": "06:07",
+   "place": "Baikonur",
+   "note": "The first human in space: 'Поехали!' ('Let's go!')."
+  },
+  {
+   "id": "apollo11",
+   "title": "Apollo 11 lands on the Moon",
+   "date": "1969-07-20",
+   "time_utc": "20:17",
+   "place": "The Moon (Sea of Tranquility)",
+   "note": "'The Eagle has landed.'"
+  },
+  {
+   "id": "woodstock",
+   "title": "Woodstock begins",
+   "date": "1969-08-15",
+   "time_utc": null,
+   "place": "Bethel, USA",
+   "note": "Three days of music."
+  },
+  {
+   "id": "mexico70",
+   "title": "Brazil wins the 1970 World Cup",
+   "date": "1970-06-21",
+   "time_utc": null,
+   "place": "Estadio Azteca, Mexico City",
+   "note": "Pelé's Brazil wins its third title."
+  },
+  {
+   "id": "garcia_marquez_nobel",
+   "title": "García Márquez's Nobel Prize announced",
+   "date": "1982-10-21",
+   "time_utc": null,
+   "place": "Stockholm, Sweden",
+   "note": "The author of One Hundred Years of Solitude."
+  },
+  {
+   "id": "hand_of_god",
+   "title": "Maradona's 'Hand of God' and 'Goal of the Century'",
+   "date": "1986-06-22",
+   "time_utc": null,
+   "place": "Estadio Azteca, Mexico City",
+   "note": "Argentina 2, England 1."
+  },
+  {
+   "id": "berlin_wall",
+   "title": "Fall of the Berlin Wall",
+   "date": "1989-11-09",
+   "time_utc": null,
+   "place": "Berlin, Germany",
+   "note": "The border opens in the night."
+  },
+  {
+   "id": "mandela",
+   "title": "Nelson Mandela released",
+   "date": "1990-02-11",
+   "time_utc": null,
+   "place": "Paarl, South Africa",
+   "note": "After 27 years in prison."
+  },
+  {
+   "id": "hubble",
+   "title": "Hubble Space Telescope launched",
+   "date": "1990-04-24",
+   "time_utc": "12:33",
+   "place": "Cape Canaveral, USA",
+   "note": "A new eye on the universe."
+  },
+  {
+   "id": "curiosity",
+   "title": "Curiosity lands on Mars",
+   "date": "2012-08-06",
+   "time_utc": "05:17",
+   "place": "Gale Crater, Mars",
+   "note": "'Seven minutes of terror' end well."
+  }
+ ]
+}

@@ -37,5 +37,6 @@ No dependencies beyond Python 3. Mark each scenario pass/fail in the report.
 
 - [docs/design-voice.md](docs/design-voice.md): how the daemon speaks; why not ElevenLabs as the main voice; our own voice engine.
 - [docs/design-interface.md](docs/design-interface.md): channels, and how users send text, voice notes, photos and location.
+- [docs/design-sky-context.md](docs/design-sky-context.md): festivities, moon circles, weather, tides and history readings, with worked examples.
 - [docs/design-person-model.md](docs/design-person-model.md): the daemon's notebook about its person, how it learns interactively, and the privacy rules.
 - [avatar/README.md](avatar/README.md): the procedural daemon avatar, species and summoning.

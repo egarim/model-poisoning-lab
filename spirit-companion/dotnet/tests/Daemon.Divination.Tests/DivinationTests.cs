@@ -297,8 +297,8 @@ public class OracleTests
         Assert.True(r.Locked);
         Assert.Equal("lenormand", r.Result["school"]!.GetValue<string>());
         var names = ToolCatalog.For(free.Schools).Select(t => t!["function"]!["name"]!.GetValue<string>()).ToList();
-        Assert.Equal(new[] { "birth_chart", "draw_tarot", "sky_now" }, names.Order());
-        Assert.Equal(8, ToolCatalog.All().Count);
+        Assert.Equal(new[] { "birth_chart", "day_context", "draw_tarot", "history_reading", "moon_circles", "sky_now" }, names.Order());
+        Assert.Equal(11, ToolCatalog.All().Count);
     }
 
     [Fact]

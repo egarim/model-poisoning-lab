@@ -487,6 +487,31 @@
    "your surroundings",
    "hopes and fears",
    "where this is heading"
+  ],
+  "ancestors": [
+   "what your ancestors gave you",
+   "what to honour",
+   "what to let rest"
+  ],
+  "new_year": [
+   "what to leave in the old year",
+   "what to carry forward",
+   "what to plant in the new"
+  ],
+  "solstice": [
+   "what is in the light",
+   "what is in the dark",
+   "the turning"
+  ],
+  "new_moon": [
+   "what to begin",
+   "what supports it",
+   "the first step"
+  ],
+  "full_moon": [
+   "what has come to light",
+   "what to release",
+   "what to be grateful for"
   ]
  },
  "rank_themes": {

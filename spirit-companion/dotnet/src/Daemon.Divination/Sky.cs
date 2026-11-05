@@ -18,6 +18,21 @@ public static class Sky
 
     public static double Norm(double deg) => ((deg % 360) + 360) % 360;
 
+    /// <summary>
+    /// Index into the eight moon phases (calendars.json) for a phase angle (0 = new, 180 = full). The four principal
+    /// phases cover about a day each (±12°); the rest of each quarter is crescent or gibbous, as in almanacs.
+    /// </summary>
+    public static int PhaseIndex(double angle)
+    {
+        angle = Norm(angle);
+        for (int q = 0; q < 4; q++)
+            if (Math.Abs(Norm(angle - q * 90 + 180) - 180) <= 12) return q * 2;
+        return (int)(angle / 90) * 2 + 1;
+    }
+
+    /// <summary>Round to the nearest minute before formatting (20:50:56 shows as 20:51).</summary>
+    public static string Minute(DateTime t) => t.AddSeconds(30).ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+
     public static string SignOf(double longitude) => Signs[(int)Math.Floor(Norm(longitude) / 30) % 12];
 
     /// <summary>Geocentric ecliptic longitude, true ecliptic and equinox of date.</summary>
@@ -64,7 +79,7 @@ public static class Sky
     }
 
     private static string Local(AstroTime t, TimeZoneInfo tz) =>
-        TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(t.ToUtcDateTime(), DateTimeKind.Utc), tz).ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+        Minute(TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(t.ToUtcDateTime(), DateTimeKind.Utc), tz));
 
     private static JsonObject Placement(double lon) => new()
     {
@@ -80,7 +95,7 @@ public static class Sky
         var t = new AstroTime(now.UtcDateTime);
         double angle = Astronomy.MoonPhase(t);
         var phases = Data.Get("calendars")["moon_phases"]!.AsArray();
-        var phase = phases[(int)Math.Floor(Norm(angle + 22.5) / 45) % 8]!.AsArray();
+        var phase = phases[PhaseIndex(angle)]!.AsArray();
         var o = new JsonObject
         {
             ["method"] = "sky",

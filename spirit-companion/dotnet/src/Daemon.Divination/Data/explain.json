@@ -1,0 +1,150 @@
+{
+ "_format": "concept: [what it is, what tradition reads into it, an example]",
+ "concepts": {
+  "new_moon": {
+   "what": "The moon sits between Earth and Sun, its lit side facing away: a dark sky.",
+   "meaning": "A time to set intentions and begin quietly.",
+   "example": "New moon in Scorpio: begin something you've kept secret, even from yourself."
+  },
+  "waxing_crescent": {
+   "what": "A thin growing sliver in the evening sky.",
+   "meaning": "First steps, momentum.",
+   "example": "Send the first message about the job you want."
+  },
+  "first_quarter": {
+   "what": "Half the moon is lit and growing.",
+   "meaning": "Decisions and obstacles: commit.",
+   "example": "If the plan wobbles this week, that's the first-quarter test."
+  },
+  "waxing_gibbous": {
+   "what": "More than half lit, still growing.",
+   "meaning": "Refine and persist.",
+   "example": "Adjust, don't abandon."
+  },
+  "full_moon": {
+   "what": "The moon is opposite the Sun, fully lit all night.",
+   "meaning": "Culmination, emotions high, what was hidden is revealed; a time to release.",
+   "example": "Full moon in Cancer: feelings about home come to the surface."
+  },
+  "waning_gibbous": {
+   "what": "Past full, shrinking, rising later each night.",
+   "meaning": "Gratitude and sharing what you learned.",
+   "example": "Tell someone what this month taught you."
+  },
+  "last_quarter": {
+   "what": "Half lit and shrinking.",
+   "meaning": "Let go, forgive, clear out.",
+   "example": "Delete, donate, close the tab you keep open."
+  },
+  "waning_crescent": {
+   "what": "A thin sliver before dawn.",
+   "meaning": "Rest and surrender before the next cycle.",
+   "example": "Sleep early; don't start anything big yet."
+  },
+  "supermoon": {
+   "what": "A full or new moon close to perigee, the moon's nearest point to Earth: up to ~14% larger and ~30% brighter than at its farthest.",
+   "meaning": "Tradition reads it as the same moon, turned up.",
+   "example": "A super full moon: release with extra force."
+  },
+  "blue_moon": {
+   "what": "The second full moon in one calendar month; it happens about every two and a half years.",
+   "meaning": "A rare extra chance: 'once in a blue moon'.",
+   "example": "Use it for something you've postponed for years."
+  },
+  "lunar_eclipse": {
+   "what": "Earth's shadow falls on the full moon, turning it copper-red when total.",
+   "meaning": "Read in many traditions as a powerful ending or revelation.",
+   "example": "Something hidden shows its true colour."
+  },
+  "solar_eclipse": {
+   "what": "The new moon passes in front of the Sun, somewhere on Earth.",
+   "meaning": "A new beginning that arrives with a shock.",
+   "example": "A door you didn't expect opens."
+  },
+  "spring_tide": {
+   "what": "Around new and full moon, Sun and Moon pull in line: the year's higher high tides and lower low tides, usually peaking a day or two later. 'Spring' means 'springing up', not the season.",
+   "meaning": "Strong tides, strong feelings.",
+   "example": "Emotions run high this week; name them before acting on them."
+  },
+  "neap_tide": {
+   "what": "Around the quarter moons, Sun and Moon pull at right angles: the gentlest tides.",
+   "meaning": "A still, in-between time.",
+   "example": "A quiet week for reflection rather than big moves."
+  },
+  "king_tide": {
+   "what": "A spring tide when the moon is also near perigee: the highest tides of the year.",
+   "meaning": "Everything at its fullest.",
+   "example": "If something has been building, it may crest now."
+  },
+  "retrograde": {
+   "what": "From Earth, a planet seems to move backward against the stars for a few weeks; it's an effect of Earth overtaking it (or it overtaking Earth), not real backward motion.",
+   "meaning": "Tradition: review, revisit, re-do (Mercury: messages and travel; Venus: love and values).",
+   "example": "Mercury retrograde: reread before you send."
+  },
+  "solstice": {
+   "what": "The Sun reaches its farthest north or south: the longest day in one hemisphere and the longest night in the other.",
+   "meaning": "A turning point between light and dark.",
+   "example": "What in your life is at its brightest, and what at its darkest?"
+  },
+  "equinox": {
+   "what": "The Sun crosses the equator; day and night are nearly equal everywhere.",
+   "meaning": "Balance.",
+   "example": "What's out of balance this week?"
+  },
+  "cross_quarter": {
+   "what": "The midpoint between a solstice and an equinox; the old Celtic festivals (Imbolc, Beltane, Lammas, Samhain) sit near them.",
+   "meaning": "Seasonal thresholds.",
+   "example": "Mark the halfway point of the season."
+  },
+  "weather_rain": {
+   "what": "Rain where the user is.",
+   "meaning": "Water: feelings, cleansing, letting things flow.",
+   "example": "Rain on a Five of Cups day: let the grief rinse through."
+  },
+  "weather_storm": {
+   "what": "Thunderstorms where the user is.",
+   "meaning": "Fire and air together: sudden insight, things shaken loose.",
+   "example": "A storm and The Tower on the same day: let the false structure fall."
+  },
+  "weather_clear": {
+   "what": "Clear sky where the user is.",
+   "meaning": "Fire and clarity.",
+   "example": "A clear day for a clear decision."
+  },
+  "weather_cloud": {
+   "what": "Cloudy sky.",
+   "meaning": "Air and the veiled: things not fully visible yet.",
+   "example": "Don't force an answer under clouds; ask again tomorrow."
+  },
+  "weather_fog": {
+   "what": "Fog.",
+   "meaning": "The moon's realm: mystery, intuition over sight.",
+   "example": "Trust what you feel more than what you see today."
+  },
+  "weather_snow": {
+   "what": "Snow.",
+   "meaning": "Earth and stillness: rest, quiet, covering.",
+   "example": "A day to pause plans and keep warm."
+  },
+  "weather_wind": {
+   "what": "Strong wind.",
+   "meaning": "Air: change, messages, things moving.",
+   "example": "Expect news; let go of what the wind wants to take."
+  },
+  "weather_heat": {
+   "what": "Hot day.",
+   "meaning": "Fire: energy, also short tempers.",
+   "example": "Act boldly, but count to ten."
+  },
+  "weather_cold": {
+   "what": "Cold day.",
+   "meaning": "Earth and endurance.",
+   "example": "Small, steady steps."
+  },
+  "history_reading": {
+   "what": "A playful reading of a historical moment: the real sky at that moment, and a card the deck gives that event (the same for everyone).",
+   "meaning": "Not a claim that the stars caused history; a way to play with symbols.",
+   "example": "The Moon landing happened under a waxing crescent moon: the 'first steps' phase."
+  }
+ }
+}
