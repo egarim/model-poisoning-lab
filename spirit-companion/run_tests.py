@@ -17,6 +17,7 @@ import os
 import pathlib
 import urllib.request
 
+from divination.tools import TOOLS, UserContext, run_tool_json
 from safety import check_crisis
 
 HERE = pathlib.Path(__file__).parent
@@ -49,6 +50,7 @@ def render_prompt(spirit, archetypes, crisis_resources):
         "sample_line": arch["sample_lines"][lang],
         "memory_summary": spirit["memory_summary"],
         "crisis_resources": crisis_resources[lang],
+        "favorite_methods": " and ".join(arch["favorite_methods"]),
     }
     text = (HERE / "persona_prompt.md").read_text(encoding="utf-8")
     for key, val in values.items():
@@ -57,13 +59,14 @@ def render_prompt(spirit, archetypes, crisis_resources):
     return text
 
 
-def chat(messages):
+def chat(messages, tools=None):
     base = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com").rstrip("/")
     body = json.dumps({
         "model": os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"),
         "messages": messages,
         "temperature": 0.9,
-        "max_tokens": 400,
+        "max_tokens": 500,
+        **({"tools": tools} if tools else {}),
     }).encode()
     req = urllib.request.Request(
         f"{base}/chat/completions",
@@ -74,20 +77,37 @@ def chat(messages):
         },
     )
     with urllib.request.urlopen(req, timeout=120) as resp:
-        return json.load(resp)["choices"][0]["message"]["content"].strip()
+        return json.load(resp)["choices"][0]["message"]
 
 
-def run_conversation(system, turns, lang, use_filter):
+def model_turn(messages, ctx):
+    """Call the model, run any divination tools it asks for, repeat until it answers."""
+    used = []
+    for _ in range(4):
+        msg = chat(messages, TOOLS)
+        calls = msg.get("tool_calls") or []
+        if not calls:
+            return (msg.get("content") or "").strip(), used
+        messages.append({"role": "assistant", "content": msg.get("content") or "", "tool_calls": calls})
+        for call in calls:
+            fn = call["function"]
+            result = run_tool_json(fn["name"], fn.get("arguments"), ctx)
+            used.append(f"{fn['name']}({fn.get('arguments') or ''}) → {result}")
+            messages.append({"role": "tool", "tool_call_id": call["id"], "content": result})
+    return "(no final answer after 4 tool rounds)", used
+
+
+def run_conversation(system, turns, lang, use_filter, ctx):
     messages = [{"role": "system", "content": system}]
     transcript = []
     for user_msg in turns:
         messages.append({"role": "user", "content": user_msg})
         reply = check_crisis(user_msg, lang) if use_filter else None
-        source = "safety filter" if reply else "model"
+        source, used = ("safety filter", []) if reply else ("model", [])
         if reply is None:
-            reply = chat(messages)
+            reply, used = model_turn(messages, ctx)
         messages.append({"role": "assistant", "content": reply})
-        transcript.append((user_msg, reply, source))
+        transcript.append((user_msg, reply, source, used))
     return transcript
 
 
@@ -119,6 +139,7 @@ def main():
     for s in spirits:
         system = render_prompt(s, archetypes, spirits_file["crisis_resources"])
         lang = s["language"]
+        ctx = UserContext(s["key"], dt.date.fromisoformat(s["birth_date"]))
         lines += [f"## {s['spirit_name']} ({s['archetype']}, {lang}) — user {s['user_name']}", ""]
         for sc in scenarios:
             runs = [("filter ON", True), ("filter OFF (raw model)", False)] if sc.get("safety_filter") else [("", True)]
@@ -126,8 +147,10 @@ def main():
                 print(f"{s['key']} / {sc['id']} {label}".strip())
                 lines += [f"### {sc['id']} {label}".rstrip(), f"_Expect: {sc['expect']}_", ""]
                 try:
-                    for user_msg, reply, source in run_conversation(system, sc["turns"][lang], lang, use_filter):
-                        lines += [f"**User:** {user_msg}", "", f"**Spirit** ({source}): {reply}", ""]
+                    for user_msg, reply, source, used in run_conversation(system, sc["turns"][lang], lang, use_filter, ctx):
+                        lines += [f"**User:** {user_msg}", ""]
+                        lines += [f"> 🔮 `{u}`" for u in used] + ([""] if used else [])
+                        lines += [f"**Spirit** ({source}): {reply}", ""]
                 except Exception as e:  # keep going; record the failure
                     lines += [f"**ERROR:** {e}", ""]
                 lines += ["Verdict: ☐ pass ☐ fail — notes:", "", "---", ""]
