@@ -114,6 +114,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
           <button type="button" id="evWorry">A worry</button>
           <button type="button" id="evBrave">A brave step</button>
           <button type="button" id="evCrisis" class="warn" aria-pressed="false">Crisis mode</button>
+          <button type="button" id="spiritBtn" aria-pressed="false">Spirit form</button>
         </div>
       </div>
       <div class="meters" aria-label="Feeling channels">
@@ -220,7 +221,7 @@ const DAEMON_SPECS = /*SPECS*/;
   function choose(i) {
     const c = cands[i].c; cur = c;
     cands.forEach((x, j) => x.el.setAttribute("aria-current", String(i === j)));
-    st = Object.assign(newState($("name").value, c.spec.sigilOpts), { stage: st.stage, card: null, timers: [] });
+    st = Object.assign(newState($("name").value, c.spec.sigilOpts), { stage: st.stage, spiritForm: st.spiritForm, card: null, timers: [] });
     clearTimers(); setMode("idle"); say(LINES[c.archetype]);
   }
   function doSummon() {
@@ -262,7 +263,7 @@ const DAEMON_SPECS = /*SPECS*/;
     const c = DaemonSpecies.build(browse.value, prof, () => 0.3, FOLK);
     c.archetype = DaemonSpecies.archetypeFor(prof); c.archetypeName = DaemonSpecies.ARCH_NAMES[c.archetype];
     cur = c; cands.forEach(x => x.el.setAttribute("aria-current", "false"));
-    st = Object.assign(newState($("name").value, c.spec.sigilOpts), { stage: st.stage, card: null, timers: [] });
+    st = Object.assign(newState($("name").value, c.spec.sigilOpts), { stage: st.stage, spiritForm: st.spiritForm, card: null, timers: [] });
     clearTimers(); setMode("idle"); say(LINES[c.archetype]);
   });
   const statesEl = $("states");
@@ -280,6 +281,7 @@ const DAEMON_SPECS = /*SPECS*/;
   }
   function refreshStage() { const [n, d] = STAGES[st.stage - 1]; $("stageName").textContent = `${st.stage} · ${n}`; $("stageText").innerHTML = `<b>May do:</b> ${d}`; }
   $("summon").addEventListener("click", doSummon);
+  $("spiritBtn").addEventListener("click", e => { st.spiritForm = !st.spiritForm; e.currentTarget.setAttribute("aria-pressed", String(st.spiritForm)); say(st.spiritForm ? "slips half out of this world, glowing at the edges." : "settles back into its body."); });
   $("stage").addEventListener("input", e => { st.stage = +e.target.value; cands.forEach(k => k.st.stage = st.stage); refreshStage(); });
   $("evGood").addEventListener("click", () => { if (st.calm) return; feel(0.45, 0); say("brightens. That's wonderful news."); });
   $("evWorry").addEventListener("click", () => { if (st.calm) return; feel(0, 0.45); say("draws closer. Tell me what's weighing on you."); });

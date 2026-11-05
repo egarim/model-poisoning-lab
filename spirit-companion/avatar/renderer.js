@@ -116,12 +116,13 @@
     const wag = Math.sin(m.t * (1.2 + 3 * m.A)) * 0.22 * (m.calm ? 0.2 : 1);
     if (part.style === "stub") { c.fillStyle = col(p, part, part.color); c.beginPath(); c.arc(cx + s * R * 0.85, cy + R * 0.7, R * 0.2, 0, TAU); c.fill(); return; }
     if (part.style === "curl" || part.style === "thin") {
-      const L = part.length * k, lw = R * (part.style === "curl" ? 0.2 : 0.11);
+      const L = part.length * k, lw = R * (part.fluffy ? 0.36 : part.style === "curl" ? 0.2 : 0.11);
       c.strokeStyle = col(p, part, part.color); c.lineWidth = lw; c.lineCap = "round"; c.beginPath();
       const x0 = cx + s * R * 0.7, y0 = cy + R * 0.6;
       if (part.style === "curl") { c.moveTo(x0, y0); c.bezierCurveTo(x0 + s * R * 0.7, y0 - R * 0.1, x0 + s * R * (0.75 + wag), y0 - R * 0.9 * L, x0 + s * R * (0.25 + wag), y0 - R * 0.75 * L); }
       else { c.moveTo(x0, y0); c.bezierCurveTo(x0 + s * R * 0.9 * L, y0 + R * 0.2, x0 + s * R * (0.5 + wag) * L, y0 - R * 0.9 * L + tuckY(m), x0 + s * R * (1.0 + wag) * L, y0 - R * 1.1 * L + tuckY(m)); }
       c.stroke();
+      if (part.fluffy) { c.strokeStyle = col(p, part, "light", 0.55); c.lineWidth = lw * 0.45; c.stroke(); }
       return;
     }
     const tuck = 0.5 * m.I;
@@ -147,7 +148,15 @@
   P.mane = (c, g, part) => { // ruff of spikes around the lower face, behind the body
     const { cx, cy, R, k, m, p } = g;
     const n = part.count || 9;
-    c.fillStyle = col(p, part, "dark", 0.8);
+    if (part.soft) { // round fluffy tufts (spitz ruff) instead of spikes
+      c.fillStyle = col(p, part, part.color || "dark", 0.95);
+      for (let i = 0; i < n; i++) {
+        const a = Math.PI * 0.08 + (i / (n - 1)) * Math.PI * 0.84, rr = R * (0.92 + part.length * 0.45 * k * (1 + 0.15 * Math.sin(m.t * 2 + i)));
+        c.beginPath(); c.arc(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr * 1.02, R * part.length * 0.55 * k, 0, TAU); c.fill();
+      }
+      return;
+    }
+    c.fillStyle = col(p, part, part.color || "dark", 0.9);
     c.beginPath();
     for (let i = 0; i <= n; i++) {
       const a = Math.PI * 0.1 + (i / n) * Math.PI * 0.8;
@@ -549,7 +558,8 @@
       const sa = Math.sin(a), ca = Math.cos(a);
       const dTop = Math.atan2(Math.sin(a + Math.PI / 2), Math.cos(a + Math.PI / 2));
       const cheek = (b.cheeks || 0) * (Math.exp(-((a - 0.62) ** 2) / 0.06) + Math.exp(-((a - (Math.PI - 0.62)) ** 2) / 0.06));
-      const r = R * (1 + wob * w + (b.top || 0) * Math.exp(-(dTop * dTop) / 0.06) + cheek);
+      const fur = (b.fluff || 0) * Math.pow(Math.abs(Math.sin(13 * a + 0.2 * Math.sin(t))), 0.6) + (b.bumps || 0) * Math.abs(Math.sin(4 * a + t * 0.25));
+      const r = R * (1 + wob * w + (b.top || 0) * Math.exp(-(dTop * dTop) / 0.06) + cheek + fur);
       let x = cx + ca * r * (b.w || 0.96) * (1 + (b.bottom || 0) * Math.max(0, sa));
       let y = cy + sa * r * (b.squash || 1.07) + (sa > 0 ? sa * R * 0.06 : 0);
       if (b.bell && sa > 0.25) y = Math.min(y, cy + R * 0.5 + Math.sin(a * 14 + t * 2) * R * 0.035);
@@ -573,7 +583,11 @@
       c.save(); c.translate(ex, ey); c.rotate(tilt);
       c.fillStyle = silver ? "hsla(210,15%,90%,0.98)" : hsla(p.h, 55, 94, 0.97);
       c.beginPath(); c.ellipse(0, 0, ew, Math.max(0.6, eh), 0, 0, TAU); c.fill();
-      if (eh > 2) {
+      if (eh > 2 && st.mode === "consulting" && !st.calm) {
+        const gl = c.createRadialGradient(0, 0, 0, 0, 0, ew);
+        gl.addColorStop(0, hsla(p.h, 90, 96, 1)); gl.addColorStop(1, hsla(p.h, 85, 62, 0.95));
+        c.fillStyle = gl; c.beginPath(); c.ellipse(0, 0, ew, eh, 0, 0, TAU); c.fill();
+      } else if (eh > 2) {
         c.save(); c.beginPath(); c.ellipse(0, 0, ew, eh, 0, 0, TAU); c.clip();
         const px = st.look.x * ew * 0.45, py = st.look.y * eh * 0.4, pr = ew * (0.55 + 0.15 * st.A - 0.1 * st.I);
         if (e.iris) { c.fillStyle = hsla(e.iris[0], e.iris[1], e.iris[2], 1); c.beginPath(); c.arc(px, py, ew * 0.82, 0, TAU); c.fill(); }
@@ -616,7 +630,7 @@
     c.restore();
   }
 
-  function motes(c, cx, cy, R, p, st, dt) {
+  function motes(c, cx, cy, R, p, st, dt, element) {
     if (st.calm || st.stage < 2 || st.reduce) { st.motes.length = 0; return; }
     const want = Math.round(10 + 40 * st.A + 8 * st.stage);
     while (st.motes.length < want) st.motes.push({ a: Math.random() * TAU, r: R * (1.1 + Math.random() * 1.2), y: 0, v: 0.2 + Math.random() * 0.6, life: Math.random(), size: 0.6 + Math.random() * 1.8 });
@@ -627,7 +641,21 @@
       else { mo.a += dt * 0.15 * mo.v; mo.y -= dt * R * 0.25 * mo.v * (0.3 + st.A - 0.6 * st.I); }
       mo.life += dt * 0.25; if (mo.life > 1 || Math.abs(mo.y) > R * 2) { mo.life = 0; mo.y = 0; mo.r = R * (1.1 + Math.random() * 1.2); }
       const a = Math.sin(mo.life * Math.PI) * (0.5 + 0.4 * st.A);
-      c.fillStyle = hsla(p.h, p.s, 75, a); c.beginPath(); c.arc(cx + Math.cos(mo.a) * mo.r, cy + Math.sin(mo.a) * mo.r * 0.8 + mo.y, mo.size, 0, TAU); c.fill();
+      const x = cx + Math.cos(mo.a) * mo.r, y = cy + Math.sin(mo.a) * mo.r * 0.8 + (element === "earth" ? -mo.y * 0.6 : mo.y);
+      if (element === "fire") { // embers: flickering, rising
+        c.fillStyle = hsla(25 + 25 * Math.sin(mo.life * 20), 100, 62, a * (0.6 + 0.4 * Math.sin(mo.life * 37))); c.beginPath(); c.arc(x, y, mo.size * 0.9, 0, TAU); c.fill();
+      } else if (element === "water") { // bubbles
+        c.strokeStyle = hsla(p.h, 70, 82, a); c.lineWidth = 1; c.beginPath(); c.arc(x, y, mo.size * 2.2, 0, TAU); c.stroke();
+        c.fillStyle = hsla(p.h, 70, 95, a); c.beginPath(); c.arc(x - mo.size * 0.7, y - mo.size * 0.7, mo.size * 0.5, 0, TAU); c.fill();
+      } else if (element === "earth") { // leaves drifting down
+        c.save(); c.translate(x, y); c.rotate(mo.a * 3 + mo.life * 4); c.fillStyle = hsla(70 + mo.v * 60, 55, 50, a);
+        c.beginPath(); c.ellipse(0, 0, mo.size * 2.4, mo.size * 1.1, 0, 0, TAU); c.fill(); c.restore();
+      } else if (element === "air") { // wind wisps
+        c.strokeStyle = hsla(p.h, 50, 88, a * 0.8); c.lineWidth = 1.2; c.beginPath(); c.arc(cx, cy + mo.y * 0.3, mo.r, mo.a, mo.a + 0.25 + mo.v * 0.2); c.stroke();
+      } else { // moon: twinkling four-point stars
+        const tw = mo.size * (1.5 + Math.sin(mo.life * 18) * 0.8);
+        c.strokeStyle = hsla(p.h, 40, 94, a); c.lineWidth = 1; c.beginPath(); c.moveTo(x - tw, y); c.lineTo(x + tw, y); c.moveTo(x, y - tw); c.lineTo(x, y + tw); c.stroke();
+      }
     }
     c.restore();
   }
@@ -651,6 +679,31 @@
     c.restore();
   }
 
+  // ---------- spirit layer ----------
+  function wisps(c, cx, cy, R, p, st, t, front) { // will-o'-wisps orbit from stage 3
+    if (st.stage < 3 || st.calm) return;
+    const n = Math.min(3, st.stage - 2);
+    for (let i = 0; i < n; i++) {
+      const at = tt => { const a = tt * 0.7 + i * TAU / n; return [cx + Math.cos(a) * R * 1.55, cy - R * 0.2 + Math.sin(a) * R * 0.45 + Math.sin(tt * 2 + i) * R * 0.08, Math.sin(a)]; };
+      const [x, y, depth] = at(t);
+      if ((depth > 0) !== front) continue;
+      c.save(); c.globalCompositeOperation = "lighter";
+      for (let j = 8; j >= 1; j--) { const [tx, ty] = at(t - j * 0.045); c.fillStyle = hsla(p.h + 20, 90, 75, 0.06 * (9 - j) / 8); c.beginPath(); c.arc(tx, ty, R * 0.07 * (1 - j / 10), 0, TAU); c.fill(); }
+      const gr = c.createRadialGradient(x, y, 0, x, y, R * 0.16);
+      gr.addColorStop(0, hsla(p.h + 20, 90, 96, 0.95)); gr.addColorStop(1, hsla(p.h + 20, 90, 70, 0));
+      c.fillStyle = gr; c.beginPath(); c.arc(x, y, R * 0.16, 0, TAU); c.fill();
+      c.restore();
+    }
+  }
+  function constellation(c, g, st, always) { // stars inside the body from stage 4, or always for star spirits
+    if ((!always && st.stage < 4) || st.calm) return;
+    const { cx, cy, R, p, m } = g, pts = st.sigil.ticks.slice(0, 7).map((tk, i) => [cx + Math.cos(tk.a) * R * (0.25 + tk.len * 5), cy + Math.sin(tk.a) * R * (0.25 + tk.len * 5) * 0.9]);
+    c.save(); c.strokeStyle = hsla(p.h, 50, 92, always ? 0.55 : 0.3); c.lineWidth = always ? 1.5 : 1; c.beginPath();
+    pts.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.stroke();
+    pts.forEach(([x, y], i) => { c.fillStyle = hsla(p.h, 40, 97, 0.7 + 0.3 * Math.sin(m.t * 2.5 + i * 1.3)); c.beginPath(); c.arc(x, y, R * (always ? 0.04 : 0.028), 0, TAU); c.fill(); });
+    c.restore();
+  }
+
   // ---------- entry point ----------
   function render(c, spec, st, t, dt, box) {
     const p = palette(spec, st);
@@ -658,30 +711,43 @@
     const R = box.size * 0.16 * (0.9 + 0.05 * st.stage) * (1 - 0.12 * st.I);
     const breath = 1 + (st.calm ? 0.015 : 0.03) * Math.sin(t * (st.calm ? 0.9 : 1.6));
     const bounce = st.calm ? 0 : Math.sin(t * 2.2) * R * 0.06 * st.A;
-    const cx = box.cx, cy = box.cy + bounce + R * 0.12 * st.I;
+    const float = Math.sin(t * 0.9) * R * (st.calm ? 0.02 : 0.07);
+    const cx = box.cx, cy = box.cy + bounce + R * 0.12 * st.I + float;
+    const ghost = !!(st.spiritForm || spec.spiritForm);
     const m = { A: st.A, I: st.I, calm: st.calm, mode: st.mode, t: t * (spec.tempo || 1) };
     const g = { cx, cy, R: R * breath, k, m, p };
 
-    glow(c, cx, cy, R, p, st, t);
+    // floating: a soft shadow on the ground, smaller when the daemon rises
+    const sh = c.createRadialGradient(cx, box.cy + R * 1.75, 0, cx, box.cy + R * 1.75, R * 0.9);
+    sh.addColorStop(0, `rgba(0,0,0,${0.32 - float / R})`); sh.addColorStop(1, "rgba(0,0,0,0)");
+    c.save(); c.translate(cx, box.cy + R * 1.75); c.scale(1, 0.25); c.translate(-cx, -(box.cy + R * 1.75));
+    c.fillStyle = sh; c.beginPath(); c.arc(cx, box.cy + R * 1.75, R * 0.9, 0, TAU); c.fill(); c.restore();
+    glow(c, cx, cy, R * (ghost ? 1.15 : 1), p, st, t);
     halo(c, cx, cy, R, p, st, t);
     sigil(c, cx, cy, R, p, st, t, 1.85, 1, Math.min(0.95, st.calm ? 0.12 : (0.18 + 0.12 * st.stage) * (st.mode === "consulting" ? 1.6 : 1)));
     if (st.stage >= 5 && !st.calm) sigil(c, cx, cy, R, p, st, t, 2.15, -1, 0.35);
-    motes(c, cx, cy, R, p, st, dt);
+    motes(c, cx, cy, R, p, st, dt, spec.element);
+    wisps(c, cx, cy, R, p, st, t, false);
 
     c.save();
     if (st.mode === "listening") { c.translate(cx, cy); c.rotate(0.05); c.translate(-cx, -cy); }
     const visible = part => st.stage >= (part.minStage || 2);
+    if (ghost) c.globalAlpha = 0.72;
     for (const part of spec.parts) if (part.layer === "back" && visible(part) && P[part.type]) P[part.type](c, g, part);
     blobPath(c, cx, cy, g.R, m.t, spec, st.calm);
     const gr = c.createRadialGradient(cx - R * 0.15, cy - R * 0.35, R * 0.1, cx, cy, R * 1.1);
-    const B = p.coat.base, alpha = spec.body && spec.body.translucent ? 0.55 : 1;
+    const B = p.coat.base, alpha = (spec.body && spec.body.translucent ? 0.55 : 1) * (ghost ? 0.7 : 1);
     gr.addColorStop(0, hsla(B[0], B[1] * 0.6, B[2] + (p.real ? 18 : 32), 0.97 * alpha)); gr.addColorStop(0.55, hsla(B[0], B[1], B[2], 0.94 * alpha)); gr.addColorStop(1, hsla(B[0], B[1], B[2] - (p.real ? 18 : 26), 0.9 * alpha));
     c.fillStyle = gr; c.fill();
+    if (ghost) { c.globalAlpha = 1; c.strokeStyle = hsla(p.h, 85, 85, 0.55); c.lineWidth = Math.max(1.5, R * 0.035); c.stroke(); c.globalAlpha = 0.85; }
     markings(c, g, spec);
+    constellation(c, g, st, (spec.markings || []).some(mk => mk.style === "stars"));
     for (const part of spec.parts) if (part.layer === "front" && visible(part) && P[part.type]) P[part.type](c, g, part);
+    c.globalAlpha = 1;
     eyes(c, g, spec, st);
     for (const part of spec.parts) if (part.layer === "top" && visible(part) && P[part.type]) P[part.type](c, g, part);
     c.restore();
+    wisps(c, cx, cy, R, p, st, t, true);
     extras(c, cx, cy, R, p, st, t);
     return { R, p, cx, cy };
   }

@@ -24,9 +24,14 @@ Porting to the app: replace the Canvas 2D calls in `renderer.js` with React Nati
 
 ## Species and summoning
 
-`species.js` adds real animals with real coats (12 species, 25 variants): red panda, panda, cat (7 coats), dog
-(xoloitzcuintle, vira-lata caramelo, shiba, laika, golden, black), owl (brown, snowy), macaw (scarlet, hyacinth),
-toucan, bullfinch, octopus, jellyfish, seal, capybara, plus the 16 folklore spirits.
+`species.js` adds real animals with real coats and pure spirits (16 species, 33 variants): red panda, panda, cat (7 coats),
+dog (xoloitzcuintle, vira-lata caramelo, shiba, laika, golden, black), spitz (orange pomeranian, white, cream, black,
+wolf-grey keeshond), owl (brown, snowy), macaw (scarlet, hyacinth), toucan, bullfinch, octopus, jellyfish, seal,
+capybara, and the spirits wisp, cloud spirit and star spirit; plus the 16 folklore spirits.
+
+**Spirit layer** (every daemon): it floats above a soft shadow; element particles (fire embers, water bubbles,
+earth leaves, air wind wisps, moon stars); will-o'-wisps orbit it from stage 3; a constellation glows inside it from
+stage 4; its eyes fill with light while it consults; and a *spirit form* makes any animal translucent with a glowing rim.
 
 `DaemonSpecies.summon(profile, folkSpecs)` turns a person into three candidates, seeded so the same person always
 gets the same three:

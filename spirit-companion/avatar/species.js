@@ -71,6 +71,40 @@
         black:    { name: "black", base: [250, 8, 16], light: [250, 6, 40], dark: [250, 8, 8], nose: [0, 0, 5] }
       }
     },
+    spitz: {
+      name: "Spitz", local: { es: "spitz", pt: "spitz", ru: "шпиц" },
+      body: { w: 1.0, squash: 1.0, cheeks: 0.1, fluff: 0.06 }, eyes: { shape: "round", size: 0.14, spacing: 0.32, y: -0.12, iris: [25, 45, 22] },
+      parts: [
+        { type: "mane", soft: true, count: 11, length: 0.32, color: "light", layer: "back", minStage: 1 },
+        { type: "tail", style: "curl", fluffy: true, length: 1.2, side: 1, layer: "back", minStage: 1 },
+        { type: "ear", style: "pointed", angle: 0.58, size: 1.3, width: 0.26, droop: 0.4, inner: "light", layer: "back", minStage: 1 },
+        { type: "nose", style: "round", muzzle: "light", tongue: true, layer: "front", minStage: 1 },
+        { type: "paws", layer: "front", minStage: 1 }],
+      variants: {
+        orange: { name: "orange pomeranian", base: [30, 80, 58], light: [38, 60, 88], dark: [25, 65, 38], nose: [0, 0, 10] },
+        white:  { name: "white", base: [40, 10, 96], light: [0, 0, 100], dark: [40, 8, 75], nose: [0, 0, 10] },
+        cream:  { name: "cream", base: [38, 45, 82], light: [40, 40, 94], dark: [32, 40, 60], nose: [20, 20, 15] },
+        black:  { name: "black", base: [250, 8, 14], light: [250, 6, 40], dark: [250, 8, 6], nose: [0, 0, 5] },
+        wolf:   { name: "wolf-grey keeshond", base: [215, 6, 58], light: [215, 5, 88], dark: [215, 8, 25], nose: [0, 0, 8], markings: [{ style: "points" }] }
+      }
+    },
+    wisp: {
+      name: "Wisp", local: { es: "fuego fatuo", pt: "fogo-fátuo", ru: "блуждающий огонёк" }, spiritForm: true,
+      body: { w: 0.88, squash: 1.1, top: 0.45 }, eyes: { shape: "round", size: 0.15, spacing: 0.3, y: -0.05 },
+      parts: [{ type: "crest", style: "flame", count: 3, height: 1.3, layer: "back", minStage: 1 }],
+      markings: [], variants: { spirit: { name: "flame", spirit: true } }
+    },
+    cloud: {
+      name: "Cloud spirit", local: { es: "espíritu de nube", pt: "espírito da nuvem", ru: "облачный дух" },
+      body: { w: 1.1, squash: 0.92, bumps: 0.09 }, eyes: { shape: "almond", size: 0.14, spacing: 0.34, y: -0.05, lid: 0.2 }, tempo: 0.8,
+      parts: [], markings: [{ style: "blush" }], variants: { pale: { name: "pale", elementCoat: [25, 90] } }
+    },
+    star: {
+      name: "Star spirit", local: { es: "espíritu estelar", pt: "espírito estelar", ru: "звёздный дух" }, spiritForm: true,
+      body: { w: 0.95, squash: 1.05 }, eyes: { shape: "round", size: 0.16, spacing: 0.33, y: -0.1 },
+      parts: [{ type: "antennae", length: 0.45, layer: "back", minStage: 1 }],
+      markings: [{ style: "stars" }], variants: { night: { name: "night", elementCoat: [50, 40] } }
+    },
     owl: {
       name: "Owl", local: { es: "búho", pt: "coruja", ru: "сова" },
       body: { w: 0.95, squash: 1.08 }, eyes: { shape: "round", size: 0.2, spacing: 0.33, y: -0.12, iris: [42, 95, 55] },
@@ -164,15 +198,15 @@
     CO: { name: "Colombia", lang: "es", pool: ["macaw:guacamaya", "folk:flame-latam", "toucan:classic", "octopus:*", "folk:seer-latam"], charm: { shape: "flower", hue: 285, sat: 60, lum: 65, label: "orchid" } },
     PE: { name: "Peru", lang: "es", pool: ["owl:brown", "folk:flame-latam", "macaw:guacamaya", "capybara:classic", "folk:keeper-latam"], charm: { shape: "flower", hue: 345, label: "kantuta flower" } },
     CL: { name: "Chile", lang: "es", pool: ["seal:classic", "owl:brown", "jellyfish:spirit", "octopus:*", "folk:wanderer-latam"], charm: { shape: "flower", hue: 350, sat: 80, lum: 48, label: "copihue flower" } },
-    RU: { name: "Russia", lang: "ru", pool: ["dog:laika", "cat:russian_blue", "owl:snowy", "bullfinch:classic", "seal:classic", "folk:trickster-slavic", "folk:shadow-slavic", "folk:keeper-slavic", "folk:wild-slavic", "folk:flame-slavic"], charm: { shape: "berries", hue: 8, label: "rowan berries" } },
-    XX: { name: "Somewhere else", lang: "en", pool: ["red_panda:classic", "panda:classic", "cat:*", "dog:golden", "owl:brown", "octopus:*", "jellyfish:spirit"], charm: { shape: "star", hue: 48, label: "star" } }
+    RU: { name: "Russia", lang: "ru", pool: ["dog:laika", "spitz:*", "cat:russian_blue", "owl:snowy", "bullfinch:classic", "seal:classic", "folk:trickster-slavic", "folk:shadow-slavic", "folk:keeper-slavic", "folk:wild-slavic", "folk:flame-slavic"], charm: { shape: "berries", hue: 8, label: "rowan berries" } },
+    XX: { name: "Somewhere else", lang: "en", pool: ["red_panda:classic", "panda:classic", "cat:*", "dog:golden", "spitz:*", "owl:brown", "octopus:*", "jellyfish:spirit", "wisp:spirit", "star:night", "cloud:pale"], charm: { shape: "star", hue: 48, label: "star" } }
   };
-  const FAVOURITES = ["red_panda:classic", "panda:classic", "cat:*", "dog:*", "octopus:*", "jellyfish:spirit"];
+  const FAVOURITES = ["red_panda:classic", "panda:classic", "cat:*", "dog:*", "spitz:*", "octopus:*", "jellyfish:spirit", "wisp:spirit"];
   const BY_TEMPERAMENT = { // a wild card that suits the personality
-    calm: ["panda:classic", "seal:classic", "capybara:classic", "jellyfish:spirit"],
-    lively: ["dog:*", "macaw:*", "bullfinch:classic", "folk:flame-latam"],
-    head: ["owl:*", "octopus:*", "folk:shadow-slavic"],
-    heart: ["red_panda:classic", "folk:healer-latam", "cat:*"]
+    calm: ["panda:classic", "seal:classic", "capybara:classic", "jellyfish:spirit", "cloud:pale"],
+    lively: ["dog:*", "spitz:*", "macaw:*", "bullfinch:classic", "folk:flame-latam", "wisp:spirit"],
+    head: ["owl:*", "octopus:*", "folk:shadow-slavic", "star:night"],
+    heart: ["red_panda:classic", "folk:healer-latam", "cat:*", "cloud:pale"]
   };
 
   // ---------------- archetypes (the daemon's voice) ----------------
@@ -232,7 +266,9 @@
                element: z.element, hueShift: 0, body: clone(sp.body), eyes: clone(sp.eyes), parts: clone(sp.parts),
                markings: clone(v.markings || sp.markings || []), tempo: sp.tempo || 1 };
       if (v.extraMarkings) spec.markings.push(...clone(v.extraMarkings));
-      if (!v.spirit) spec.coat = { base: v.base, light: v.light, dark: v.dark, accent: v.accent, accent2: v.accent2, nose: v.nose };
+      if (v.elementCoat) { const e = ELEMENT_HS[z.element]; spec.coat = { base: [e[0], v.elementCoat[0], v.elementCoat[1]], light: [e[0], v.elementCoat[0], Math.min(98, v.elementCoat[1] + 25)], dark: [e[0], v.elementCoat[0] + 10, Math.max(10, v.elementCoat[1] - 25)] }; }
+      else if (!v.spirit) spec.coat = { base: v.base, light: v.light, dark: v.dark, accent: v.accent, accent2: v.accent2, nose: v.nose };
+      if (sp.spiritForm) spec.spiritForm = true;
       if (v.iris) spec.eyes.iris = v.iris;
       if (v.beak) spec.parts.forEach(p => { if (p.type === "beak") p.color = v.beak; });
       for (const [type, changes] of Object.entries(v.swap || {})) spec.parts.forEach(p => { if (p.type === type) Object.assign(p, changes); });
