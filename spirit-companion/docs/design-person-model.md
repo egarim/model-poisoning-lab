@@ -44,6 +44,30 @@ whether the user confirmed it**.
 | **Orienting and habituation** (Sokolov) | Something new in the user's life (a new name, a new place, a sudden mood change) makes the daemon orient: ask about it, open a thread. Repeated topics stop triggering it |
 | **Stages** | What the daemon may *do* with the notebook grows with the bond: stage 1 uses facts only; stage 3 follows up on threads; stage 4 shares patterns and weekly insights |
 
+## How this maps to Creatura's code
+
+Checked against Creatura `main` (b7df228). Creatura's belief classes are small and are written for the agent's own
+skills and tools, counted in ticks: `SkillBelief(Action, Supported, Attempted)`, `CoherenceAudit.Accept(claim,
+supported, evidence, tick)`, `Quarantine` of tool ids with a tick cooldown, `PredictionTracker` counting right and
+wrong predictions. The *rules* carry over to a person; the *classes* do not fit as they are.
+
+| Part | Use Creatura as is | Adapt (same idea, new class in Creatura's style) | Outside Creatura |
+|---|---|---|---|
+| Daemon turn loop, tools (divination, remember, schedule follow-up) | Control layer: only offered tools, effects checked | A turn is the task: "reply cites only what was drawn and what the notebook holds" | |
+| Model calls | Seats: `deepseek-v4-flash`, the vision variant, call log (encrypted, short retention) | | |
+| Catching invented memories and cards | Hotz critic: each claim checked against facts (the draw, the notebook) | | |
+| Bond and what the daemon may do | Stages | Earned by the bond's record instead of tool predictions | |
+| Mood and noticing new things | Affect, habituation (orienting) | Outcomes are user events instead of tool results | |
+| Beliefs about the person | | `PersonBelief(key, value, supported, contradicted, evidence, confirmed)`, a coherence gate and a quarantine counted in sessions, predictions about the person | |
+| Testing the daemon | Bench: batteries, oracles, `ModelJudge` | Hypotheses about memory and tone | |
+| Training our own model later | `ExampleRecorder`, fine-tune seam | | |
+| Storage and search | | | Postgres, pgvector, embedding model |
+| Session-end extraction prompt, scheduler, notebook screen, plans, avatar, voice | | | Our app and server |
+
+The adapted classes would be a new package beside the others, for example `Creatura.Companion`, so the core stays
+unchanged. Creatura is C#, so the daemon's server is .NET; the Python divination engine in this repository is a
+prototype to port.
+
 ## The update loop (cheap on tokens)
 
 1. **During a conversation:** the daemon uses a compact **profile card** (~300 tokens: key facts, open threads,
