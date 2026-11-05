@@ -4,7 +4,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a night "summoning circle" stage on top (or left), the forge controls beside it. Single dark world by design: the daemon is a light source. */
+/* Layout: summoning ritual first (who you are -> three daemons), then the chosen daemon's stage beside its controls.
+   Single dark world by design: the daemon is a light source. */
 :root {
   color-scheme: dark;
   --night: #100d18;
@@ -20,97 +21,92 @@
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
 html, body { background: var(--night); color: var(--ink); }
-body {
-  font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.5;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  padding-block: 20px 32px;
-}
-.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
-header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+body { font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 32px; }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 22px; }
+header { display: grid; gap: 4px; }
 h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(26px, 4vw, 34px); letter-spacing: 0.04em; margin: 0; text-wrap: balance; }
-.sub { color: var(--ink-dim); margin: 0; max-width: 62ch; }
-.main { display: grid; gap: 20px; grid-template-columns: 1fr; }
-@media (min-width: 900px) { .main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; } }
-.stage { position: relative; background: radial-gradient(120% 90% at 50% 40%, var(--night-2), var(--night)); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-canvas { display: block; width: 100%; aspect-ratio: 1 / 1; max-width: 100%; }
-.caption { min-height: 3em; margin: 0; padding: 12px 16px 14px; border-top: 1px solid var(--line); color: var(--ink); font-size: 15px; }
-.caption .form { color: var(--ink-dim); }
-.caption .who { font-family: var(--font-display); color: var(--candle); letter-spacing: 0.03em; }
-.forge { display: grid; gap: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+h2 { font-family: var(--font-display); font-weight: 400; font-size: 20px; letter-spacing: 0.04em; margin: 0; }
+.sub { color: var(--ink-dim); margin: 0; max-width: 66ch; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 16px; min-width: 0; }
+.summon-grid { display: grid; gap: 14px 18px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
 .field { display: grid; gap: 6px; min-width: 0; }
-.row2 { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
-@media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
 label, .label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
-select, input[type=text] {
-  font: inherit; color: var(--ink); background: var(--night); border: 1px solid var(--line);
-  border-radius: 8px; padding: 8px 10px; min-width: 0; width: 100%;
-}
+.ends { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-dim); }
+select, input[type=text], input[type=date] { font: inherit; color: var(--ink); background: var(--night); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-width: 0; width: 100%; }
 input[type=range] { width: 100%; accent-color: var(--candle); }
 .seg { display: flex; flex-wrap: wrap; gap: 6px; }
-button {
-  font: inherit; font-size: 14px; color: var(--ink); background: var(--night); border: 1px solid var(--line);
-  border-radius: 999px; padding: 7px 13px; cursor: pointer;
-}
+button { font: inherit; font-size: 14px; color: var(--ink); background: var(--night); border: 1px solid var(--line); border-radius: 999px; padding: 7px 13px; cursor: pointer; }
 button:hover { border-color: var(--ink-dim); }
 button[aria-pressed="true"] { background: var(--ink); color: var(--night); border-color: var(--ink); }
 button.primary { background: var(--candle); color: var(--candle-ink); border-color: var(--candle); font-weight: 600; }
 button.warn[aria-pressed="true"] { background: #f0d9d9; color: #3a1414; border-color: #f0d9d9; }
 button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--candle); outline-offset: 2px; }
+.cands { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.cand { border: 1px solid var(--line); border-radius: 12px; background: radial-gradient(120% 90% at 50% 35%, var(--night-2), var(--night)); display: grid; grid-template-rows: auto 1fr auto; min-width: 0; overflow: hidden; }
+.cand[aria-current="true"] { border-color: var(--candle); box-shadow: 0 0 0 1px var(--candle) inset; }
+.cand canvas { width: 100%; aspect-ratio: 1 / 1; display: block; }
+.cand .info { padding: 4px 14px 10px; display: grid; gap: 6px; }
+.cand .title { font-family: var(--font-display); font-size: 17px; letter-spacing: 0.03em; }
+.cand ul { margin: 0; padding-left: 18px; color: var(--ink-dim); font-size: 13px; display: grid; gap: 2px; }
+.cand .pick { margin: 0 14px 14px; justify-self: start; }
+.main { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; } }
+.stage { position: relative; background: radial-gradient(120% 90% at 50% 40%, var(--night-2), var(--night)); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+#cv { display: block; width: 100%; aspect-ratio: 1 / 1; max-width: 100%; }
+.caption { min-height: 3em; margin: 0; padding: 12px 16px 14px; border-top: 1px solid var(--line); }
+.caption .who { font-family: var(--font-display); color: var(--candle); letter-spacing: 0.03em; }
+.caption .form { color: var(--ink-dim); }
 .meters { display: grid; gap: 8px; font-family: var(--font-mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .meter { display: grid; grid-template-columns: 9.5em 1fr 3.2em; gap: 10px; align-items: center; }
 .bar { height: 6px; border-radius: 3px; background: var(--night); overflow: hidden; }
 .bar i { display: block; height: 100%; width: 0; border-radius: 3px; }
-#barA i { background: var(--candle); }
-#barI i { background: #8fa7d8; }
-#barR i { background: #6f6687; }
-.stagebox { font-size: 14px; color: var(--ink-dim); margin: 0; }
+#barA i { background: var(--candle); } #barI i { background: #8fa7d8; } #barR i { background: #6f6687; }
+.stagebox, .note { font-size: 13.5px; color: var(--ink-dim); margin: 0; }
 .stagebox b { color: var(--ink); font-weight: 600; }
-.note { font-size: 13px; color: var(--ink-dim); margin: 0; }
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
 </style>
 
 <div class="wrap">
   <header>
     <h1>Daemon Forge</h1>
-    <p class="sub">A daemon drawn entirely by code from a small description file: no images, no animation tool. 8 archetypes, each in a Latin American and a Slavic form. Its mood comes from two feeling channels, approach and inhibition, and its form grows with the bond stage.</p>
+    <p class="sub">Tell the forge who you are. It summons three daemons shaped by your birthplace, your sign and your temperament, and tells you why each one came.</p>
   </header>
+
+  <section class="panel" aria-labelledby="sumH">
+    <h2 id="sumH">Summoning</h2>
+    <div class="summon-grid">
+      <div class="field"><label for="name">Your daemon's name</label><input type="text" id="name" value="Itzel" maxlength="24" autocomplete="off"></div>
+      <div class="field"><label for="country">Where you were born</label>
+        <select id="country"><option value="MX">Mexico</option><option value="BR">Brazil</option><option value="AR">Argentina</option><option value="CO">Colombia</option><option value="PE">Peru</option><option value="CL">Chile</option><option value="RU">Russia</option><option value="XX">Somewhere else</option></select></div>
+      <div class="field"><label for="bday">Birth date</label><input type="date" id="bday" value="1997-07-22"></div>
+      <div class="field"><label for="energy">Energy</label><input type="range" id="energy" min="0" max="1" step="0.05" value="0.35"><span class="ends"><span>calm</span><span>energetic</span></span></div>
+      <div class="field"><label for="social">Social</label><input type="range" id="social" min="0" max="1" step="0.05" value="0.4"><span class="ends"><span>introvert</span><span>extrovert</span></span></div>
+      <div class="field"><label for="mind">Guided by</label><input type="range" id="mind" min="0" max="1" step="0.05" value="0.3"><span class="ends"><span>heart</span><span>head</span></span></div>
+      <div class="field"><label for="spirit">Spirit</label><input type="range" id="spirit" min="0" max="1" step="0.05" value="0.5"><span class="ends"><span>traditional</span><span>rebel</span></span></div>
+      <div class="field" style="align-self:end"><button type="button" class="primary" id="summon">Summon</button></div>
+    </div>
+    <div class="cands" id="cands"></div>
+  </section>
 
   <div class="main">
     <div class="stage">
-      <canvas id="cv" aria-label="Animated daemon"></canvas>
+      <canvas id="cv" aria-label="Your daemon, animated"></canvas>
       <p class="caption" id="caption" aria-live="polite"></p>
     </div>
-
-    <div class="forge">
-      <div class="row2">
-        <div class="field">
-          <label for="arch">Archetype</label>
-          <select id="arch"></select>
-        </div>
-        <div class="field">
-          <label for="form">Form</label>
-          <select id="form"><option value="latam">Latin America</option><option value="slavic">Slavic</option></select>
-        </div>
-      </div>
+    <div class="panel">
       <div class="field">
-          <label for="name">Daemon name (seeds its sigil)</label>
-          <input type="text" id="name" value="Itzel" maxlength="24" autocomplete="off">
+        <label for="browse">Or browse every creature</label>
+        <select id="browse"></select>
       </div>
-
       <div class="field">
         <label for="stage">Bond stage: <span id="stageName"></span></label>
         <input type="range" id="stage" min="1" max="5" step="1" value="3">
         <p class="stagebox" id="stageText"></p>
       </div>
-
       <div class="field">
         <span class="label" id="stateLbl">What the daemon is doing</span>
         <div class="seg" role="group" aria-labelledby="stateLbl" id="states"></div>
       </div>
-
       <div class="field">
         <span class="label" id="evLbl">Something happens in the user's life</span>
         <div class="seg" role="group" aria-labelledby="evLbl">
@@ -120,17 +116,13 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
           <button type="button" id="evCrisis" class="warn" aria-pressed="false">Crisis mode</button>
         </div>
       </div>
-
       <div class="meters" aria-label="Feeling channels">
         <div class="meter"><span>approach A</span><span class="bar" id="barA"><i></i></span><span id="valA">0.20</span></div>
         <div class="meter"><span>inhibition I</span><span class="bar" id="barI"><i></i></span><span id="valI">0.20</span></div>
         <div class="meter"><span>resting I</span><span class="bar" id="barR"><i></i></span><span id="valR">0.20</span></div>
       </div>
-
-      <div class="seg">
-        <button type="button" class="primary" id="draw">Draw a card</button>
-      </div>
-      <p class="note">The card is drawn by code, never by the AI. Mood channels follow Creatura's Affect: separate, never summed, each fading back to rest. Brave steps lower resting inhibition, so a daemon grows calmer with its person over time.</p>
+      <div class="seg"><button type="button" class="primary" id="draw">Draw a card</button></div>
+      <p class="note">Everything here is drawn by code from small data files. The card is drawn by code, never by the AI. Mood follows Creatura's Affect: approach and inhibition, separate and each fading back to rest.</p>
     </div>
   </div>
 </div>
@@ -149,9 +141,9 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
   // ---------- sigil (seeded by the daemon's name) ----------
   function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
   function rng(seed) { let a = seed; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  function makeSigil(name) {
+  function makeSigil(name, opts) {
     const r = rng(hash((name || "daemon").trim().toLowerCase()));
-    const n = 5 + Math.floor(r() * 5);
+    const n = opts && opts.points ? opts.points : 5 + Math.floor(r() * 5);
     const k = Math.max(2, 2 + Math.floor(r() * (Math.floor(n / 2) - 1)));
     const ticks = Array.from({ length: 10 + Math.floor(r() * 10) }, () => ({ a: r() * TAU, len: 0.05 + r() * 0.09, kind: Math.floor(r() * 3) }));
     return { n, k, ticks, hueShift: (r() - 0.5) * 24, rot: r() * TAU };
@@ -162,14 +154,28 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     const h = e.h + (spec.hueShift || 0) + (st.sigil ? st.sigil.hueShift : 0);
     const s = Math.max(10, e.s * (1 - 0.45 * st.I) * (st.calm ? 0.5 : 1));
     const l = 52 + 10 * st.A - 8 * st.I;
-    return { h, s, l };
+    // coat: real fur/feather colours as [h,s,l]; without one, the coat is the element's colour (spirit look)
+    const c = spec.coat, dl = 6 * st.A - 6 * st.I, ds = (st.calm ? 0.6 : 1) * (1 - 0.3 * st.I);
+    const adj = v => [v[0], v[1] * ds, v[2] + dl];
+    const coat = c ? {
+      base: adj(c.base), light: adj(c.light || [c.base[0], c.base[1] * 0.5, Math.min(96, c.base[2] + 30)]),
+      dark: adj(c.dark || [c.base[0], c.base[1], Math.max(8, c.base[2] - 30)]), accent: adj(c.accent || c.base),
+      accent2: adj(c.accent2 || c.accent || c.base), nose: c.nose || [350, 25, 25]
+    } : {
+      base: [h, s, l], light: [h, s * 0.7, l + 26], dark: [h, s, l - 30], accent: [h, Math.max(45, s), l + 6], accent2: [h + 40, Math.max(45, s), l + 6], nose: [h, s * 0.6, l - 34]
+    };
+    return { h, s, l, coat, real: !!c };
   }
   function col(p, part, name, alpha = 0.92) {
     const n = name || (part && part.color) || (part && part.hue !== undefined ? "accent" : "body");
-    if (n === "light") return hsla(p.h, p.s * 0.7, p.l + 26, alpha);
-    if (n === "dark" || (part && part.dark && n === "body")) return hsla(p.h, p.s, p.l - 30, alpha);
-    if (n === "accent") return hsla(p.h + ((part && part.hue) || 0), Math.max(45, p.s), p.l + 6, alpha);
-    return hsla(p.h, p.s, p.l - 12, alpha);
+    if (Array.isArray(n)) return hsla(n[0], n[1], n[2], alpha);
+    const k = p.coat;
+    if (n === "light") return hsla(...k.light, alpha);
+    if (n === "dark" || (part && part.dark && n === "body")) return hsla(...k.dark, alpha);
+    if (n === "accent") return p.real ? hsla(...k.accent, alpha) : hsla(p.h + ((part && part.hue) || 0), Math.max(45, p.s), p.l + 6, alpha);
+    if (n === "accent2") return hsla(...k.accent2, alpha);
+    if (n === "nose") return hsla(...k.nose, alpha);
+    return hsla(k.base[0], k.base[1], k.base[2] - (p.real ? 5 : 12), alpha);
   }
 
   // ---------- primitives ----------
@@ -180,18 +186,30 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     const ang = part.angle + (part.droop || 0) * m.I * 0.7 - 0.08 * m.A;
     for (const s of [-1, 1]) {
       const base = -Math.PI / 2 + s * ang;
+      if (part.style === "floppy") {
+        const swing = Math.sin(m.t * 1.5 + s) * 0.08 * (m.calm ? 0.3 : 1) + 0.25 * m.I - 0.2 * m.A;
+        const ax = cx + s * R * 0.62, ay = cy - R * 0.72, L = R * part.size * k;
+        c.save(); c.translate(ax, ay); c.rotate(s * (0.35 + swing));
+        c.fillStyle = col(p, part, part.color || "dark"); c.beginPath();
+        c.moveTo(-s * R * 0.12, 0); c.bezierCurveTo(s * R * 0.45, -R * 0.1, s * R * 0.4, L * 0.8, s * R * 0.12, L);
+        c.bezierCurveTo(-s * R * 0.12, L * 0.95, -s * R * 0.15, L * 0.3, -s * R * 0.12, 0); c.fill();
+        c.strokeStyle = col(p, part, "light", 0.35); c.lineWidth = Math.max(1.2, R * 0.025); c.stroke(); c.restore();
+        continue;
+      }
       if (part.style === "round") {
         const ex = cx + Math.cos(base) * R * 0.98, ey = cy + Math.sin(base) * R * 1.02;
-        c.fillStyle = col(p, part); c.beginPath(); c.arc(ex, ey, R * part.size * k, 0, TAU); c.fill();
-        c.fillStyle = col(p, part, "light", 0.5); c.beginPath(); c.arc(ex, ey + R * 0.03, R * part.size * 0.55 * k, 0, TAU); c.fill();
+        c.fillStyle = col(p, part, part.outer); c.beginPath(); c.arc(ex, ey, R * part.size * k, 0, TAU); c.fill();
+        c.fillStyle = col(p, part, part.inner || "light", 0.5); c.beginPath(); c.arc(ex, ey + R * 0.03, R * part.size * 0.55 * k, 0, TAU); c.fill();
         continue;
       }
       const w = part.width || 0.3;
       const b1 = base - w, b2 = base + w;
       const x1 = cx + Math.cos(b1) * R * 0.9, y1 = cy + Math.sin(b1) * R * 0.98;
       const x2 = cx + Math.cos(b2) * R * 0.9, y2 = cy + Math.sin(b2) * R * 0.98;
-      const tipA = base + s * (0.06 + 0.04 * Math.sin(m.t * 1.3 + s)) * (m.calm ? 0.3 : 1);
-      const tx = cx + Math.cos(tipA) * R * part.size * k, ty = cy + Math.sin(tipA) * R * part.size * k;
+      const bent = part.bent === s;
+      const tipA = base + s * ((0.06 + 0.04 * Math.sin(m.t * 1.3 + s)) * (m.calm ? 0.3 : 1) + (bent ? 0.55 : 0));
+      const sz = part.size * (bent ? 0.82 : 1);
+      const tx = cx + Math.cos(tipA) * R * sz * k, ty = cy + Math.sin(tipA) * R * sz * k;
       const ear = (shrink, fill) => {
         const ix1 = x1 + (tx - x1) * shrink * 0.25, iy1 = y1 + (ty - y1) * shrink * 0.25;
         const ix2 = x2 + (tx - x2) * shrink * 0.25, iy2 = y2 + (ty - y2) * shrink * 0.25;
@@ -226,6 +244,16 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     }
     const s = part.side || 1;
     const wag = Math.sin(m.t * (1.2 + 3 * m.A)) * 0.22 * (m.calm ? 0.2 : 1);
+    if (part.style === "stub") { c.fillStyle = col(p, part, part.color); c.beginPath(); c.arc(cx + s * R * 0.85, cy + R * 0.7, R * 0.2, 0, TAU); c.fill(); return; }
+    if (part.style === "curl" || part.style === "thin") {
+      const L = part.length * k, lw = R * (part.style === "curl" ? 0.2 : 0.11);
+      c.strokeStyle = col(p, part, part.color); c.lineWidth = lw; c.lineCap = "round"; c.beginPath();
+      const x0 = cx + s * R * 0.7, y0 = cy + R * 0.6;
+      if (part.style === "curl") { c.moveTo(x0, y0); c.bezierCurveTo(x0 + s * R * 0.7, y0 - R * 0.1, x0 + s * R * (0.75 + wag), y0 - R * 0.9 * L, x0 + s * R * (0.25 + wag), y0 - R * 0.75 * L); }
+      else { c.moveTo(x0, y0); c.bezierCurveTo(x0 + s * R * 0.9 * L, y0 + R * 0.2, x0 + s * R * (0.5 + wag) * L, y0 - R * 0.9 * L + tuckY(m), x0 + s * R * (1.0 + wag) * L, y0 - R * 1.1 * L + tuckY(m)); }
+      c.stroke();
+      return;
+    }
     const tuck = 0.5 * m.I;
     const L = part.length * k;
     const ex = cx + s * R * (L * 0.85 + wag), ey = cy + R * (-0.55 * L + 0.4 + tuck * L);
@@ -236,7 +264,15 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     c.bezierCurveTo(cx + s * R * (L * 0.85 + wag - thick), ey + R * 0.55, cx + s * R * (0.9 + thick), cy + R * 0.6, cx + s * R * 0.62, cy + R * 0.42);
     c.closePath(); c.fill();
     if (part.tip) { c.fillStyle = col(p, part, part.tip, 0.9); c.beginPath(); c.arc(ex, ey, R * (part.style === "bushy" ? 0.15 : 0.07), 0, TAU); c.fill(); }
+    if (part.rings) { // red panda: stripes across the bushy tail
+      c.strokeStyle = col(p, part, part.rings, 0.85); c.lineWidth = R * 0.08;
+      for (let i = 1; i <= 4; i++) {
+        const u = i / 5, bx = cx + s * R * (0.6 + (L * 0.85 + wag - 0.6) * u), by = cy + R * (0.6 + (-0.55 * L - 0.2 + tuck * L) * u);
+        c.beginPath(); c.moveTo(bx - R * 0.16, by - s * R * 0.1 * 0); c.lineTo(bx + R * 0.16 * s * 0.3, by + R * 0.18); c.stroke();
+      }
+    }
   };
+  const tuckY = m => m.I * 0.5;
 
   P.mane = (c, g, part) => { // ruff of spikes around the lower face, behind the body
     const { cx, cy, R, k, m, p } = g;
@@ -327,7 +363,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
         c.translate(cx + s * R * 0.55, cy - R * 0.1); c.rotate(s * (-0.15 + 0.12 * Math.sin(m.t * 1.4 * fast) * (m.calm ? 0.2 : 1) - (spread - 0.8) * 0.6));
         for (let i = n - 1; i >= 0; i--) {
           const u = i / (n - 1), a = -0.9 + u * 1.5, L = R * S * (1.05 - u * 0.45);
-          c.save(); c.rotate(s * a); c.fillStyle = part.dark ? hsla(p.h + 15, p.s + 10, p.l - 20 + u * 10, 0.95) : hsla(p.h + u * 20, p.s, p.l - 14 + u * 14, 0.92);
+          c.save(); c.rotate(s * a); c.fillStyle = part.colors ? col(p, part, part.colors[Math.min(part.colors.length - 1, Math.floor(u * part.colors.length))], 0.95) : part.dark ? (p.real ? hsla(p.coat.dark[0], p.coat.dark[1], p.coat.dark[2] + 6 + u * 8, 0.95) : hsla(p.h + 15, p.s + 10, p.l - 20 + u * 10, 0.95)) : p.real ? hsla(p.coat.base[0] + u * 6, p.coat.base[1], p.coat.base[2] - 14 + u * 14, 0.95) : hsla(p.h + u * 20, p.s, p.l - 14 + u * 14, 0.92);
           c.beginPath(); c.ellipse(s * L * 0.55, 0, L * 0.55, R * 0.13 * k, 0, 0, TAU); c.fill(); c.restore();
         }
       } else if (part.style === "blur") { // hummingbird wings: fast translucent smear
@@ -401,15 +437,20 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     for (let i = 0; i < n; i++) {
       const a = -Math.PI / 2 + (i / (n - 1) - 0.5) * 2.0;
       const x = cx + Math.cos(a) * R * 0.95, y = cy + Math.sin(a) * R * 1.0;
+      if (part.style === "berries") {
+        c.fillStyle = hsla(110, 40, 32, 0.9); c.beginPath(); c.ellipse(x, y - R * 0.04, R * 0.05 * k, R * 0.12 * k, a + Math.PI / 2, 0, TAU); c.fill();
+        for (const [dx, dy] of [[-0.05, 0.03], [0.05, 0.03], [0, -0.03], [0, 0.08]]) { c.fillStyle = hsla(part.hue || 8, 85, 50, 0.97); c.beginPath(); c.arc(x + dx * R * k, y + dy * R * k, R * 0.045 * k, 0, TAU); c.fill(); }
+        continue;
+      }
       if (part.style === "leaves") {
         c.save(); c.translate(x, y); c.rotate(a + Math.PI / 2 + Math.sin(m.t + i) * 0.1);
         c.fillStyle = hsla(p.h + (i % 2 ? 10 : -15), 55, 38 + (i % 3) * 6, 0.95);
         c.beginPath(); c.ellipse(0, -R * 0.12 * k, R * 0.08 * k, R * 0.17 * k, 0, 0, TAU); c.fill(); c.restore();
       } else {
-        const hue = p.h + (part.hue || 0) + (i % 3) * 25;
+        const hue = part.absHue !== undefined ? part.absHue + (i % 3) * 8 : p.h + (part.hue || 0) + (i % 3) * 25;
         for (let j = 0; j < 5; j++) {
           const b = j / 5 * TAU + m.t * 0.2;
-          c.fillStyle = hsla(hue, 70, 78, 0.95); c.beginPath(); c.arc(x + Math.cos(b) * R * 0.065 * k, y + Math.sin(b) * R * 0.065 * k, R * 0.055 * k, 0, TAU); c.fill();
+          c.fillStyle = hsla(hue, part.sat || 70, part.lum || 78, 0.95); c.beginPath(); c.arc(x + Math.cos(b) * R * 0.065 * k, y + Math.sin(b) * R * 0.065 * k, R * 0.055 * k, 0, TAU); c.fill();
         }
         c.fillStyle = hsla(48, 90, 62, 1); c.beginPath(); c.arc(x, y, R * 0.04 * k, 0, TAU); c.fill();
       }
@@ -452,9 +493,15 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 
   P.beak = (c, g, part) => {
     const { cx, cy, R, k, m, p } = g;
-    const L = R * part.length * (0.8 + 0.2 * k), w = R * (part.slim ? 0.07 : 0.14);
+    if (part.style === "hooked") {
+      const L = R * part.length; c.fillStyle = col(p, part, part.color || [40, 15, 85]);
+      c.beginPath(); c.moveTo(cx - R * 0.14, cy + R * 0.02); c.quadraticCurveTo(cx + R * 0.05, cy - R * 0.08, cx + R * 0.16, cy + R * 0.05);
+      c.quadraticCurveTo(cx + R * 0.12, cy + L * 0.8, cx, cy + L); c.quadraticCurveTo(cx - R * 0.05, cy + L * 0.5, cx - R * 0.14, cy + R * 0.02); c.fill();
+      return;
+    }
+    const L = R * part.length * (0.8 + 0.2 * k), w = R * (part.slim ? 0.07 : part.style === "stubby" ? 0.12 : 0.14);
     const open = m.mode === "speaking" ? Math.abs(Math.sin(m.t * 9)) * R * 0.05 : 0;
-    c.fillStyle = hsla(45, 70, part.slim ? 42 : 30, 0.97);
+    c.fillStyle = part.color ? col(p, part, part.color, 0.97) : hsla(45, 70, part.slim ? 42 : 30, 0.97);
     c.beginPath(); c.moveTo(cx - w, cy + R * 0.12); c.lineTo(cx, cy + R * 0.12 + L - open * 0.2); c.lineTo(cx + w, cy + R * 0.12); c.quadraticCurveTo(cx, cy + R * 0.02, cx - w, cy + R * 0.12); c.fill();
     if (open) { c.fillStyle = hsla(45, 60, 24, 0.97); c.beginPath(); c.moveTo(cx - w * 0.8, cy + R * 0.14 + open); c.lineTo(cx, cy + R * 0.14 + L * 0.7 + open); c.lineTo(cx + w * 0.8, cy + R * 0.14 + open); c.fill(); }
   };
@@ -481,7 +528,91 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     }
   };
 
+  P.whiskers = (c, g, part) => {
+    const { cx, cy, R, m, p } = g;
+    c.strokeStyle = col(p, part, part.color || "light", 0.7); c.lineWidth = Math.max(1, R * 0.015);
+    for (const s of [-1, 1]) for (let i = -1; i <= 1; i++) {
+      const tw = Math.sin(m.t * 2 + i) * R * 0.02;
+      c.beginPath(); c.moveTo(cx + s * R * 0.2, cy + R * 0.24 + i * R * 0.05);
+      c.quadraticCurveTo(cx + s * R * 0.55, cy + R * 0.2 + i * R * 0.09 + tw, cx + s * R * 0.85, cy + R * 0.18 + i * R * 0.15 + tw); c.stroke();
+    }
+  };
+
+  P.nose = (c, g, part) => {
+    const { cx, cy, R, m, p } = g;
+    if (part.muzzle) { c.fillStyle = col(p, part, part.muzzle, 0.9); c.beginPath(); c.ellipse(cx, cy + R * 0.3, R * 0.3, R * 0.2, 0, 0, TAU); c.fill(); }
+    c.fillStyle = col(p, part, "nose", 0.97); c.beginPath();
+    if (part.style === "cat") { c.moveTo(cx - R * 0.07, cy + R * 0.17); c.lineTo(cx + R * 0.07, cy + R * 0.17); c.lineTo(cx, cy + R * 0.25); c.closePath(); }
+    else c.ellipse(cx, cy + R * 0.2, R * (part.style === "big" ? 0.12 : 0.08), R * (part.style === "big" ? 0.08 : 0.055), 0, 0, TAU);
+    c.fill();
+    c.strokeStyle = col(p, part, "nose", 0.8); c.lineWidth = Math.max(1, R * 0.02); c.lineCap = "round"; c.beginPath();
+    const mouthY = cy + R * 0.32, smile = R * (0.02 + 0.06 * m.A - 0.04 * m.I);
+    c.moveTo(cx, cy + R * 0.25); c.lineTo(cx, mouthY);
+    c.moveTo(cx - R * 0.1, mouthY - smile * 0.2); c.quadraticCurveTo(cx - R * 0.05, mouthY + smile, cx, mouthY);
+    c.quadraticCurveTo(cx + R * 0.05, mouthY + smile, cx + R * 0.1, mouthY - smile * 0.2); c.stroke();
+    if (part.tongue && m.A > 0.55 && !m.calm) { c.fillStyle = hsla(350, 70, 68, 0.95); c.beginPath(); c.ellipse(cx, mouthY + R * 0.08, R * 0.06, R * 0.09 * (m.A - 0.4) * 2, 0, 0, TAU); c.fill(); }
+  };
+
+  P.paws = (c, g, part) => {
+    const { cx, cy, R, m, p } = g;
+    const wave = m.mode === "speaking" ? Math.sin(m.t * 4) * R * 0.04 : 0;
+    for (const s of [-1, 1]) {
+      c.fillStyle = col(p, part, part.color || "body", 0.97);
+      c.beginPath(); c.ellipse(cx + s * R * 0.42, cy + R * 0.92 - (s > 0 ? wave : 0), R * 0.2, R * 0.14, 0, 0, TAU); c.fill();
+      if (part.beans) { c.fillStyle = hsla(350, 45, 75, 0.8); c.beginPath(); c.arc(cx + s * R * 0.42, cy + R * 0.95 - (s > 0 ? wave : 0), R * 0.05, 0, TAU); c.fill(); }
+    }
+  };
+
+  P.tentacles = (c, g, part) => {
+    const { cx, cy, R, k, m, p } = g;
+    const n = part.count || 6; c.lineCap = "round";
+    for (let i = 0; i < n; i++) {
+      const u = i / (n - 1) - 0.5, x0 = cx + u * R * 1.3, y0 = cy + R * 0.7;
+      const L = R * part.length * k, curl = (u > 0 ? 1 : -1) * (0.6 + 0.4 * Math.sin(m.t * 1.3 + i)) * (m.calm ? 0.4 : 1);
+      const x1 = x0 + u * R * 1.4 + curl * R * 0.35, y1 = y0 + L * (0.75 - 0.3 * m.I);
+      c.strokeStyle = col(p, part, "body", 0.95); c.lineWidth = R * 0.17;
+      c.beginPath(); c.moveTo(x0, y0); c.bezierCurveTo(x0 + u * R * 0.3, y0 + L * 0.4, x1 - curl * R * 0.5, y1, x1, y1 - R * 0.12); c.stroke();
+      c.fillStyle = col(p, part, "light", 0.7);
+      for (let j = 1; j <= 3; j++) { const v = j / 4; c.beginPath(); c.arc(x0 + (x1 - x0) * v * 0.9, y0 + (y1 - y0) * v * 0.9, R * 0.03, 0, TAU); c.fill(); }
+    }
+  };
+
+  P.tendrils = (c, g, part) => { // jellyfish: long glowing threads
+    const { cx, cy, R, k, m, p } = g;
+    const n = part.count || 7; c.lineCap = "round";
+    for (let i = 0; i < n; i++) {
+      const u = i / (n - 1) - 0.5, x0 = cx + u * R * 1.4, y0 = cy + R * 0.5, L = R * part.length * k * (1 - Math.abs(u) * 0.4);
+      c.strokeStyle = hsla(p.coat.light[0] + i * 6, 70, 80, 0.55); c.lineWidth = Math.max(1.2, R * (i % 2 ? 0.025 : 0.05));
+      c.beginPath(); c.moveTo(x0, y0);
+      for (let j = 1; j <= 8; j++) { const v = j / 8; c.lineTo(x0 + Math.sin(m.t * 1.5 + i + v * 5) * R * 0.12 * v, y0 + L * v); }
+      c.stroke();
+    }
+  };
+
+  P.fin = (c, g, part) => { // dorsal fin / fish fins on the sides
+    const { cx, cy, R, k, m, p } = g;
+    const fl = Math.sin(m.t * 2.5) * 0.15;
+    for (const s of [-1, 1]) {
+      c.save(); c.translate(cx + s * R * 0.9, cy + R * 0.15); c.rotate(s * (0.3 + fl));
+      c.fillStyle = col(p, part, part.color || "accent", 0.85); c.beginPath(); c.moveTo(0, -R * 0.2);
+      c.quadraticCurveTo(s * R * 0.6 * k, -R * 0.4, s * R * 0.55 * k, R * 0.25); c.quadraticCurveTo(s * R * 0.2, R * 0.1, 0, R * 0.2); c.fill(); c.restore();
+    }
+  };
+
+  P.charm = (c, g, part) => { // birthplace talisman hanging on the chest
+    const { cx, cy, R, m, p } = g;
+    const sw = Math.sin(m.t * 1.4) * R * 0.03, x = cx + sw, y = cy + R * 0.72;
+    c.strokeStyle = hsla(40, 40, 70, 0.8); c.lineWidth = 1.2; c.beginPath(); c.moveTo(cx - R * 0.45, cy + R * 0.48); c.quadraticCurveTo(cx, cy + R * 0.66, cx + R * 0.45, cy + R * 0.48); c.stroke();
+    c.fillStyle = hsla(part.hue, part.sat || 80, part.lum || 58, 0.97);
+    if (part.shape === "flower") for (let j = 0; j < 6; j++) { const b = j / 6 * TAU; c.beginPath(); c.arc(x + Math.cos(b) * R * 0.06, y + Math.sin(b) * R * 0.06, R * 0.055, 0, TAU); c.fill(); }
+    else if (part.shape === "berries") for (const [dx, dy] of [[-0.05, 0], [0.05, 0], [0, -0.06], [0, 0.06]]) { c.beginPath(); c.arc(x + dx * R, y + dy * R, R * 0.045, 0, TAU); c.fill(); }
+    else if (part.shape === "star") { c.beginPath(); for (let j = 0; j <= 10; j++) { const b = -Math.PI / 2 + j / 10 * TAU, rr = j % 2 ? R * 0.045 : R * 0.1; c.lineTo(x + Math.cos(b) * rr, y + Math.sin(b) * rr); } c.fill(); }
+    else { c.beginPath(); c.arc(x, y, R * 0.08, 0, TAU); c.fill(); }
+    c.fillStyle = hsla(48, 90, 70, 1); c.beginPath(); c.arc(x, y, R * 0.03, 0, TAU); c.fill();
+  };
+
   // ---------- markings (drawn on the body) ----------
+  function blobClip(c, g, spec) { blobPath(c, g.cx, g.cy, g.R, g.m.t, spec, g.m.calm); c.clip(); }
   function markings(c, g, spec) {
     const { cx, cy, R, p } = g;
     for (const mk of spec.markings || []) {
@@ -492,6 +623,45 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
       } else if (mk.style === "bark") {
         c.strokeStyle = hsla(p.h - 60, 35, p.l - 30, 0.35); c.lineWidth = Math.max(1, R * 0.02);
         for (let i = 0; i < (mk.count || 5); i++) { const x = cx + (i / 4 - 0.5) * R * 1.3; c.beginPath(); c.moveTo(x, cy + R * 0.35); c.quadraticCurveTo(x + R * 0.06, cy + R * 0.6, x - R * 0.02, cy + R * 0.92); c.stroke(); }
+      } else if (mk.style === "eyepatch") { // panda
+        c.fillStyle = col(p, null, "dark", 0.95);
+        for (const s of [-1, 1]) { c.beginPath(); c.ellipse(cx + s * R * 0.36, cy - R * 0.06, R * 0.24, R * 0.3, s * -0.5, 0, TAU); c.fill(); }
+      } else if (mk.style === "mask") { // red panda: white cheeks, brow dots, tear lines
+        c.fillStyle = col(p, null, "light", 0.95);
+        c.beginPath(); c.ellipse(cx, cy + R * 0.3, R * 0.5, R * 0.3, 0, 0, TAU); c.fill();
+        for (const s of [-1, 1]) {
+          c.beginPath(); c.ellipse(cx + s * R * 0.36, cy - R * 0.4, R * 0.12, R * 0.08, 0, 0, TAU); c.fill();
+          c.fillStyle = col(p, null, "dark", 0.75); c.beginPath(); c.ellipse(cx + s * R * 0.4, cy + R * 0.12, R * 0.05, R * 0.2, s * -0.2, 0, TAU); c.fill();
+          c.fillStyle = col(p, null, "light", 0.95);
+        }
+      } else if (mk.style === "tabby") {
+        c.strokeStyle = col(p, null, "dark", 0.55); c.lineWidth = R * 0.06; c.lineCap = "round";
+        for (const dx of [-0.18, 0, 0.18]) { c.beginPath(); c.moveTo(cx + dx * R, cy - R * 0.98); c.lineTo(cx + dx * R * 0.8, cy - R * 0.6); c.stroke(); }
+        for (const s of [-1, 1]) for (const dy of [0.1, 0.35, 0.6]) { c.beginPath(); c.moveTo(cx + s * R * 0.98, cy + dy * R); c.quadraticCurveTo(cx + s * R * 0.8, cy + (dy + 0.05) * R, cx + s * R * 0.68, cy + (dy + 0.02) * R); c.stroke(); }
+      } else if (mk.style === "calico") {
+        c.save(); blobClip(c, g, spec);
+        c.fillStyle = col(p, null, "accent", 0.9); c.beginPath(); c.ellipse(cx - R * 0.55, cy - R * 0.5, R * 0.55, R * 0.45, 0.4, 0, TAU); c.fill();
+        c.fillStyle = col(p, null, "dark", 0.92); c.beginPath(); c.ellipse(cx + R * 0.7, cy + R * 0.45, R * 0.45, R * 0.4, -0.3, 0, TAU); c.fill();
+        c.restore();
+      } else if (mk.style === "points") { // siamese / husky mask: darker centre of the face
+        const gr = c.createRadialGradient(cx, cy + R * 0.2, R * 0.05, cx, cy + R * 0.2, R * 0.6);
+        gr.addColorStop(0, col(p, null, mk.color || "dark", 0.75)); gr.addColorStop(1, col(p, null, mk.color || "dark", 0));
+        c.fillStyle = gr; c.beginPath(); c.arc(cx, cy + R * 0.2, R * 0.6, 0, TAU); c.fill();
+      } else if (mk.style === "spots") {
+        c.fillStyle = col(p, null, mk.color || "dark", 0.5);
+        for (const [x, y, r] of [[-0.6, 0.4, 0.06], [0.55, 0.5, 0.05], [-0.2, 0.75, 0.04], [0.25, -0.65, 0.05], [-0.45, -0.6, 0.04], [0.75, 0.05, 0.05], [0.1, 0.85, 0.035]]) { c.beginPath(); c.arc(cx + x * R, cy + y * R, r * R, 0, TAU); c.fill(); }
+      } else if (mk.style === "belly" || mk.style === "breast") {
+        c.save(); blobClip(c, g, spec);
+        c.fillStyle = col(p, null, mk.color || "light", 0.9); c.beginPath(); c.ellipse(cx, cy + R * (mk.style === "breast" ? 0.55 : 0.75), R * (mk.style === "breast" ? 0.8 : 0.6), R * 0.55, 0, 0, TAU); c.fill();
+        c.restore();
+      } else if (mk.style === "cap") { // bullfinch black cap
+        c.save(); blobClip(c, g, spec);
+        c.fillStyle = col(p, null, mk.color || "dark", 0.96); c.beginPath(); c.ellipse(cx, cy - R * 0.95, R * 1.0, R * 0.5, 0, 0, TAU); c.fill();
+        c.restore();
+      } else if (mk.style === "disc") { // owl facial disc
+        c.fillStyle = col(p, null, "light", 0.85);
+        for (const s of [-1, 1]) { c.beginPath(); c.arc(cx + s * R * 0.32, cy - R * 0.1, R * 0.36, 0, TAU); c.fill(); }
+        c.strokeStyle = col(p, null, "dark", 0.5); c.lineWidth = R * 0.03; c.beginPath(); c.moveTo(cx, cy - R * 0.5); c.lineTo(cx, cy + R * 0.25); c.stroke();
       } else if (mk.style === "blush") {
         c.fillStyle = hsla(345, 70, 72, 0.35);
         for (const s of [-1, 1]) { c.beginPath(); c.ellipse(cx + s * R * 0.52, cy + R * 0.12, R * 0.13, R * 0.08, 0, 0, TAU); c.fill(); }
@@ -505,9 +675,14 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     c.beginPath();
     for (let i = 0; i <= 72; i++) {
       const a = i / 72 * TAU;
-      let w = 0; for (const [f, amp, sp] of b.wobble || []) w += amp * Math.sin(f * a + t * sp);
-      const r = R * (1 + wob * w);
-      const x = cx + Math.cos(a) * r * 0.96, y = cy + Math.sin(a) * r * (b.squash || 1.07) + (Math.sin(a) > 0 ? Math.sin(a) * R * 0.06 : 0);
+      let w = 0; for (const [f, amp, sp] of b.wobble || [[3, 0.035, 0.9], [5, 0.022, -1.4], [8, 0.012, 2.1]]) w += amp * Math.sin(f * a + t * sp);
+      const sa = Math.sin(a), ca = Math.cos(a);
+      const dTop = Math.atan2(Math.sin(a + Math.PI / 2), Math.cos(a + Math.PI / 2));
+      const cheek = (b.cheeks || 0) * (Math.exp(-((a - 0.62) ** 2) / 0.06) + Math.exp(-((a - (Math.PI - 0.62)) ** 2) / 0.06));
+      const r = R * (1 + wob * w + (b.top || 0) * Math.exp(-(dTop * dTop) / 0.06) + cheek);
+      let x = cx + ca * r * (b.w || 0.96) * (1 + (b.bottom || 0) * Math.max(0, sa));
+      let y = cy + sa * r * (b.squash || 1.07) + (sa > 0 ? sa * R * 0.06 : 0);
+      if (b.bell && sa > 0.25) y = Math.min(y, cy + R * 0.5 + Math.sin(a * 14 + t * 2) * R * 0.035);
       i ? c.lineTo(x, y) : c.moveTo(x, y);
     }
     c.closePath();
@@ -518,7 +693,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     let open = Math.max(0.25, Math.min(1.15, 0.9 + 0.25 * st.A - 0.35 * st.I));
     if (st.calm) open = 0.7;
     if (st.mode === "listening") open = Math.min(1.2, open + 0.12);
-    open *= 1 - (st.blink || 0);
+    open *= (1 - (e.lid || 0)) * (1 - (st.blink || 0));
     const ew = R * e.size, ratio = e.shape === "narrow" ? 0.72 : e.shape === "almond" ? 0.9 : 1.12;
     const eh = ew * ratio * open;
     for (const s of [-1, 1]) {
@@ -531,7 +706,10 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
       if (eh > 2) {
         c.save(); c.beginPath(); c.ellipse(0, 0, ew, eh, 0, 0, TAU); c.clip();
         const px = st.look.x * ew * 0.45, py = st.look.y * eh * 0.4, pr = ew * (0.55 + 0.15 * st.A - 0.1 * st.I);
-        c.fillStyle = silver ? "hsl(215,20%,40%)" : hsla(p.h, 45, 12, 1); c.beginPath(); c.arc(px, py, pr, 0, TAU); c.fill();
+        if (e.iris) { c.fillStyle = hsla(e.iris[0], e.iris[1], e.iris[2], 1); c.beginPath(); c.arc(px, py, ew * 0.82, 0, TAU); c.fill(); }
+        c.fillStyle = silver ? "hsl(215,20%,40%)" : hsla(p.h, 45, 12, 1); c.beginPath();
+        if (e.pupil === "slit") c.ellipse(px, py, pr * (0.3 + 0.6 * st.A), pr * 1.15, 0, 0, TAU); else c.arc(px, py, e.iris ? pr * 0.7 : pr, 0, TAU);
+        c.fill();
         c.fillStyle = "rgba(255,255,255,0.9)"; c.beginPath(); c.arc(px - pr * 0.35, py - pr * 0.4, pr * 0.28, 0, TAU); c.fill();
         c.restore();
       }
@@ -611,7 +789,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     const breath = 1 + (st.calm ? 0.015 : 0.03) * Math.sin(t * (st.calm ? 0.9 : 1.6));
     const bounce = st.calm ? 0 : Math.sin(t * 2.2) * R * 0.06 * st.A;
     const cx = box.cx, cy = box.cy + bounce + R * 0.12 * st.I;
-    const m = { A: st.A, I: st.I, calm: st.calm, mode: st.mode, t };
+    const m = { A: st.A, I: st.I, calm: st.calm, mode: st.mode, t: t * (spec.tempo || 1) };
     const g = { cx, cy, R: R * breath, k, m, p };
 
     glow(c, cx, cy, R, p, st, t);
@@ -624,9 +802,10 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
     if (st.mode === "listening") { c.translate(cx, cy); c.rotate(0.05); c.translate(-cx, -cy); }
     const visible = part => st.stage >= (part.minStage || 2);
     for (const part of spec.parts) if (part.layer === "back" && visible(part) && P[part.type]) P[part.type](c, g, part);
-    blobPath(c, cx, cy, g.R, t, spec, st.calm);
+    blobPath(c, cx, cy, g.R, m.t, spec, st.calm);
     const gr = c.createRadialGradient(cx - R * 0.15, cy - R * 0.35, R * 0.1, cx, cy, R * 1.1);
-    gr.addColorStop(0, hsla(p.h, p.s * 0.6, p.l + 32, 0.97)); gr.addColorStop(0.55, hsla(p.h, p.s, p.l, 0.92)); gr.addColorStop(1, hsla(p.h, p.s, p.l - 26, 0.85));
+    const B = p.coat.base, alpha = spec.body && spec.body.translucent ? 0.55 : 1;
+    gr.addColorStop(0, hsla(B[0], B[1] * 0.6, B[2] + (p.real ? 18 : 32), 0.97 * alpha)); gr.addColorStop(0.55, hsla(B[0], B[1], B[2], 0.94 * alpha)); gr.addColorStop(1, hsla(B[0], B[1], B[2] - (p.real ? 18 : 26), 0.9 * alpha));
     c.fillStyle = gr; c.fill();
     markings(c, g, spec);
     for (const part of spec.parts) if (part.layer === "front" && visible(part) && P[part.type]) P[part.type](c, g, part);
@@ -642,112 +821,443 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 
 </script>
 <script>
+/* Species catalog + summoning: turns who the user is into three daemon candidates.
+   Inputs:  { name, country, birthDate "YYYY-MM-DD", energy, social, mind, spirit }  (traits 0..1)
+            energy: calm 0 .. energetic 1     social: introvert 0 .. extrovert 1
+            mind:   heart 0 .. head 1         spirit: traditional 0 .. rebel 1
+   Output:  three { spec, archetype, title, reasons[] }  — spec is ready for DaemonRender.render.
+   Pure functions, seeded by name + birth date, so the same person always gets the same three. */
+(function (root) {
+  "use strict";
+
+  // ---------------- species templates ----------------
+  const CAT_EYES = { shape: "almond", size: 0.18, spacing: 0.35, y: -0.1, pupil: "slit" };
+  const DOG_EYES = { shape: "round", size: 0.15, spacing: 0.34, y: -0.12, iris: [25, 45, 28] };
+  const SPECIES = {
+    red_panda: {
+      name: "Red panda", local: { es: "panda rojo", pt: "panda-vermelho", ru: "малая панда" },
+      body: { w: 1.0, squash: 1.0, cheeks: 0.07 }, eyes: { shape: "round", size: 0.14, spacing: 0.34, y: -0.1 },
+      parts: [
+        { type: "tail", style: "bushy", length: 1.5, side: 1, layer: "back", tip: "dark", rings: "dark", minStage: 1 },
+        { type: "ear", style: "round", angle: 0.74, size: 0.26, outer: "light", inner: "dark", layer: "back", minStage: 1 },
+        { type: "nose", style: "round", layer: "front", minStage: 1 },
+        { type: "paws", color: "dark", layer: "front", minStage: 1 }],
+      markings: [{ style: "mask" }],
+      variants: { classic: { base: [16, 75, 46], light: [35, 40, 94], dark: [12, 55, 20], nose: [0, 0, 12] } }
+    },
+    panda: {
+      name: "Panda", local: { es: "panda", pt: "panda", ru: "панда" },
+      body: { w: 1.02, squash: 1.0, cheeks: 0.08, bottom: 0.08 }, eyes: { shape: "round", size: 0.13, spacing: 0.35, y: -0.08 },
+      parts: [
+        { type: "ear", style: "round", angle: 0.68, size: 0.26, outer: "dark", inner: "dark", layer: "back", minStage: 1 },
+        { type: "nose", style: "round", layer: "front", minStage: 1 },
+        { type: "paws", color: "dark", layer: "front", minStage: 1 }],
+      markings: [{ style: "eyepatch" }],
+      variants: { classic: { base: [40, 12, 95], light: [40, 10, 100], dark: [240, 10, 14], nose: [240, 10, 10] } }
+    },
+    cat: {
+      name: "Cat", local: { es: "gato", pt: "gato", ru: "кот" },
+      body: { w: 0.98, squash: 1.0, cheeks: 0.1 }, eyes: CAT_EYES,
+      parts: [
+        { type: "tail", style: "thin", length: 1.2, side: 1, layer: "back", minStage: 1 },
+        { type: "ear", style: "pointed", angle: 0.55, size: 1.48, width: 0.3, droop: 0.6, inner: "accent2", layer: "back", minStage: 1 },
+        { type: "nose", style: "cat", layer: "front", minStage: 1 },
+        { type: "whiskers", layer: "front", minStage: 1 },
+        { type: "paws", layer: "front", beans: true, minStage: 1 }],
+      variants: {
+        orange_tabby: { name: "orange tabby", base: [28, 80, 56], dark: [22, 70, 36], light: [35, 60, 88], accent2: [350, 60, 80], nose: [350, 50, 62], iris: [95, 55, 50], markings: [{ style: "tabby" }] },
+        grey_tabby:   { name: "grey tabby", base: [220, 6, 58], dark: [220, 8, 30], light: [220, 8, 90], accent2: [350, 50, 80], nose: [350, 40, 60], iris: [45, 85, 55], markings: [{ style: "tabby" }] },
+        black:        { name: "black", base: [255, 12, 16], light: [255, 10, 40], dark: [255, 10, 8], accent2: [350, 30, 45], nose: [0, 0, 8], iris: [50, 90, 55] },
+        white:        { name: "white", base: [40, 12, 95], light: [0, 0, 100], dark: [40, 10, 72], accent2: [350, 60, 82], nose: [350, 55, 72], iris: [200, 70, 60] },
+        calico:       { name: "calico", base: [40, 20, 95], accent: [28, 80, 55], dark: [250, 10, 15], accent2: [350, 60, 82], nose: [350, 50, 70], iris: [40, 85, 50], markings: [{ style: "calico" }] },
+        siamese:      { name: "siamese", base: [38, 35, 88], dark: [20, 30, 24], light: [40, 30, 96], accent2: [20, 30, 40], nose: [20, 30, 20], iris: [210, 80, 55], markings: [{ style: "points" }] },
+        russian_blue: { name: "Russian blue", base: [210, 14, 55], dark: [210, 14, 35], light: [210, 10, 75], accent2: [350, 30, 70], nose: [210, 15, 30], iris: [110, 70, 45] }
+      }
+    },
+    dog: {
+      name: "Dog", local: { es: "perro", pt: "cachorro", ru: "собака" },
+      body: { w: 1.0, squash: 1.02, cheeks: 0.08 }, eyes: DOG_EYES,
+      parts: [
+        { type: "tail", style: "thin", length: 1.1, side: 1, layer: "back", minStage: 1 },
+        { type: "ear", style: "floppy", size: 0.85, layer: "front", minStage: 1 },
+        { type: "nose", style: "big", muzzle: "light", tongue: true, layer: "front", minStage: 1 },
+        { type: "paws", layer: "front", minStage: 1 }],
+      variants: {
+        xolo:     { name: "xoloitzcuintle", base: [215, 6, 30], light: [215, 5, 45], dark: [215, 8, 18], accent2: [350, 25, 50], nose: [215, 8, 10],
+                    swap: { ear: { layer: "back", style: "pointed", angle: 0.6, size: 1.75, width: 0.32, droop: 0.5, inner: "accent2" }, nose: { muzzle: null } } },
+        caramelo: { name: "vira-lata caramelo", base: [30, 65, 52], light: [35, 50, 85], dark: [25, 55, 30], nose: [20, 30, 15], swap: { ear: { color: "dark" } } },
+        shiba:    { name: "shiba", base: [26, 75, 55], light: [35, 40, 94], dark: [22, 60, 30], nose: [0, 0, 10],
+                    swap: { ear: { layer: "back", style: "pointed", angle: 0.6, size: 1.35, width: 0.33, droop: 0.4, inner: "light" }, tail: { style: "curl" } }, markings: [{ style: "belly" }] },
+        laika:    { name: "laika", base: [215, 8, 40], light: [210, 8, 94], dark: [215, 10, 22], nose: [215, 10, 8],
+                    swap: { ear: { layer: "back", style: "pointed", angle: 0.6, size: 1.45, width: 0.3, droop: 0.4, inner: "light" }, tail: { style: "curl" } }, markings: [{ style: "belly" }] },
+        golden:   { name: "golden", base: [40, 62, 62], light: [42, 50, 86], dark: [32, 50, 40], accent: [36, 60, 50], nose: [20, 20, 12], swap: { ear: { color: "accent" } } },
+        black:    { name: "black", base: [250, 8, 16], light: [250, 6, 40], dark: [250, 8, 8], nose: [0, 0, 5] }
+      }
+    },
+    owl: {
+      name: "Owl", local: { es: "búho", pt: "coruja", ru: "сова" },
+      body: { w: 0.95, squash: 1.08 }, eyes: { shape: "round", size: 0.2, spacing: 0.33, y: -0.12, iris: [42, 95, 55] },
+      parts: [
+        { type: "wing", style: "feather", span: 1.0, feathers: 5, layer: "back" },
+        { type: "ear", style: "pointed", angle: 0.5, size: 1.35, width: 0.18, droop: 0.4, layer: "back", minStage: 1 },
+        { type: "beak", style: "hooked", length: 0.32, color: [40, 15, 40], layer: "front", minStage: 1 }],
+      markings: [{ style: "disc" }, { style: "belly" }],
+      variants: {
+        brown: { name: "brown", base: [30, 35, 42], light: [35, 30, 80], dark: [25, 35, 22] },
+        snowy: { name: "snowy", base: [40, 10, 94], light: [0, 0, 100], dark: [220, 10, 30], extraMarkings: [{ style: "spots" }] }
+      }
+    },
+    macaw: {
+      name: "Macaw", local: { es: "guacamaya", pt: "arara", ru: "ара" },
+      body: { w: 0.95, squash: 1.05 }, eyes: { shape: "round", size: 0.13, spacing: 0.32, y: -0.15 },
+      parts: [
+        { type: "tail", style: "plume", length: 1.4, count: 5, side: 0, layer: "back", tip: "accent2" },
+        { type: "wing", style: "feather", span: 1.3, feathers: 7, colors: ["body", "accent", "accent2", "accent2"], layer: "back" },
+        { type: "beak", style: "hooked", length: 0.45, color: [40, 10, 90], layer: "front", minStage: 1 }],
+      markings: [],
+      variants: {
+        guacamaya: { name: "scarlet", base: [355, 82, 48], accent: [48, 95, 55], accent2: [205, 85, 45] },
+        arara_azul: { name: "hyacinth", base: [235, 60, 40], light: [235, 40, 65], accent: [235, 60, 30], accent2: [48, 95, 55], beak: [0, 0, 15] }
+      }
+    },
+    toucan: {
+      name: "Toucan", local: { es: "tucán", pt: "tucano", ru: "тукан" },
+      body: { w: 0.95, squash: 1.06 }, eyes: { shape: "round", size: 0.12, spacing: 0.32, y: -0.18, iris: [200, 60, 55] },
+      parts: [
+        { type: "wing", style: "feather", span: 1.1, feathers: 5, dark: true, layer: "back" },
+        { type: "beak", length: 0.6, color: "accent", layer: "front", minStage: 1 }],
+      markings: [{ style: "breast", color: "light" }],
+      variants: { classic: { name: "toco", base: [250, 10, 14], light: [48, 90, 82], dark: [250, 10, 8], accent: [28, 95, 55] } }
+    },
+    bullfinch: {
+      name: "Bullfinch", local: { es: "camachuelo", pt: "dom-fafe", ru: "снегирь" },
+      body: { w: 1.0, squash: 1.0, bottom: 0.06 }, eyes: { shape: "round", size: 0.13, spacing: 0.33, y: -0.15 },
+      parts: [
+        { type: "wing", style: "feather", span: 1.05, feathers: 5, colors: ["dark", "dark", "body"], layer: "back" },
+        { type: "beak", style: "stubby", length: 0.2, color: "dark", layer: "front", minStage: 1 }],
+      markings: [{ style: "breast", color: "accent" }, { style: "cap" }],
+      variants: { classic: { name: "winter", base: [215, 10, 42], light: [0, 0, 95], dark: [240, 10, 10], accent: [5, 72, 58] } }
+    },
+    octopus: {
+      name: "Octopus", local: { es: "pulpo", pt: "polvo", ru: "осьминог" },
+      body: { w: 1.0, squash: 1.1, top: 0.08 }, eyes: { shape: "round", size: 0.17, spacing: 0.33, y: -0.05 },
+      parts: [{ type: "tentacles", count: 6, length: 1.0, layer: "back", minStage: 1 }],
+      markings: [{ style: "spots", color: "light" }],
+      variants: { coral: { name: "coral", base: [350, 60, 58] }, violet: { name: "violet", base: [275, 40, 55] } }
+    },
+    jellyfish: {
+      name: "Jellyfish", local: { es: "medusa", pt: "água-viva", ru: "медуза" },
+      body: { w: 1.05, squash: 0.95, bell: true, translucent: true }, eyes: { shape: "round", size: 0.12, spacing: 0.3, y: -0.15 },
+      parts: [{ type: "tendrils", count: 8, length: 1.6, layer: "back", minStage: 1 }],
+      markings: [], variants: { spirit: { name: "moon", spirit: true } }
+    },
+    seal: {
+      name: "Seal", local: { es: "foca", pt: "foca", ru: "нерпа (Baikal seal)" },
+      body: { w: 1.05, squash: 0.98, bottom: 0.15 }, eyes: { shape: "round", size: 0.2, spacing: 0.33, y: -0.12, iris: [220, 20, 15] },
+      parts: [
+        { type: "flippers", span: 0.7, layer: "back", minStage: 1 },
+        { type: "nose", style: "round", layer: "front", minStage: 1 },
+        { type: "whiskers", color: "dark", layer: "front", minStage: 1 }],
+      markings: [{ style: "spots" }],
+      variants: { classic: { name: "silver", base: [215, 10, 58], light: [215, 8, 82], dark: [215, 12, 32], nose: [215, 15, 15] } }
+    },
+    capybara: {
+      name: "Capybara", local: { es: "carpincho", pt: "capivara", ru: "капибара" },
+      body: { w: 1.06, squash: 0.95, top: -0.04, bottom: 0.08 }, eyes: { shape: "almond", size: 0.12, spacing: 0.36, y: -0.15, lid: 0.35 }, tempo: 0.7,
+      parts: [
+        { type: "ear", style: "round", angle: 0.78, size: 0.13, outer: "dark", layer: "back", minStage: 1 },
+        { type: "nose", style: "big", muzzle: "dark", layer: "front", minStage: 1 },
+        { type: "paws", layer: "front", minStage: 1 }],
+      variants: { classic: { name: "river", base: [28, 40, 45], light: [30, 30, 62], dark: [25, 40, 28], nose: [25, 30, 20] } }
+    }
+  };
+  // Archetype creatures (specs/*.json) that can also be summoned, keyed by spec id.
+  const FOLK = {
+    "keeper-latam": "Jaguar", "healer-latam": "Axolotl", "seer-latam": "Monarch butterfly", "flame-latam": "Fire hummingbird",
+    "wanderer-latam": "Sea turtle", "shadow-latam": "Bat", "wild-latam": "Wolf", "trickster-latam": "Coyote",
+    "trickster-slavic": "Fox", "shadow-slavic": "Raven", "keeper-slavic": "Domovoi", "wild-slavic": "Leshy",
+    "flame-slavic": "Firebird", "seer-slavic": "Gamayun", "wanderer-slavic": "Crane", "healer-slavic": "Bereginya"
+  };
+
+  // ---------------- birthplaces ----------------
+  const COUNTRIES = {
+    MX: { name: "Mexico", lang: "es", pool: ["dog:xolo", "folk:healer-latam", "folk:seer-latam", "folk:keeper-latam", "macaw:guacamaya", "folk:flame-latam", "octopus:*"], charm: { shape: "flower", hue: 30, label: "cempasúchil marigold" } },
+    BR: { name: "Brazil", lang: "pt", pool: ["dog:caramelo", "macaw:arara_azul", "toucan:classic", "capybara:classic", "folk:keeper-latam", "cat:*"], charm: { shape: "flower", hue: 50, label: "yellow ipê blossom" } },
+    AR: { name: "Argentina", lang: "es", pool: ["capybara:classic", "owl:brown", "dog:caramelo", "cat:*", "folk:wild-latam"], charm: { shape: "flower", hue: 355, sat: 85, lum: 50, label: "ceibo flower" } },
+    CO: { name: "Colombia", lang: "es", pool: ["macaw:guacamaya", "folk:flame-latam", "toucan:classic", "octopus:*", "folk:seer-latam"], charm: { shape: "flower", hue: 285, sat: 60, lum: 65, label: "orchid" } },
+    PE: { name: "Peru", lang: "es", pool: ["owl:brown", "folk:flame-latam", "macaw:guacamaya", "capybara:classic", "folk:keeper-latam"], charm: { shape: "flower", hue: 345, label: "kantuta flower" } },
+    CL: { name: "Chile", lang: "es", pool: ["seal:classic", "owl:brown", "jellyfish:spirit", "octopus:*", "folk:wanderer-latam"], charm: { shape: "flower", hue: 350, sat: 80, lum: 48, label: "copihue flower" } },
+    RU: { name: "Russia", lang: "ru", pool: ["dog:laika", "cat:russian_blue", "owl:snowy", "bullfinch:classic", "seal:classic", "folk:trickster-slavic", "folk:shadow-slavic", "folk:keeper-slavic", "folk:wild-slavic", "folk:flame-slavic"], charm: { shape: "berries", hue: 8, label: "rowan berries" } },
+    XX: { name: "Somewhere else", lang: "en", pool: ["red_panda:classic", "panda:classic", "cat:*", "dog:golden", "owl:brown", "octopus:*", "jellyfish:spirit"], charm: { shape: "star", hue: 48, label: "star" } }
+  };
+  const FAVOURITES = ["red_panda:classic", "panda:classic", "cat:*", "dog:*", "octopus:*", "jellyfish:spirit"];
+  const BY_TEMPERAMENT = { // a wild card that suits the personality
+    calm: ["panda:classic", "seal:classic", "capybara:classic", "jellyfish:spirit"],
+    lively: ["dog:*", "macaw:*", "bullfinch:classic", "folk:flame-latam"],
+    head: ["owl:*", "octopus:*", "folk:shadow-slavic"],
+    heart: ["red_panda:classic", "folk:healer-latam", "cat:*"]
+  };
+
+  // ---------------- archetypes (the daemon's voice) ----------------
+  // nearest target in (energy, social, mind, spirit)
+  const ARCHETYPES = {
+    keeper: [0.2, 0.4, 0.3, 0.1], trickster: [0.8, 0.8, 0.5, 0.9], seer: [0.3, 0.3, 0.2, 0.5], wild: [0.8, 0.2, 0.4, 0.8],
+    healer: [0.3, 0.7, 0.1, 0.3], shadow: [0.4, 0.2, 0.8, 0.7], wanderer: [0.7, 0.5, 0.7, 0.6], flame: [0.9, 0.8, 0.4, 0.3]
+  };
+  const ARCH_NAMES = { keeper: "Guardian", trickster: "Trickster", seer: "Seer", wild: "Wild One", healer: "Healer", shadow: "Shadow", wanderer: "Wanderer", flame: "Flame" };
+
+  const ELEMENT_HS = { fire: [22, 88], water: [192, 70], earth: [104, 46], air: [268, 55], moon: [222, 26] };
+  // ---------------- helpers ----------------
+  function hash(s) { let h = 2166136261; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function rng(seed) { let a = seed; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
+
+  function zodiac(dateStr) {
+    const d = new Date(dateStr + "T12:00:00Z"); if (isNaN(d)) return { sign: "Unknown", element: "water" };
+    const md = (d.getUTCMonth() + 1) * 100 + d.getUTCDate();
+    const signs = [[120, "Capricorn", "earth"], [219, "Aquarius", "air"], [321, "Pisces", "water"], [420, "Aries", "fire"], [521, "Taurus", "earth"], [621, "Gemini", "air"],
+                   [723, "Cancer", "water"], [823, "Leo", "fire"], [923, "Virgo", "earth"], [1023, "Libra", "air"], [1122, "Scorpio", "water"], [1222, "Sagittarius", "fire"], [1232, "Capricorn", "earth"]];
+    for (const [end, sign, element] of signs) if (md < end) return { sign, element };
+    return { sign: "Capricorn", element: "earth" };
+  }
+
+  function archetypeFor(t) {
+    let best = null, bestD = 1e9;
+    for (const [id, v] of Object.entries(ARCHETYPES)) {
+      const d = (t.energy - v[0]) ** 2 + (t.social - v[1]) ** 2 + (t.mind - v[2]) ** 2 + (t.spirit - v[3]) ** 2;
+      if (d < bestD) { bestD = d; best = id; }
+    }
+    return best;
+  }
+
+  // ---------------- build one spec ----------------
+  let spec_rebelCoat = false;
+  function build(key, profile, r, folkSpecs) {
+    spec_rebelCoat = false;
+    const [kind, variantKey] = key.split(":");
+    const t = profile, z = zodiac(profile.birthDate), country = COUNTRIES[profile.country] || COUNTRIES.XX;
+    const reasons = [];
+    let spec, title;
+    if (kind === "folk") {
+      spec = clone(folkSpecs[variantKey]); title = FOLK[variantKey];
+      // keep the folk spirit's own colours as its coat; the zodiac element only tints aura and sigil
+      const e = ELEMENT_HS[spec.element] || ELEMENT_HS.water, h = e[0] + (spec.hueShift || 0);
+      spec.coat = { base: [h, e[1], 52], light: [h, e[1] * 0.7, 78], dark: [h, e[1], 22], accent: [h, Math.max(45, e[1]), 58], accent2: [h + 40, Math.max(45, e[1]), 58], nose: [h, e[1] * 0.6, 18] };
+      reasons.push(`${title}, a spirit from the folklore of ${country.name}`);
+    } else {
+      const sp = SPECIES[kind];
+      const vKeys = Object.keys(sp.variants);
+      let vk = variantKey === "*" || !variantKey ? pick(r, vKeys) : variantKey;
+      if (variantKey === "*" && t.spirit > 0.7 && kind === "cat") { vk = pick(r, ["black", "siamese", "calico"]); spec_rebelCoat = true; }
+      const v = sp.variants[vk];
+      spec = { id: `${kind}-${vk}`, archetype: null, form: "species", creature: sp.local[country.lang] || sp.name,
+               element: z.element, hueShift: 0, body: clone(sp.body), eyes: clone(sp.eyes), parts: clone(sp.parts),
+               markings: clone(v.markings || sp.markings || []), tempo: sp.tempo || 1 };
+      if (v.extraMarkings) spec.markings.push(...clone(v.extraMarkings));
+      if (!v.spirit) spec.coat = { base: v.base, light: v.light, dark: v.dark, accent: v.accent, accent2: v.accent2, nose: v.nose };
+      if (v.iris) spec.eyes.iris = v.iris;
+      if (v.beak) spec.parts.forEach(p => { if (p.type === "beak") p.color = v.beak; });
+      for (const [type, changes] of Object.entries(v.swap || {})) spec.parts.forEach(p => { if (p.type === type) Object.assign(p, changes); });
+      title = `${sp.name}${v.name && vKeys.length > 1 ? ` (${v.name})` : ""}`;
+      const local = country.pool.some(k => k.startsWith(kind + ":")) && country.name !== "Somewhere else";
+      reasons.push(local ? `${title}: a creature of ${country.name}` : `${title}: answered your call`);
+    }
+    // ---- personality shapes the body ----
+    spec.element = z.element;
+    reasons.push(`${z.sign}, ${z.element === "earth" || z.element === "air" ? "an" : "a"} ${z.element} sign: ${z.element} aura and sigil`);
+    spec.tempo = (spec.tempo || 1) * (0.7 + 0.6 * t.energy);
+    spec.body = Object.assign({ w: 0.96, squash: 1.07 }, spec.body);
+    spec.body.w *= 1.04 - 0.1 * t.energy; spec.body.squash *= 0.97 + 0.08 * t.energy;
+    spec.body.cheeks = (spec.body.cheeks || 0) + 0.06 * (1 - t.energy);
+    reasons.push(t.energy < 0.4 ? "calm: rounder, slow breathing" : t.energy > 0.6 ? "energetic: leaner, quick movements" : "balanced energy: steady rhythm");
+    spec.eyes = Object.assign({}, spec.eyes, { size: spec.eyes.size * (0.9 + 0.25 * t.social), lid: Math.max(spec.eyes.lid || 0, (1 - t.social) * 0.2) });
+    reasons.push(t.social > 0.6 ? "extrovert: big open eyes" : t.social < 0.4 ? "introvert: soft half-lidded gaze" : "ambivert: attentive eyes");
+    if (t.mind < 0.4) { spec.markings.push({ style: "blush" }); reasons.push("led by the heart: warm blush"); }
+    if (t.mind > 0.6) reasons.push("led by the head: a sharper, many-pointed sigil");
+    if (t.spirit > 0.65) {
+      const ear = spec.parts.find(p => p.type === "ear" && p.style === "pointed");
+      if (ear) { ear.bent = r() < 0.5 ? -1 : 1; reasons.push("a rebel streak: one ear bent its own way"); }
+      else if (spec_rebelCoat) reasons.push("a rebel streak: an unusual coat");
+    }
+    // ---- birthplace charm ----
+    spec.parts.push(Object.assign({ type: "charm", layer: "front", minStage: 1 }, country.charm));
+    reasons.push(profile.country === "XX" || !COUNTRIES[profile.country] ? "talisman: a small star" : `talisman: ${country.charm.label} from ${country.name}`);
+    spec.sigilOpts = { points: Math.round(5 + 4 * t.mind) };
+    return { spec, title, reasons };
+  }
+
+  function summon(profile, folkSpecs) {
+    const p = Object.assign({ name: "Daemon", country: "XX", birthDate: "2000-01-01", energy: 0.5, social: 0.5, mind: 0.5, spirit: 0.5 }, profile);
+    const r = rng(hash(`${p.name.trim().toLowerCase()}|${p.birthDate}|${p.country}`));
+    const country = COUNTRIES[p.country] || COUNTRIES.XX;
+    const temper = p.energy < 0.4 ? "calm" : p.energy > 0.65 ? "lively" : p.mind > 0.55 ? "head" : "heart";
+    const chosen = [];
+    const weighted = (opts) => { const w = opts.map((_, i) => 1 / (1 + 0.6 * i)), tot = w.reduce((a, b) => a + b, 0); let x = r() * tot; for (let i = 0; i < opts.length; i++) { x -= w[i]; if (x <= 0) return opts[i]; } return opts[opts.length - 1]; };
+    const take = (list, weigh) => { const opts = list.filter(k => !chosen.some(c => c.split(":")[0] === k.split(":")[0] && (k.split(":")[0] !== "folk" || c === k))); if (opts.length) chosen.push(weigh ? weighted(opts) : pick(r, opts)); };
+    take(country.pool, true); take(FAVOURITES); take(BY_TEMPERAMENT[temper]);
+    while (chosen.length < 3) take(FAVOURITES.concat(COUNTRIES.XX.pool));
+    const archetype = archetypeFor(p);
+    return chosen.map(key => {
+      const c = build(key, p, r, folkSpecs);
+      c.spec.archetype = archetype;
+      c.archetype = archetype; c.archetypeName = ARCH_NAMES[archetype];
+      return c;
+    });
+  }
+
+  root.DaemonSpecies = { summon, zodiac, archetypeFor, SPECIES, COUNTRIES, ARCH_NAMES, build };
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
+<script>
 const DAEMON_SPECS = [{"id":"flame-latam","archetype":"flame","form":"latam","creature":"colibrí de fuego","element":"fire","hueShift":0,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"round","size":0.2,"spacing":0.36,"y":-0.1},"parts":[{"type":"crest","style":"flame","count":5,"height":1.1,"layer":"back"},{"type":"wing","style":"blur","span":1.1,"layer":"back"},{"type":"beak","length":0.75,"layer":"front","slim":true}],"markings":[]},{"id":"flame-slavic","archetype":"flame","form":"slavic","creature":"жар-птица","element":"fire","hueShift":18,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"almond","size":0.16,"spacing":0.35,"y":-0.12},"parts":[{"type":"crest","style":"flame","count":5,"height":1.0,"layer":"back"},{"type":"tail","style":"plume","length":1.7,"count":7,"side":0,"layer":"back","tip":"eye"},{"type":"wing","style":"feather","span":1.25,"feathers":6,"layer":"back"}],"markings":[]},{"id":"healer-latam","archetype":"healer","form":"latam","creature":"ajolote","element":"water","hueShift":140,"body":{"squash":0.98,"wobble":[[3,0.03,0.7],[5,0.018,-1.0],[8,0.01,1.6]]},"eyes":{"shape":"round","size":0.17,"spacing":0.34,"y":-0.12},"parts":[{"type":"fronds","count":3,"length":0.7,"layer":"back","hue":150}],"markings":[{"style":"blush"}]},{"id":"healer-slavic","archetype":"healer","form":"slavic","creature":"берегиня","element":"water","hueShift":-10,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"almond","size":0.16,"spacing":0.35,"y":-0.12},"parts":[{"type":"hair","strands":12,"length":1.5,"layer":"back"},{"type":"wreath","style":"flowers","count":7,"layer":"top","hue":160}],"markings":[{"style":"blush"}]},{"id":"keeper-latam","archetype":"keeper","form":"latam","creature":"jaguar guardián","element":"earth","hueShift":-62,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"almond","size":0.16,"spacing":0.35,"y":-0.12},"parts":[{"type":"ear","style":"round","angle":0.62,"size":0.3,"droop":0.25,"layer":"back","minStage":1},{"type":"tail","style":"rope","length":1.5,"side":1,"layer":"back","tip":"dark"}],"markings":[{"style":"rosettes","count":9}]},{"id":"keeper-slavic","archetype":"keeper","form":"slavic","creature":"домовой","element":"earth","hueShift":-40,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"round","size":0.17,"spacing":0.34,"y":-0.12},"parts":[{"type":"ear","style":"round","angle":0.7,"size":0.22,"droop":0.2,"layer":"back","minStage":1},{"type":"beard","length":0.75,"strands":9,"layer":"front","minStage":1},{"type":"hat","height":0.7,"layer":"top","minStage":3}],"markings":[]},{"id":"seer-latam","archetype":"seer","form":"latam","creature":"mariposa monarca","element":"water","hueShift":0,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"round","size":0.2,"spacing":0.36,"y":-0.1},"parts":[{"type":"wing","style":"butterfly","span":1.25,"layer":"back","veins":true,"spots":true},{"type":"antennae","length":0.6,"layer":"back"}],"markings":[]},{"id":"seer-slavic","archetype":"seer","form":"slavic","creature":"Гамаюн","element":"water","hueShift":40,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"almond","size":0.16,"spacing":0.35,"y":-0.12},"parts":[{"type":"wing","style":"feather","span":1.35,"feathers":7,"layer":"back"},{"type":"crest","style":"feathers","count":5,"height":0.75,"layer":"back"},{"type":"tail","style":"plume","length":1.3,"count":5,"side":0,"layer":"back","tip":"light"}],"markings":[]},{"id":"shadow-latam","archetype":"shadow","form":"latam","creature":"murciélago","element":"moon","hueShift":40,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"narrow","size":0.16,"spacing":0.34,"y":-0.14,"special":"none"},"parts":[{"type":"wing","style":"bat","span":1.55,"layer":"back"},{"type":"ear","style":"pointed","angle":0.5,"size":1.45,"width":0.34,"droop":0.4,"layer":"back","inner":"light"},{"type":"fangs","layer":"front"}],"markings":[]},{"id":"shadow-slavic","archetype":"shadow","form":"slavic","creature":"ворон","element":"moon","hueShift":10,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"narrow","size":0.16,"spacing":0.34,"y":-0.14,"special":"silverRight"},"parts":[{"type":"wing","style":"feather","span":1.4,"feathers":6,"layer":"back","dark":true},{"type":"beak","length":0.42,"layer":"front"},{"type":"crest","style":"feathers","count":3,"height":0.45,"layer":"back","dark":true}],"markings":[]},{"id":"trickster-latam","archetype":"trickster","form":"latam","creature":"coyote","element":"air","hueShift":-236,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"almond","size":0.16,"spacing":0.35,"y":-0.12},"parts":[{"type":"ear","style":"pointed","angle":0.58,"size":1.75,"width":0.3,"droop":0.5,"layer":"back"},{"type":"tail","style":"bushy","length":1.6,"side":1,"layer":"back","tip":"dark"},{"type":"mane","count":7,"length":0.22,"layer":"back"}],"markings":[]},{"id":"trickster-slavic","archetype":"trickster","form":"slavic","creature":"лиса","element":"fire","hueShift":-4,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"almond","size":0.16,"spacing":0.35,"y":-0.12},"parts":[{"type":"ear","style":"pointed","angle":0.55,"size":1.65,"width":0.3,"droop":0.5,"layer":"back","inner":"light"},{"type":"tail","style":"bushy","length":1.8,"side":1,"layer":"back","tip":"light"},{"type":"muzzle","layer":"front"}],"markings":[]},{"id":"wanderer-latam","archetype":"wanderer","form":"latam","creature":"tortuga marina","element":"water","hueShift":-30,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"round","size":0.17,"spacing":0.34,"y":-0.12},"parts":[{"type":"dome","plates":6,"layer":"back"},{"type":"flippers","span":0.9,"layer":"back"}],"markings":[]},{"id":"wanderer-slavic","archetype":"wanderer","form":"slavic","creature":"журавль","element":"air","hueShift":-60,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"almond","size":0.16,"spacing":0.35,"y":-0.12},"parts":[{"type":"wing","style":"feather","span":1.5,"feathers":8,"layer":"back"},{"type":"crest","style":"plume","count":3,"height":0.8,"layer":"back","hue":-230},{"type":"beak","length":0.6,"layer":"front","slim":true}],"markings":[]},{"id":"wild-latam","archetype":"wild","form":"latam","creature":"lobo","element":"earth","hueShift":95,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"narrow","size":0.16,"spacing":0.34,"y":-0.14},"parts":[{"type":"ear","style":"pointed","angle":0.6,"size":1.5,"width":0.32,"droop":0.6,"layer":"back"},{"type":"mane","count":11,"length":0.32,"layer":"back"},{"type":"muzzle","layer":"front"}],"markings":[]},{"id":"wild-slavic","archetype":"wild","form":"slavic","creature":"леший","element":"earth","hueShift":0,"body":{"squash":1.07,"wobble":[[3,0.035,0.9],[5,0.022,-1.4],[8,0.012,2.1]]},"eyes":{"shape":"round","size":0.17,"spacing":0.34,"y":-0.12},"parts":[{"type":"antlers","height":0.95,"tines":3,"layer":"back"},{"type":"wreath","style":"leaves","count":9,"layer":"top"},{"type":"beard","length":0.55,"strands":7,"layer":"front","color":"accent","hue":-40}],"markings":[{"style":"bark","count":5}]}];
 (() => {
-  const ARCH = [
-    ["keeper", "Guardian", "I closed the door for a moment. Nothing comes in that you don't invite."],
-    ["trickster", "Trickster", "Waiting for the perfect sign again? I'm the sign. Move."],
-    ["seer", "Seer", "The Star came out again. Something in you is already healing."],
-    ["wild", "Wild One", "Three days thinking. Not today. Go outside, then we talk."],
-    ["healer", "Healer", "You don't have to be fine today. Breathe with me a moment."],
-    ["shadow", "Shadow", "You say you don't care. Fourth time. Who are you convincing?"],
-    ["wanderer", "Wanderer", "Turtles cross oceans without maps. You only have to cross this week."],
-    ["flame", "Flame", "You want it! You said it. Now do one thing today that brings it closer."]
-  ];
+  const LINES = {
+    keeper: "I closed the door for a moment. Nothing comes in that you don't invite.",
+    trickster: "Waiting for the perfect sign again? I'm the sign. Move.",
+    seer: "The Star came out again. Something in you is already healing.",
+    wild: "Three days thinking. Not today. Go outside, then we talk.",
+    healer: "You don't have to be fine today. Breathe with me a moment.",
+    shadow: "You say you don't care. Fourth time. Who are you convincing?",
+    wanderer: "Turtles cross oceans without maps. You only have to cross this week.",
+    flame: "You want it! You said it. Now do one thing today that brings it closer."
+  };
   const STAGES = [
     ["Spark", "Replies only when spoken to. Faint sigil, no aura, features still forming."],
-    ["Kindled", "May send the morning omen. Aura motes appear and its features show."],
+    ["Kindled", "May send the morning omen. Aura motes appear."],
     ["Bonded", "May follow up on things you told it. Its features are fully grown."],
     ["Awakened", "May write weekly insights. A crown of motes circles it."],
     ["Sovereign", "Full freedom within the hard limits. A second sigil ring and a halo."]
   ];
   const MAJOR = ["The Fool","The Magician","The High Priestess","The Empress","The Emperor","The Hierophant","The Lovers","The Chariot","Strength","The Hermit","Wheel of Fortune","Justice","The Hanged Man","Death","Temperance","The Devil","The Tower","The Star","The Moon","The Sun","Judgement","The World"];
   const ROMAN = ["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"];
-  const SPEC = Object.fromEntries(DAEMON_SPECS.map(s => [s.id, s]));
+  const FOLK = Object.fromEntries(DAEMON_SPECS.map(s => [s.id, s]));
   const $ = id => document.getElementById(id);
-  const cv = $("cv"), ctx = cv.getContext("2d");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const st = { arch: 2, form: "latam", name: "Itzel", stage: 3, mode: "idle", calm: false, reduce,
-    A: 0.2, I: 0.2, restA: 0.2, restI: 0.2, blink: 0, nextBlink: 2, look: { x: 0, y: 0 }, lookTarget: { x: 0, y: 0 }, nextLook: 1,
-    card: null, timers: [], sigil: DaemonRender.makeSigil("Itzel"), motes: [] };
-  const spec = () => SPEC[`${ARCH[st.arch][0]}-${st.form}`];
+  const newState = (name, opts) => ({ stage: 3, mode: "idle", calm: false, reduce, A: 0.25, I: 0.2, restA: 0.25, restI: 0.2, blink: 0, nextBlink: 2 + Math.random() * 2,
+    look: { x: 0, y: 0 }, lookTarget: { x: 0, y: 0 }, nextLook: Math.random() * 2, sigil: DaemonRender.makeSigil(name, opts), motes: [] });
 
-  // Creatura-style Affect: two channels, coupled, decaying toward rest.
-  function feel(dA, dI) { st.A = Math.min(1, st.A + dA); st.I = Math.min(1, st.I + dI); if (dA > 0) st.I = Math.max(0, st.I - 0.2 * dA); if (dI > 0) st.A = Math.max(0, st.A - 0.2 * dI); }
-  function decay(dt) { const k = 1 - Math.pow(0.75, dt); st.A += (st.restA - st.A) * k; st.I += (st.restI - st.I) * k; }
-
-  let W = 0, H = 0;
-  function resize() { const dpr = Math.min(2, devicePixelRatio || 1); W = H = cv.clientWidth; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  // ---- main daemon ----
+  const cv = $("cv"), ctx = cv.getContext("2d");
+  let cur = { spec: FOLK["seer-latam"], title: "Monarch butterfly", archetype: "seer" };
+  let st = Object.assign(newState("Itzel"), { card: null, timers: [] });
+  let W = 0;
+  function resize() { const dpr = Math.min(2, devicePixelRatio || 1); W = cv.clientWidth; cv.width = cv.height = Math.round(W * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
   new ResizeObserver(resize).observe(cv);
 
-  function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  function feel(dA, dI) { st.A = Math.min(1, st.A + dA); st.I = Math.min(1, st.I + dI); if (dA > 0) st.I = Math.max(0, st.I - 0.2 * dA); if (dI > 0) st.A = Math.max(0, st.A - 0.2 * dI); }
+  function tickLife(s, dt) {
+    if (!s.calm) { const k = 1 - Math.pow(0.75, dt); s.A += (s.restA - s.A) * k; s.I += (s.restI - s.I) * k; }
+    s.nextBlink -= dt; if (s.nextBlink <= 0) { s.blinkT = 0; s.nextBlink = 2.5 + Math.random() * 4; }
+    if (s.blinkT !== undefined) { s.blinkT += dt; const b = s.blinkT / 0.18; s.blink = b < 1 ? Math.sin(b * Math.PI) : 0; if (b >= 1) s.blinkT = undefined; }
+    s.nextLook -= dt;
+    if (s.mode === "listening") s.lookTarget = { x: 0.1, y: 0.9 };
+    else if (s.mode === "consulting") s.lookTarget = { x: 0, y: -0.9 };
+    else if (s.card) s.lookTarget = { x: 0.9, y: 0.4 };
+    else if (s.nextLook <= 0) { s.lookTarget = { x: (Math.random() - 0.5) * 1.4, y: (Math.random() - 0.5) * 0.8 }; s.nextLook = 1.5 + Math.random() * 3; }
+    s.look.x += (s.lookTarget.x - s.look.x) * Math.min(1, dt * 8); s.look.y += (s.lookTarget.y - s.look.y) * Math.min(1, dt * 8);
+  }
+  function roundRect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
   function drawCard(info, t) {
     const c = st.card; if (!c) return;
     const { R, p, cx, cy } = info, hs = DaemonRender.hsla;
     const age = t - c.t0, flip = Math.min(1, Math.max(0, (age - 0.2) / 0.9)), face = flip > 0.5;
-    const w = R * 0.95, h = w * 1.65, x = cx + R * 1.75, y = cy + R * 0.4;
-    ctx.save(); ctx.translate(x, y); ctx.globalAlpha = Math.min(1, age / 0.25); ctx.scale(Math.max(0.02, Math.abs(Math.cos(flip * Math.PI))), 1);
+    const w = R * 0.95, h = w * 1.65;
+    ctx.save(); ctx.translate(cx + R * 1.8, cy + R * 0.4); ctx.globalAlpha = Math.min(1, age / 0.25); ctx.scale(Math.max(0.02, Math.abs(Math.cos(flip * Math.PI))), 1);
     if (face && c.reversed) ctx.rotate(Math.PI);
     ctx.fillStyle = face ? "hsl(40,35%,90%)" : hs(p.h, 30, 16, 1); ctx.strokeStyle = hs(p.h, p.s, face ? 35 : 70, 1); ctx.lineWidth = 2;
-    roundRect(-w / 2, -h / 2, w, h, 8); ctx.fill(); ctx.stroke();
+    roundRect(ctx, -w / 2, -h / 2, w, h, 8); ctx.fill(); ctx.stroke();
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    if (!face) {
-      ctx.strokeStyle = hs(p.h, p.s, 70, 0.6); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, 0, w * 0.3, 0, Math.PI * 2); ctx.stroke();
-    } else {
+    if (!face) { ctx.strokeStyle = hs(p.h, p.s, 70, 0.6); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, 0, w * 0.3, 0, Math.PI * 2); ctx.stroke(); }
+    else {
       ctx.fillStyle = "hsl(30,30%,18%)"; ctx.font = `${Math.round(w * 0.16)}px "Marcellus SC", Georgia, serif`; ctx.fillText(ROMAN[c.i], 0, -h * 0.36);
       ctx.strokeStyle = hs(p.h, p.s, 40, 0.8); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(0, -h * 0.03, w * 0.26, 0, Math.PI * 2); ctx.stroke();
-      ctx.fillStyle = hs(p.h, p.s, 45, 0.85); ctx.beginPath(); ctx.arc(0, -h * 0.03, w * 0.08, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = "hsl(30,30%,18%)"; ctx.font = `${Math.round(w * 0.12)}px "Marcellus SC", Georgia, serif`;
-      const lines = []; let cur = "";
-      for (const wd of MAJOR[c.i].split(" ")) { const tst = cur ? cur + " " + wd : wd; if (ctx.measureText(tst).width > w * 0.85 && cur) { lines.push(cur); cur = wd; } else cur = tst; }
-      lines.push(cur); lines.forEach((ln, i) => ctx.fillText(ln, 0, h * 0.3 + (i - (lines.length - 1) / 2) * w * 0.14));
+      const lines = []; let ln = "";
+      for (const wd of MAJOR[c.i].split(" ")) { const tst = ln ? ln + " " + wd : wd; if (ctx.measureText(tst).width > w * 0.85 && ln) { lines.push(ln); ln = wd; } else ln = tst; }
+      lines.push(ln); lines.forEach((x, i) => ctx.fillText(x, 0, h * 0.3 + (i - (lines.length - 1) / 2) * w * 0.14));
     }
     ctx.restore();
   }
 
+  // ---- candidates ----
+  let cands = [];
+  function renderCands(list) {
+    const box = $("cands"); box.innerHTML = "";
+    cands = list.map((c, i) => {
+      const el = document.createElement("article"); el.className = "cand";
+      el.innerHTML = `<canvas aria-label="${c.title}"></canvas><div class="info"><div class="title">${c.title}</div><ul>${c.reasons.map(r => `<li>${r}</li>`).join("")}<li>voice: ${c.archetypeName}</li></ul></div>`;
+      const b = document.createElement("button"); b.type = "button"; b.className = "pick"; b.textContent = "Choose this daemon";
+      b.addEventListener("click", () => choose(i)); el.appendChild(b); box.appendChild(el);
+      const canvas = el.querySelector("canvas");
+      return { c, el, canvas, ctx: canvas.getContext("2d"), st: newState($("name").value, c.spec.sigilOpts) };
+    });
+  }
+  function choose(i) {
+    const c = cands[i].c; cur = c;
+    cands.forEach((x, j) => x.el.setAttribute("aria-current", String(i === j)));
+    st = Object.assign(newState($("name").value, c.spec.sigilOpts), { stage: st.stage, card: null, timers: [] });
+    clearTimers(); setMode("idle"); say(LINES[c.archetype]);
+  }
+  function doSummon() {
+    const prof = { name: $("name").value || "Daemon", country: $("country").value, birthDate: $("bday").value,
+      energy: +$("energy").value, social: +$("social").value, mind: +$("mind").value, spirit: +$("spirit").value };
+    renderCands(DaemonSpecies.summon(prof, FOLK)); choose(0);
+  }
+
+  // ---- loop ----
   let last = performance.now() / 1000;
   function frame(now) {
     const t = now / 1000 * (reduce ? 0.25 : 1), dt = Math.min(0.05, now / 1000 - last); last = now / 1000;
-    if (!st.calm) decay(dt);
-    st.nextBlink -= dt; if (st.nextBlink <= 0) { st.blinkT = 0; st.nextBlink = 2.5 + Math.random() * 4; }
-    if (st.blinkT !== undefined) { st.blinkT += dt; const b = st.blinkT / 0.18; st.blink = b < 1 ? Math.sin(b * Math.PI) : 0; if (b >= 1) st.blinkT = undefined; }
-    st.nextLook -= dt;
-    if (st.mode === "listening") st.lookTarget = { x: 0.1, y: 0.9 };
-    else if (st.mode === "consulting") st.lookTarget = { x: 0, y: -0.9 };
-    else if (st.card) st.lookTarget = { x: 0.9, y: 0.4 };
-    else if (st.nextLook <= 0) { st.lookTarget = { x: (Math.random() - 0.5) * 1.4, y: (Math.random() - 0.5) * 0.8 }; st.nextLook = 1.5 + Math.random() * 3; }
-    st.look.x += (st.lookTarget.x - st.look.x) * Math.min(1, dt * 8); st.look.y += (st.lookTarget.y - st.look.y) * Math.min(1, dt * 8);
-    ctx.clearRect(0, 0, W, H);
-    const info = DaemonRender.render(ctx, spec(), st, t, dt, { cx: W * (st.card ? 0.4 : 0.5), cy: H * 0.5, size: W });
+    tickLife(st, dt);
+    ctx.clearRect(0, 0, W, W);
+    const info = DaemonRender.render(ctx, cur.spec, st, t, dt, { cx: W * (st.card ? 0.4 : 0.5), cy: W * 0.5, size: W });
     drawCard(info, t);
+    for (const k of cands) {
+      const cw = k.canvas.clientWidth; if (!cw) continue;
+      const dpr = Math.min(2, devicePixelRatio || 1);
+      if (k.canvas.width !== Math.round(cw * dpr)) { k.canvas.width = k.canvas.height = Math.round(cw * dpr); }
+      k.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); k.ctx.clearRect(0, 0, cw, cw);
+      tickLife(k.st, dt); DaemonRender.render(k.ctx, k.c.spec, k.st, t, dt, { cx: cw / 2, cy: cw * 0.5, size: cw * 1.05 });
+    }
     for (const [k, v] of [["A", st.A], ["I", st.I], ["R", st.restI]]) { $("bar" + k).firstElementChild.style.width = (v * 100).toFixed(1) + "%"; $("val" + k).textContent = v.toFixed(2); }
     requestAnimationFrame(frame);
   }
 
-  const sel = $("arch");
-  ARCH.forEach(([id, label], i) => { const o = document.createElement("option"); o.value = i; o.textContent = label; sel.appendChild(o); });
-  sel.value = 2;
+  // ---- controls ----
+  const browse = $("browse");
+  const all = [];
+  for (const [id, label] of Object.entries({ "keeper-latam": "Jaguar", "keeper-slavic": "Domovoi", "trickster-latam": "Coyote", "trickster-slavic": "Fox", "seer-latam": "Monarch butterfly", "seer-slavic": "Gamayun", "wild-latam": "Wolf", "wild-slavic": "Leshy", "healer-latam": "Axolotl", "healer-slavic": "Bereginya", "shadow-latam": "Bat", "shadow-slavic": "Raven", "wanderer-latam": "Sea turtle", "wanderer-slavic": "Crane", "flame-latam": "Fire hummingbird", "flame-slavic": "Firebird" }))
+    all.push({ key: "folk:" + id, label: label + " (folklore)" });
+  for (const [k, sp] of Object.entries(DaemonSpecies.SPECIES)) for (const [vk, v] of Object.entries(sp.variants)) all.push({ key: `${k}:${vk}`, label: sp.name + (Object.keys(sp.variants).length > 1 ? ` (${v.name})` : "") });
+  all.sort((a, b) => a.label.localeCompare(b.label));
+  browse.innerHTML = `<option value="">Choose a creature…</option>` + all.map(a => `<option value="${a.key}">${a.label}</option>`).join("");
+  browse.addEventListener("change", () => {
+    if (!browse.value) return;
+    const prof = { name: $("name").value || "Daemon", country: $("country").value, birthDate: $("bday").value, energy: +$("energy").value, social: +$("social").value, mind: +$("mind").value, spirit: +$("spirit").value };
+    const c = DaemonSpecies.build(browse.value, prof, () => 0.3, FOLK);
+    c.archetype = DaemonSpecies.archetypeFor(prof); c.archetypeName = DaemonSpecies.ARCH_NAMES[c.archetype];
+    cur = c; cands.forEach(x => x.el.setAttribute("aria-current", "false"));
+    st = Object.assign(newState($("name").value, c.spec.sigilOpts), { stage: st.stage, card: null, timers: [] });
+    clearTimers(); setMode("idle"); say(LINES[c.archetype]);
+  });
   const statesEl = $("states");
   [["idle", "Idle"], ["listening", "Listening"], ["consulting", "Consulting"], ["speaking", "Speaking"]].forEach(([id, label]) => {
     const b = document.createElement("button"); b.type = "button"; b.dataset.mode = id; b.textContent = label; b.addEventListener("click", () => setMode(id, true)); statesEl.appendChild(b);
   });
-  const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-  function say(text) { $("caption").innerHTML = `<span class="who">${esc(st.name || "Daemon")}</span> <span class="form">· ${esc(spec().creature)}</span>&nbsp; ${esc(text)}`; }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function say(text) { $("caption").innerHTML = `<span class="who">${esc($("name").value || "Daemon")}</span> <span class="form">· ${esc(cur.title)}</span>&nbsp; ${esc(text)}`; }
   function clearTimers() { st.timers.forEach(clearTimeout); st.timers = []; }
   function setMode(m, manual) {
     if (manual) clearTimers();
-    st.mode = m;
-    statesEl.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === m)));
+    st.mode = m; statesEl.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === m)));
     if (m === "idle") st.card = null;
-    if (!manual) return;
-    say({ idle: "is resting beside you.", listening: "is listening while you write.", consulting: "is consulting the signs.", speaking: ARCH[st.arch][2] }[m]);
+    if (manual) say({ idle: "is resting beside you.", listening: "is listening while you write.", consulting: "is consulting the signs.", speaking: LINES[cur.archetype] }[m]);
   }
   function refreshStage() { const [n, d] = STAGES[st.stage - 1]; $("stageName").textContent = `${st.stage} · ${n}`; $("stageText").innerHTML = `<b>May do:</b> ${d}`; }
-  function changed() { clearTimers(); st.card = null; setMode("idle"); say(ARCH[st.arch][2]); }
-  sel.addEventListener("change", () => { st.arch = +sel.value; changed(); });
-  $("form").addEventListener("change", e => { st.form = e.target.value; changed(); });
-  $("name").addEventListener("input", e => { st.name = e.target.value; st.sigil = DaemonRender.makeSigil(st.name); });
-  $("stage").addEventListener("input", e => { st.stage = +e.target.value; refreshStage(); });
+  $("summon").addEventListener("click", doSummon);
+  $("stage").addEventListener("input", e => { st.stage = +e.target.value; cands.forEach(k => k.st.stage = st.stage); refreshStage(); });
   $("evGood").addEventListener("click", () => { if (st.calm) return; feel(0.45, 0); say("brightens. That's wonderful news."); });
   $("evWorry").addEventListener("click", () => { if (st.calm) return; feel(0, 0.45); say("draws closer. Tell me what's weighing on you."); });
   $("evBrave").addEventListener("click", () => { if (st.calm) return; feel(0.3, 0); st.restI = Math.max(0.05, st.restI - 0.03); say("glows. You faced it. Each time, the fear rests a little lower."); });
@@ -763,8 +1273,8 @@ const DAEMON_SPECS = [{"id":"flame-latam","archetype":"flame","form":"latam","cr
     st.timers.push(setTimeout(() => { st.card = { i, reversed, t0: performance.now() / 1000 * (reduce ? 0.25 : 1) }; setMode("speaking"); feel(0.15, 0); say(`turns the card: ${MAJOR[i]}${reversed ? ", reversed" : ""}. Let's look at what it asks of you.`); }, 1700));
     st.timers.push(setTimeout(() => setMode("idle"), 6500));
   });
-  window.__daemon = st; // for automated visual checks
-  resize(); refreshStage(); setMode("idle"); say(ARCH[st.arch][2]);
+  window.__forge = { get st() { return st; }, set: key => { browse.value = key; browse.dispatchEvent(new Event("change")); } }; // for automated visual checks
+  resize(); refreshStage(); doSummon();
   requestAnimationFrame(frame);
 })();
 </script>
