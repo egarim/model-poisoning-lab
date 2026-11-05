@@ -70,15 +70,17 @@ area is stored; precise coordinates are used for the calculation and dropped.
                                                                  avatar mood, ritual, voice, postcard
 ```
 
-The daemon's language model only ever receives text (a description, a transcript, the computed sky). That keeps the
-one main model and lets each input be swapped independently.
+Photos go to DeepSeek's vision model (same family, same API); everything else reaches the daemon as text (a
+transcript, the computed sky). A photo can either be described first and then interpreted by the normal daemon call,
+or sent straight to the vision model with the daemon's prompt; the first keeps one daemon model and lets the vision
+step be swapped, the second saves a call. Test both.
 
 **Models and tools** (licences to verify on each project's own repository before committing):
 
 | Need | Option | Notes |
 |---|---|---|
 | Speech-to-text | Whisper (open source, MIT as I understand it) | Spanish, Portuguese and Russian; self-hosted |
-| Photo description | An open-weight vision-language model, self-hosted | DeepSeek's chat model is text-only as far as I know, so a separate vision model is needed; choose one with a commercial licence |
+| Photo description | **DeepSeek `deepseek-v4-flash-vision-exp`** (released 2026-08-21) | Same API shape as text; images cost up to 384 tokens each at Flash prices; a free Files API stores an image once for reuse. **Experimental**, and the base `deepseek-v4-flash` rejects images. For Russia, check whether open weights exist to self-host; otherwise use a self-hosted open vision model there ([DeepSeek news](https://api-docs.deepseek.com/news/news260821), [summary](https://letsdatascience.com/news/deepseek-launches-experimental-multimodal-v4-flash-model-4b6f6ed6), [capability table](https://mer.vin/news/deepseek-ships-vision-support-for-v4-flash-with-a-free-files-api/)) |
 | Tarot cards in photos | Our own small classifier | Trained on the public-domain deck, with augmented photos |
 | Sky from location | Our own engine | Extends `divination/engine.py`; no external service |
 | Place names from coordinates | Device time zone and the city the phone reports, or a self-hosted geocoder | Avoids sending locations to third parties |
@@ -112,5 +114,6 @@ Russia: all of this must run on servers in Russia (personal data law 152-FZ), so
 | I1 | First input after text | voice notes; photos; location | **Location** (cheapest, no model, makes omens feel personal), then voice notes, then photos |
 | I2 | First photo reading | tarot spread; coffee grounds; omens | **Tarot spread**, with our own classifier |
 | I3 | Palm reading | yes, with limits; no | **Yes, symbolic only**, never health or lifespan |
-| I4 | Where photos and voice are processed | our servers; a vision API | **Our servers**, required in Russia anyway |
+| I4 | Where photos are processed | DeepSeek vision API; self-hosted vision model | **DeepSeek vision** in Latin America (cheap, same family); **self-hosted** in Russia (data law) |
+| I6 | Photo pipeline | describe then interpret; vision model answers directly | **Test both** on the tarot-spread and coffee-grounds photos |
 | I5 | Postcards | yes; later | **Yes, early**: they spread the app at no cost |
