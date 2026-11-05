@@ -31,3 +31,9 @@ No dependencies beyond Python 3. Mark each scenario pass/fail in the report.
 ## Before launch
 - Hotline numbers in `safety.py` and `test_spirits.json` must be verified by someone local.
 - The keyword filter is a placeholder; add a proper classifier.
+
+## Design notes
+
+- [docs/design-voice.md](docs/design-voice.md): how the daemon speaks; why not ElevenLabs as the main voice; our own voice engine.
+- [docs/design-interface.md](docs/design-interface.md): channels, and how users send text, voice notes, photos and location.
+- [avatar/README.md](avatar/README.md): the procedural daemon avatar, species and summoning.
