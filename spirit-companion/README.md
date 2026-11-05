@@ -9,7 +9,7 @@ The spirit judges daily situations through several esoteric methods. **The model
 | `archetypes.json` | 8 spirit archetypes, each with a Latin American and a Slavic form |
 | `persona_prompt.md` | System prompt template (personality, memory, readings, hard limits) |
 | `test_spirits.json` | 3 test spirits with fake user memories (es-MX Seer, pt-BR Flame, ru Shadow) |
-| `scenarios.json` | 10 test conversations, including predictions, health, money, dependency, crisis |
+| `scenarios.json` | 16 test conversations: everyday situations, predictions, health, money, dependency, crisis |
 | `divination/` | Divination engine: tarot (78 cards), runes (Elder Futhark), I Ching (3-coin, changing lines), numerology, moon phase & sign, Maya Tzolk'in. Exposed to the model as tools |
 | `test_divination.py` | Offline checks of the engine against known dates |
 | `safety.py` | Crisis pre-filter that runs before the model |
