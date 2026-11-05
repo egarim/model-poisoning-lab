@@ -1,0 +1,56 @@
+{
+ "id": "wild-latam",
+ "archetype": "wild",
+ "form": "latam",
+ "creature": "lobo",
+ "element": "earth",
+ "hueShift": 95,
+ "body": {
+  "squash": 1.07,
+  "wobble": [
+   [
+    3,
+    0.035,
+    0.9
+   ],
+   [
+    5,
+    0.022,
+    -1.4
+   ],
+   [
+    8,
+    0.012,
+    2.1
+   ]
+  ]
+ },
+ "eyes": {
+  "shape": "narrow",
+  "size": 0.16,
+  "spacing": 0.34,
+  "y": -0.14
+ },
+ "parts": [
+  {
+   "type": "ear",
+   "style": "pointed",
+   "angle": 0.6,
+   "size": 1.5,
+   "width": 0.32,
+   "droop": 0.6,
+   "layer": "back"
+  },
+  {
+   "type": "mane",
+   "count": 11,
+   "length": 0.32,
+   "layer": "back"
+  },
+  {
+   "type": "muzzle",
+   "layer": "front"
+  }
+ ],
+ "markings": []
+}

@@ -1,0 +1,267 @@
+<title>Daemon Forge</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a night "summoning circle" stage on top (or left), the forge controls beside it. Single dark world by design: the daemon is a light source. */
+:root {
+  color-scheme: dark;
+  --night: #100d18;
+  --night-2: #181424;
+  --panel: #1d1829;
+  --line: #342c47;
+  --ink: #ece6f5;
+  --ink-dim: #a99fbd;
+  --candle: #e3b866;
+  --candle-ink: #1d1508;
+  --font-display: "Marcellus SC", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+html, body { background: var(--night); color: var(--ink); }
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 32px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(26px, 4vw, 34px); letter-spacing: 0.04em; margin: 0; text-wrap: balance; }
+.sub { color: var(--ink-dim); margin: 0; max-width: 62ch; }
+.main { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .main { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; } }
+.stage { position: relative; background: radial-gradient(120% 90% at 50% 40%, var(--night-2), var(--night)); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+canvas { display: block; width: 100%; aspect-ratio: 1 / 1; max-width: 100%; }
+.caption { min-height: 3em; margin: 0; padding: 12px 16px 14px; border-top: 1px solid var(--line); color: var(--ink); font-size: 15px; }
+.caption .form { color: var(--ink-dim); }
+.caption .who { font-family: var(--font-display); color: var(--candle); letter-spacing: 0.03em; }
+.forge { display: grid; gap: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.row2 { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+@media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
+label, .label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
+select, input[type=text] {
+  font: inherit; color: var(--ink); background: var(--night); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 10px; min-width: 0; width: 100%;
+}
+input[type=range] { width: 100%; accent-color: var(--candle); }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+button {
+  font: inherit; font-size: 14px; color: var(--ink); background: var(--night); border: 1px solid var(--line);
+  border-radius: 999px; padding: 7px 13px; cursor: pointer;
+}
+button:hover { border-color: var(--ink-dim); }
+button[aria-pressed="true"] { background: var(--ink); color: var(--night); border-color: var(--ink); }
+button.primary { background: var(--candle); color: var(--candle-ink); border-color: var(--candle); font-weight: 600; }
+button.warn[aria-pressed="true"] { background: #f0d9d9; color: #3a1414; border-color: #f0d9d9; }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--candle); outline-offset: 2px; }
+.meters { display: grid; gap: 8px; font-family: var(--font-mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.meter { display: grid; grid-template-columns: 9.5em 1fr 3.2em; gap: 10px; align-items: center; }
+.bar { height: 6px; border-radius: 3px; background: var(--night); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; border-radius: 3px; }
+#barA i { background: var(--candle); }
+#barI i { background: #8fa7d8; }
+#barR i { background: #6f6687; }
+.stagebox { font-size: 14px; color: var(--ink-dim); margin: 0; }
+.stagebox b { color: var(--ink); font-weight: 600; }
+.note { font-size: 13px; color: var(--ink-dim); margin: 0; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Daemon Forge</h1>
+    <p class="sub">A daemon drawn entirely by code from a small description file: no images, no animation tool. 8 archetypes, each in a Latin American and a Slavic form. Its mood comes from two feeling channels, approach and inhibition, and its form grows with the bond stage.</p>
+  </header>
+
+  <div class="main">
+    <div class="stage">
+      <canvas id="cv" aria-label="Animated daemon"></canvas>
+      <p class="caption" id="caption" aria-live="polite"></p>
+    </div>
+
+    <div class="forge">
+      <div class="row2">
+        <div class="field">
+          <label for="arch">Archetype</label>
+          <select id="arch"></select>
+        </div>
+        <div class="field">
+          <label for="form">Form</label>
+          <select id="form"><option value="latam">Latin America</option><option value="slavic">Slavic</option></select>
+        </div>
+      </div>
+      <div class="field">
+          <label for="name">Daemon name (seeds its sigil)</label>
+          <input type="text" id="name" value="Itzel" maxlength="24" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label for="stage">Bond stage: <span id="stageName"></span></label>
+        <input type="range" id="stage" min="1" max="5" step="1" value="3">
+        <p class="stagebox" id="stageText"></p>
+      </div>
+
+      <div class="field">
+        <span class="label" id="stateLbl">What the daemon is doing</span>
+        <div class="seg" role="group" aria-labelledby="stateLbl" id="states"></div>
+      </div>
+
+      <div class="field">
+        <span class="label" id="evLbl">Something happens in the user's life</span>
+        <div class="seg" role="group" aria-labelledby="evLbl">
+          <button type="button" id="evGood">Good news</button>
+          <button type="button" id="evWorry">A worry</button>
+          <button type="button" id="evBrave">A brave step</button>
+          <button type="button" id="evCrisis" class="warn" aria-pressed="false">Crisis mode</button>
+        </div>
+      </div>
+
+      <div class="meters" aria-label="Feeling channels">
+        <div class="meter"><span>approach A</span><span class="bar" id="barA"><i></i></span><span id="valA">0.20</span></div>
+        <div class="meter"><span>inhibition I</span><span class="bar" id="barI"><i></i></span><span id="valI">0.20</span></div>
+        <div class="meter"><span>resting I</span><span class="bar" id="barR"><i></i></span><span id="valR">0.20</span></div>
+      </div>
+
+      <div class="seg">
+        <button type="button" class="primary" id="draw">Draw a card</button>
+      </div>
+      <p class="note">The card is drawn by code, never by the AI. Mood channels follow Creatura's Affect: separate, never summed, each fading back to rest. Brave steps lower resting inhibition, so a daemon grows calmer with its person over time.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/*RENDERER*/
+</script>
+<script>
+const DAEMON_SPECS = /*SPECS*/;
+(() => {
+  const ARCH = [
+    ["keeper", "Guardian", "I closed the door for a moment. Nothing comes in that you don't invite."],
+    ["trickster", "Trickster", "Waiting for the perfect sign again? I'm the sign. Move."],
+    ["seer", "Seer", "The Star came out again. Something in you is already healing."],
+    ["wild", "Wild One", "Three days thinking. Not today. Go outside, then we talk."],
+    ["healer", "Healer", "You don't have to be fine today. Breathe with me a moment."],
+    ["shadow", "Shadow", "You say you don't care. Fourth time. Who are you convincing?"],
+    ["wanderer", "Wanderer", "Turtles cross oceans without maps. You only have to cross this week."],
+    ["flame", "Flame", "You want it! You said it. Now do one thing today that brings it closer."]
+  ];
+  const STAGES = [
+    ["Spark", "Replies only when spoken to. Faint sigil, no aura, features still forming."],
+    ["Kindled", "May send the morning omen. Aura motes appear and its features show."],
+    ["Bonded", "May follow up on things you told it. Its features are fully grown."],
+    ["Awakened", "May write weekly insights. A crown of motes circles it."],
+    ["Sovereign", "Full freedom within the hard limits. A second sigil ring and a halo."]
+  ];
+  const MAJOR = ["The Fool","The Magician","The High Priestess","The Empress","The Emperor","The Hierophant","The Lovers","The Chariot","Strength","The Hermit","Wheel of Fortune","Justice","The Hanged Man","Death","Temperance","The Devil","The Tower","The Star","The Moon","The Sun","Judgement","The World"];
+  const ROMAN = ["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"];
+  const SPEC = Object.fromEntries(DAEMON_SPECS.map(s => [s.id, s]));
+  const $ = id => document.getElementById(id);
+  const cv = $("cv"), ctx = cv.getContext("2d");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const st = { arch: 2, form: "latam", name: "Itzel", stage: 3, mode: "idle", calm: false, reduce,
+    A: 0.2, I: 0.2, restA: 0.2, restI: 0.2, blink: 0, nextBlink: 2, look: { x: 0, y: 0 }, lookTarget: { x: 0, y: 0 }, nextLook: 1,
+    card: null, timers: [], sigil: DaemonRender.makeSigil("Itzel"), motes: [] };
+  const spec = () => SPEC[`${ARCH[st.arch][0]}-${st.form}`];
+
+  // Creatura-style Affect: two channels, coupled, decaying toward rest.
+  function feel(dA, dI) { st.A = Math.min(1, st.A + dA); st.I = Math.min(1, st.I + dI); if (dA > 0) st.I = Math.max(0, st.I - 0.2 * dA); if (dI > 0) st.A = Math.max(0, st.A - 0.2 * dI); }
+  function decay(dt) { const k = 1 - Math.pow(0.75, dt); st.A += (st.restA - st.A) * k; st.I += (st.restI - st.I) * k; }
+
+  let W = 0, H = 0;
+  function resize() { const dpr = Math.min(2, devicePixelRatio || 1); W = H = cv.clientWidth; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  new ResizeObserver(resize).observe(cv);
+
+  function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  function drawCard(info, t) {
+    const c = st.card; if (!c) return;
+    const { R, p, cx, cy } = info, hs = DaemonRender.hsla;
+    const age = t - c.t0, flip = Math.min(1, Math.max(0, (age - 0.2) / 0.9)), face = flip > 0.5;
+    const w = R * 0.95, h = w * 1.65, x = cx + R * 1.75, y = cy + R * 0.4;
+    ctx.save(); ctx.translate(x, y); ctx.globalAlpha = Math.min(1, age / 0.25); ctx.scale(Math.max(0.02, Math.abs(Math.cos(flip * Math.PI))), 1);
+    if (face && c.reversed) ctx.rotate(Math.PI);
+    ctx.fillStyle = face ? "hsl(40,35%,90%)" : hs(p.h, 30, 16, 1); ctx.strokeStyle = hs(p.h, p.s, face ? 35 : 70, 1); ctx.lineWidth = 2;
+    roundRect(-w / 2, -h / 2, w, h, 8); ctx.fill(); ctx.stroke();
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    if (!face) {
+      ctx.strokeStyle = hs(p.h, p.s, 70, 0.6); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(0, 0, w * 0.3, 0, Math.PI * 2); ctx.stroke();
+    } else {
+      ctx.fillStyle = "hsl(30,30%,18%)"; ctx.font = `${Math.round(w * 0.16)}px "Marcellus SC", Georgia, serif`; ctx.fillText(ROMAN[c.i], 0, -h * 0.36);
+      ctx.strokeStyle = hs(p.h, p.s, 40, 0.8); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(0, -h * 0.03, w * 0.26, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = hs(p.h, p.s, 45, 0.85); ctx.beginPath(); ctx.arc(0, -h * 0.03, w * 0.08, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "hsl(30,30%,18%)"; ctx.font = `${Math.round(w * 0.12)}px "Marcellus SC", Georgia, serif`;
+      const lines = []; let cur = "";
+      for (const wd of MAJOR[c.i].split(" ")) { const tst = cur ? cur + " " + wd : wd; if (ctx.measureText(tst).width > w * 0.85 && cur) { lines.push(cur); cur = wd; } else cur = tst; }
+      lines.push(cur); lines.forEach((ln, i) => ctx.fillText(ln, 0, h * 0.3 + (i - (lines.length - 1) / 2) * w * 0.14));
+    }
+    ctx.restore();
+  }
+
+  let last = performance.now() / 1000;
+  function frame(now) {
+    const t = now / 1000 * (reduce ? 0.25 : 1), dt = Math.min(0.05, now / 1000 - last); last = now / 1000;
+    if (!st.calm) decay(dt);
+    st.nextBlink -= dt; if (st.nextBlink <= 0) { st.blinkT = 0; st.nextBlink = 2.5 + Math.random() * 4; }
+    if (st.blinkT !== undefined) { st.blinkT += dt; const b = st.blinkT / 0.18; st.blink = b < 1 ? Math.sin(b * Math.PI) : 0; if (b >= 1) st.blinkT = undefined; }
+    st.nextLook -= dt;
+    if (st.mode === "listening") st.lookTarget = { x: 0.1, y: 0.9 };
+    else if (st.mode === "consulting") st.lookTarget = { x: 0, y: -0.9 };
+    else if (st.card) st.lookTarget = { x: 0.9, y: 0.4 };
+    else if (st.nextLook <= 0) { st.lookTarget = { x: (Math.random() - 0.5) * 1.4, y: (Math.random() - 0.5) * 0.8 }; st.nextLook = 1.5 + Math.random() * 3; }
+    st.look.x += (st.lookTarget.x - st.look.x) * Math.min(1, dt * 8); st.look.y += (st.lookTarget.y - st.look.y) * Math.min(1, dt * 8);
+    ctx.clearRect(0, 0, W, H);
+    const info = DaemonRender.render(ctx, spec(), st, t, dt, { cx: W * (st.card ? 0.4 : 0.5), cy: H * 0.5, size: W });
+    drawCard(info, t);
+    for (const [k, v] of [["A", st.A], ["I", st.I], ["R", st.restI]]) { $("bar" + k).firstElementChild.style.width = (v * 100).toFixed(1) + "%"; $("val" + k).textContent = v.toFixed(2); }
+    requestAnimationFrame(frame);
+  }
+
+  const sel = $("arch");
+  ARCH.forEach(([id, label], i) => { const o = document.createElement("option"); o.value = i; o.textContent = label; sel.appendChild(o); });
+  sel.value = 2;
+  const statesEl = $("states");
+  [["idle", "Idle"], ["listening", "Listening"], ["consulting", "Consulting"], ["speaking", "Speaking"]].forEach(([id, label]) => {
+    const b = document.createElement("button"); b.type = "button"; b.dataset.mode = id; b.textContent = label; b.addEventListener("click", () => setMode(id, true)); statesEl.appendChild(b);
+  });
+  const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  function say(text) { $("caption").innerHTML = `<span class="who">${esc(st.name || "Daemon")}</span> <span class="form">· ${esc(spec().creature)}</span>&nbsp; ${esc(text)}`; }
+  function clearTimers() { st.timers.forEach(clearTimeout); st.timers = []; }
+  function setMode(m, manual) {
+    if (manual) clearTimers();
+    st.mode = m;
+    statesEl.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === m)));
+    if (m === "idle") st.card = null;
+    if (!manual) return;
+    say({ idle: "is resting beside you.", listening: "is listening while you write.", consulting: "is consulting the signs.", speaking: ARCH[st.arch][2] }[m]);
+  }
+  function refreshStage() { const [n, d] = STAGES[st.stage - 1]; $("stageName").textContent = `${st.stage} · ${n}`; $("stageText").innerHTML = `<b>May do:</b> ${d}`; }
+  function changed() { clearTimers(); st.card = null; setMode("idle"); say(ARCH[st.arch][2]); }
+  sel.addEventListener("change", () => { st.arch = +sel.value; changed(); });
+  $("form").addEventListener("change", e => { st.form = e.target.value; changed(); });
+  $("name").addEventListener("input", e => { st.name = e.target.value; st.sigil = DaemonRender.makeSigil(st.name); });
+  $("stage").addEventListener("input", e => { st.stage = +e.target.value; refreshStage(); });
+  $("evGood").addEventListener("click", () => { if (st.calm) return; feel(0.45, 0); say("brightens. That's wonderful news."); });
+  $("evWorry").addEventListener("click", () => { if (st.calm) return; feel(0, 0.45); say("draws closer. Tell me what's weighing on you."); });
+  $("evBrave").addEventListener("click", () => { if (st.calm) return; feel(0.3, 0); st.restI = Math.max(0.05, st.restI - 0.03); say("glows. You faced it. Each time, the fear rests a little lower."); });
+  $("evCrisis").addEventListener("click", e => {
+    st.calm = !st.calm; e.currentTarget.setAttribute("aria-pressed", String(st.calm)); clearTimers(); st.card = null;
+    if (st.calm) { st.A = 0.25; st.I = 0.35; setMode("idle"); say("is right here with you. Please call your local crisis line now, or 911 / 188 / 112 if you're in danger."); }
+    else setMode("idle", true);
+  });
+  $("draw").addEventListener("click", () => {
+    if (st.calm) { say("won't read cards right now. Your safety comes first."); return; }
+    clearTimers(); st.card = null; setMode("consulting"); say("shuffles the deck and gathers the signs…");
+    const i = Math.floor(Math.random() * 22), reversed = Math.random() < 0.3;
+    st.timers.push(setTimeout(() => { st.card = { i, reversed, t0: performance.now() / 1000 * (reduce ? 0.25 : 1) }; setMode("speaking"); feel(0.15, 0); say(`turns the card: ${MAJOR[i]}${reversed ? ", reversed" : ""}. Let's look at what it asks of you.`); }, 1700));
+    st.timers.push(setTimeout(() => setMode("idle"), 6500));
+  });
+  window.__daemon = st; // for automated visual checks
+  resize(); refreshStage(); setMode("idle"); say(ARCH[st.arch][2]);
+  requestAnimationFrame(frame);
+})();
+</script>
