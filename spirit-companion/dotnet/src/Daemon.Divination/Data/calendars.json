@@ -1,0 +1,80 @@
+{
+  "numerology": {
+    "1": "new beginnings, independence, initiative",
+    "2": "cooperation, patience, partnership",
+    "3": "expression, creativity, socializing",
+    "4": "work, structure, building foundations",
+    "5": "change, freedom, the unexpected",
+    "6": "responsibility, home, caring for others",
+    "7": "reflection, solitude, study",
+    "8": "power, money, achievement",
+    "9": "completion, release, compassion",
+    "11": "master number: intuition, inspiration, sensitivity",
+    "22": "master number: big plans made real",
+    "33": "master number: teaching, compassion, service"
+  },
+  "moon_phases": [
+    ["New Moon", "seed intentions, quiet start, plant something"],
+    ["Waxing Crescent", "first steps, hope, building momentum"],
+    ["First Quarter", "decisions, obstacles, commit to action"],
+    ["Waxing Gibbous", "refine, adjust, persist"],
+    ["Full Moon", "culmination, emotions high, what is revealed, release"],
+    ["Waning Gibbous", "gratitude, sharing, teaching what you learned"],
+    ["Last Quarter", "let go, forgive, clear out"],
+    ["Waning Crescent", "rest, surrender, prepare for the next cycle"]
+  ],
+  "zodiac": [
+    ["Aries", "impulse, courage, impatience"],
+    ["Taurus", "comfort, the senses, stubbornness"],
+    ["Gemini", "talk, curiosity, restlessness"],
+    ["Cancer", "home, feelings, nostalgia"],
+    ["Leo", "pride, play, the need to be seen"],
+    ["Virgo", "order, details, self-criticism"],
+    ["Libra", "harmony, relationships, indecision"],
+    ["Scorpio", "intensity, secrets, transformation"],
+    ["Sagittarius", "adventure, optimism, big ideas"],
+    ["Capricorn", "ambition, duty, seriousness"],
+    ["Aquarius", "freedom, friends, detachment"],
+    ["Pisces", "dreams, empathy, escapism"]
+  ],
+  "tzolkin": {
+    "_note": "Maya 260-day calendar (GMT correlation 584283). Meanings are popular modern interpretations, not the teachings of Maya daykeepers.",
+    "signs": [
+      ["Imix", "crocodile", "origin, nourishment, new beginnings"],
+      ["Ik'", "wind", "breath, communication, spirit"],
+      ["Ak'b'al", "night", "inner world, dreams, rest"],
+      ["K'an", "seed", "potential, growth, abundance"],
+      ["Chikchan", "serpent", "life force, instinct, the body"],
+      ["Kimi", "death", "transformation, ancestors, release"],
+      ["Manik'", "deer", "healing, hands, generosity"],
+      ["Lamat", "star", "harmony, beauty, abundance"],
+      ["Muluk", "water", "emotions, offering, purification"],
+      ["Ok", "dog", "loyalty, love, friendship"],
+      ["Chuwen", "monkey", "play, creativity, art"],
+      ["Eb'", "road", "the path, service, community"],
+      ["B'en", "reed", "growth, home, authority"],
+      ["Ix", "jaguar", "magic, earth wisdom, intuition"],
+      ["Men", "eagle", "vision, ambition, perspective"],
+      ["K'ib'", "owl", "wisdom, forgiveness, old souls"],
+      ["Kab'an", "earth", "movement, synchronicity, thought"],
+      ["Etz'nab'", "flint", "truth, clarity, cutting away"],
+      ["Kawak", "storm", "purification, renewal, family"],
+      ["Ajaw", "sun", "light, wholeness, leadership"]
+    ],
+    "tones": {
+      "1": "unity, purpose, beginning",
+      "2": "duality, challenge, polarity",
+      "3": "activation, movement, rhythm",
+      "4": "form, definition, stability",
+      "5": "empowerment, center, gathering strength",
+      "6": "flow, balance, organizing",
+      "7": "reflection, mystical power, attunement",
+      "8": "harmony, integrity, justice",
+      "9": "patience, intention, completion of a cycle",
+      "10": "manifestation, perfection, results",
+      "11": "release, dissolving, letting go",
+      "12": "understanding, cooperation, stability",
+      "13": "transcendence, ascension, presence"
+    }
+  }
+}

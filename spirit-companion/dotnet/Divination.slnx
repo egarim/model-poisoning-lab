@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Daemon.Divination/Daemon.Divination.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Daemon.Divination.Tests/Daemon.Divination.Tests.csproj" />
+  </Folder>
+</Solution>

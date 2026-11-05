@@ -1,0 +1,211 @@
+{
+ "_format": "36 Lenormand cards: [name, meaning]. Read a line of cards as a sentence: the first is the subject, the next ones colour it.",
+ "local_names": {
+  "pt": "baralho cigano",
+  "es": "Lenormand",
+  "ru": "Ленорман"
+ },
+ "cards": [
+  {
+   "number": 1,
+   "name": "Rider",
+   "meaning": "news, a visitor, things starting to move"
+  },
+  {
+   "number": 2,
+   "name": "Clover",
+   "meaning": "a small piece of luck, a brief chance"
+  },
+  {
+   "number": 3,
+   "name": "Ship",
+   "meaning": "travel, distance, longing for elsewhere"
+  },
+  {
+   "number": 4,
+   "name": "House",
+   "meaning": "home, family, what feels safe"
+  },
+  {
+   "number": 5,
+   "name": "Tree",
+   "meaning": "growth, roots, wellbeing over time"
+  },
+  {
+   "number": 6,
+   "name": "Clouds",
+   "meaning": "confusion, uncertainty, a passing unclear time"
+  },
+  {
+   "number": 7,
+   "name": "Snake",
+   "meaning": "complications, a detour, someone clever"
+  },
+  {
+   "number": 8,
+   "name": "Coffin",
+   "meaning": "an ending, closure, making space"
+  },
+  {
+   "number": 9,
+   "name": "Bouquet",
+   "meaning": "a gift, appreciation, a pleasant surprise"
+  },
+  {
+   "number": 10,
+   "name": "Scythe",
+   "meaning": "a sudden decision, a quick cut"
+  },
+  {
+   "number": 11,
+   "name": "Whip",
+   "meaning": "arguments, repetition, a pattern that keeps returning"
+  },
+  {
+   "number": 12,
+   "name": "Birds",
+   "meaning": "conversation, nerves, chatter"
+  },
+  {
+   "number": 13,
+   "name": "Child",
+   "meaning": "a new start, innocence, something small and new"
+  },
+  {
+   "number": 14,
+   "name": "Fox",
+   "meaning": "cleverness, work, be alert to tricks"
+  },
+  {
+   "number": 15,
+   "name": "Bear",
+   "meaning": "strength, resources, a protective figure"
+  },
+  {
+   "number": 16,
+   "name": "Stars",
+   "meaning": "hope, guidance, clarity ahead"
+  },
+  {
+   "number": 17,
+   "name": "Stork",
+   "meaning": "change, a move, improvement"
+  },
+  {
+   "number": 18,
+   "name": "Dog",
+   "meaning": "a loyal friend, trust"
+  },
+  {
+   "number": 19,
+   "name": "Tower",
+   "meaning": "institutions, authority, solitude"
+  },
+  {
+   "number": 20,
+   "name": "Garden",
+   "meaning": "social life, gatherings, being seen"
+  },
+  {
+   "number": 21,
+   "name": "Mountain",
+   "meaning": "an obstacle, a delay, patience needed"
+  },
+  {
+   "number": 22,
+   "name": "Crossroads",
+   "meaning": "a choice, several paths"
+  },
+  {
+   "number": 23,
+   "name": "Mice",
+   "meaning": "worry, loss, something being eaten away"
+  },
+  {
+   "number": 24,
+   "name": "Heart",
+   "meaning": "love, affection, what you care about"
+  },
+  {
+   "number": 25,
+   "name": "Ring",
+   "meaning": "commitment, a promise, a cycle"
+  },
+  {
+   "number": 26,
+   "name": "Book",
+   "meaning": "a secret, learning, the unknown"
+  },
+  {
+   "number": 27,
+   "name": "Letter",
+   "meaning": "a message, a document, written words"
+  },
+  {
+   "number": 28,
+   "name": "Man",
+   "meaning": "a man in your life, or yourself"
+  },
+  {
+   "number": 29,
+   "name": "Woman",
+   "meaning": "a woman in your life, or yourself"
+  },
+  {
+   "number": 30,
+   "name": "Lily",
+   "meaning": "peace, maturity, harmony"
+  },
+  {
+   "number": 31,
+   "name": "Sun",
+   "meaning": "success, warmth, energy"
+  },
+  {
+   "number": 32,
+   "name": "Moon",
+   "meaning": "feelings, recognition, intuition"
+  },
+  {
+   "number": 33,
+   "name": "Key",
+   "meaning": "a solution, an opening, certainty"
+  },
+  {
+   "number": 34,
+   "name": "Fish",
+   "meaning": "money, abundance, flow"
+  },
+  {
+   "number": 35,
+   "name": "Anchor",
+   "meaning": "stability, staying power, a safe harbour"
+  },
+  {
+   "number": 36,
+   "name": "Cross",
+   "meaning": "a burden, a test, faith"
+  }
+ ],
+ "spreads": {
+  "single": [
+   "the card"
+  ],
+  "three": [
+   "the subject",
+   "what colours it",
+   "where it leads"
+  ],
+  "nine": [
+   "thoughts",
+   "hopes",
+   "what is arriving",
+   "what has passed",
+   "the centre",
+   "what comes next",
+   "foundations",
+   "what you hold",
+   "what is growing"
+  ]
+ }
+}

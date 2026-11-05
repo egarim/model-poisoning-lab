@@ -1,0 +1,509 @@
+{
+ "_format": "major: name, meanings and a reflection question each; minor: rank and meanings per suit, question from question_template with the suit domain and rank theme",
+ "major": [
+  {
+   "name": "The Fool",
+   "upright": "new beginnings, spontaneity, a leap of faith",
+   "reversed": "recklessness, hesitation, fear of the unknown",
+   "question": "What would you try if you weren't afraid of looking foolish?"
+  },
+  {
+   "name": "The Magician",
+   "upright": "willpower, skill, making things happen",
+   "reversed": "manipulation, untapped talent, scattered energy",
+   "question": "What tools do you already have that you're not using?"
+  },
+  {
+   "name": "The High Priestess",
+   "upright": "intuition, hidden knowledge, the inner voice",
+   "reversed": "secrets, disconnection from intuition, surface noise",
+   "question": "What does your quiet inner voice already know?"
+  },
+  {
+   "name": "The Empress",
+   "upright": "abundance, nurturing, creativity, the body",
+   "reversed": "dependence, creative block, neglecting self-care",
+   "question": "What in your life needs nurturing right now, including you?"
+  },
+  {
+   "name": "The Emperor",
+   "upright": "structure, authority, stability",
+   "reversed": "rigidity, control, lack of discipline",
+   "question": "Where would a little structure set you free?"
+  },
+  {
+   "name": "The Hierophant",
+   "upright": "tradition, learning, mentors, institutions",
+   "reversed": "rebellion, breaking convention, personal beliefs",
+   "question": "Which teacher or tradition could guide you here, and which one do you need to question?"
+  },
+  {
+   "name": "The Lovers",
+   "upright": "love, union, a choice aligned with your values",
+   "reversed": "disharmony, misaligned values, avoiding a choice",
+   "question": "Which choice is true to your values, not only your wishes?"
+  },
+  {
+   "name": "The Chariot",
+   "upright": "determination, momentum, victory through will",
+   "reversed": "lack of direction, scattered effort, aggression",
+   "question": "Where are you pulled two ways, and which way do you choose to steer?"
+  },
+  {
+   "name": "Strength",
+   "upright": "courage, gentle power, patience",
+   "reversed": "self-doubt, raw emotion, inner weakness",
+   "question": "Where could gentleness be stronger than force?"
+  },
+  {
+   "name": "The Hermit",
+   "upright": "solitude, introspection, inner guidance",
+   "reversed": "isolation, loneliness, withdrawal",
+   "question": "What would you hear if you gave yourself an hour of silence?"
+  },
+  {
+   "name": "Wheel of Fortune",
+   "upright": "cycles, a turning point, change",
+   "reversed": "resistance to change, bad timing, repeating patterns",
+   "question": "What keeps coming back around, and what is it asking you to learn?"
+  },
+  {
+   "name": "Justice",
+   "upright": "fairness, truth, cause and effect",
+   "reversed": "dishonesty, unfairness, avoiding accountability",
+   "question": "What would be fair here, including fair to yourself?"
+  },
+  {
+   "name": "The Hanged Man",
+   "upright": "pause, surrender, a new perspective",
+   "reversed": "stalling, needless sacrifice, indecision",
+   "question": "What changes if you look at this from the other side?"
+  },
+  {
+   "name": "Death",
+   "upright": "endings, transformation, transition",
+   "reversed": "resisting change, stagnation, fear of letting go",
+   "question": "What is ready to end so that something new can begin?"
+  },
+  {
+   "name": "Temperance",
+   "upright": "balance, moderation, patience, healing",
+   "reversed": "excess, imbalance, impatience",
+   "question": "Where do you need balance instead of extremes?"
+  },
+  {
+   "name": "The Devil",
+   "upright": "attachment, temptation, the shadow, feeling bound",
+   "reversed": "release, breaking free, reclaiming power",
+   "question": "What holds you that you could actually put down?"
+  },
+  {
+   "name": "The Tower",
+   "upright": "sudden change, collapse of false structures, revelation",
+   "reversed": "fear of change, delayed upheaval, averting disaster",
+   "question": "What false structure is ready to fall?"
+  },
+  {
+   "name": "The Star",
+   "upright": "hope, renewal, healing, inspiration",
+   "reversed": "discouragement, lost faith, disconnection",
+   "question": "What small hope is worth keeping alight?"
+  },
+  {
+   "name": "The Moon",
+   "upright": "illusion, fear, the subconscious, uncertainty",
+   "reversed": "clarity emerging, fear released, confusion lifting",
+   "question": "Which fear is bigger in the dark than it would be in daylight?"
+  },
+  {
+   "name": "The Sun",
+   "upright": "joy, success, vitality, clarity",
+   "reversed": "temporary gloom, dimmed enthusiasm, ego",
+   "question": "What brings you simple joy, and when did you last make time for it?"
+  },
+  {
+   "name": "Judgement",
+   "upright": "awakening, reckoning, a calling",
+   "reversed": "self-doubt, harsh self-judgment, ignoring the call",
+   "question": "What is calling you, and what would answering look like?"
+  },
+  {
+   "name": "The World",
+   "upright": "completion, integration, fulfillment",
+   "reversed": "incompletion, loose ends, seeking closure",
+   "question": "What have you completed that you haven't celebrated yet?"
+  }
+ ],
+ "suits": {
+  "Wands": {
+   "element": "fire",
+   "theme": "action, passion, ambition",
+   "domain": "your passions and projects"
+  },
+  "Cups": {
+   "element": "water",
+   "theme": "emotions, love, relationships",
+   "domain": "your feelings and relationships"
+  },
+  "Swords": {
+   "element": "air",
+   "theme": "thoughts, conflict, truth",
+   "domain": "your thoughts and conflicts"
+  },
+  "Pentacles": {
+   "element": "earth",
+   "theme": "money, work, the body, home",
+   "domain": "your work, money and daily life"
+  }
+ },
+ "minor": {
+  "Wands": [
+   {
+    "rank": "Ace",
+    "upright": "inspiration, a new venture, a spark",
+    "reversed": "delays, lack of motivation"
+   },
+   {
+    "rank": "Two",
+    "upright": "planning, future vision, deciding",
+    "reversed": "fear of change, playing it safe"
+   },
+   {
+    "rank": "Three",
+    "upright": "expansion, foresight, progress",
+    "reversed": "obstacles, delays, frustration"
+   },
+   {
+    "rank": "Four",
+    "upright": "celebration, home, harmony",
+    "reversed": "instability at home, transition"
+   },
+   {
+    "rank": "Five",
+    "upright": "competition, conflict, rivalry",
+    "reversed": "avoiding conflict, tension released"
+   },
+   {
+    "rank": "Six",
+    "upright": "victory, recognition, confidence",
+    "reversed": "ego, lack of recognition"
+   },
+   {
+    "rank": "Seven",
+    "upright": "defending your position, perseverance",
+    "reversed": "overwhelmed, giving up"
+   },
+   {
+    "rank": "Eight",
+    "upright": "speed, movement, swift news",
+    "reversed": "delays, frustration, slowing down"
+   },
+   {
+    "rank": "Nine",
+    "upright": "resilience, the last stand, boundaries",
+    "reversed": "exhaustion, paranoia"
+   },
+   {
+    "rank": "Ten",
+    "upright": "burden, overcommitment, responsibility",
+    "reversed": "delegating, putting the load down"
+   },
+   {
+    "rank": "Page",
+    "upright": "curiosity, enthusiasm, new ideas",
+    "reversed": "haste, lack of direction"
+   },
+   {
+    "rank": "Knight",
+    "upright": "adventure, passion, impulsiveness",
+    "reversed": "recklessness, frustration"
+   },
+   {
+    "rank": "Queen",
+    "upright": "confidence, warmth, determination",
+    "reversed": "jealousy, insecurity"
+   },
+   {
+    "rank": "King",
+    "upright": "leadership, vision, boldness",
+    "reversed": "impulsiveness, being overbearing"
+   }
+  ],
+  "Cups": [
+   {
+    "rank": "Ace",
+    "upright": "new love, emotional opening, compassion",
+    "reversed": "blocked emotions, emptiness"
+   },
+   {
+    "rank": "Two",
+    "upright": "partnership, mutual attraction, connection",
+    "reversed": "imbalance, broken communication"
+   },
+   {
+    "rank": "Three",
+    "upright": "friendship, celebration, community",
+    "reversed": "overindulgence, gossip, isolation"
+   },
+   {
+    "rank": "Four",
+    "upright": "apathy, contemplation, missed offers",
+    "reversed": "renewed interest, acceptance"
+   },
+   {
+    "rank": "Five",
+    "upright": "loss, grief, regret",
+    "reversed": "acceptance, moving on, forgiveness"
+   },
+   {
+    "rank": "Six",
+    "upright": "nostalgia, childhood, innocence",
+    "reversed": "stuck in the past, leaving home"
+   },
+   {
+    "rank": "Seven",
+    "upright": "many choices, fantasy, illusion",
+    "reversed": "clarity, focus, deciding"
+   },
+   {
+    "rank": "Eight",
+    "upright": "walking away, seeking deeper meaning",
+    "reversed": "fear of leaving, aimless drifting"
+   },
+   {
+    "rank": "Nine",
+    "upright": "contentment, wishes fulfilled",
+    "reversed": "dissatisfaction, smugness"
+   },
+   {
+    "rank": "Ten",
+    "upright": "harmony, family, emotional fulfillment",
+    "reversed": "broken home, misaligned values"
+   },
+   {
+    "rank": "Page",
+    "upright": "an emotional message, intuition, creativity",
+    "reversed": "emotional immaturity, blocked creativity"
+   },
+   {
+    "rank": "Knight",
+    "upright": "romance, charm, following the heart",
+    "reversed": "moodiness, unrealistic expectations"
+   },
+   {
+    "rank": "Queen",
+    "upright": "compassion, emotional security, intuition",
+    "reversed": "codependence, emotional overwhelm"
+   },
+   {
+    "rank": "King",
+    "upright": "emotional balance, diplomacy",
+    "reversed": "manipulation, moodiness, coldness"
+   }
+  ],
+  "Swords": [
+   {
+    "rank": "Ace",
+    "upright": "clarity, breakthrough, truth",
+    "reversed": "confusion, miscommunication"
+   },
+   {
+    "rank": "Two",
+    "upright": "stalemate, a difficult decision, avoidance",
+    "reversed": "indecision, information overload"
+   },
+   {
+    "rank": "Three",
+    "upright": "heartbreak, sorrow, a painful truth",
+    "reversed": "recovery, forgiveness, releasing pain"
+   },
+   {
+    "rank": "Four",
+    "upright": "rest, recovery, contemplation",
+    "reversed": "burnout, restlessness"
+   },
+   {
+    "rank": "Five",
+    "upright": "conflict, winning at a cost",
+    "reversed": "reconciliation, making amends"
+   },
+   {
+    "rank": "Six",
+    "upright": "transition, moving on, leaving behind",
+    "reversed": "unresolved baggage, resisting the move"
+   },
+   {
+    "rank": "Seven",
+    "upright": "strategy, deception, getting away with something",
+    "reversed": "confession, conscience"
+   },
+   {
+    "rank": "Eight",
+    "upright": "feeling trapped, self-imposed restriction",
+    "reversed": "release, new perspective, freedom"
+   },
+   {
+    "rank": "Nine",
+    "upright": "anxiety, worry, sleepless nights",
+    "reversed": "hope, reaching out, fears fading"
+   },
+   {
+    "rank": "Ten",
+    "upright": "a painful ending, hitting bottom",
+    "reversed": "recovery, the worst is over"
+   },
+   {
+    "rank": "Page",
+    "upright": "curiosity, new ideas, vigilance",
+    "reversed": "all talk, hasty words"
+   },
+   {
+    "rank": "Knight",
+    "upright": "ambition, fast action, directness",
+    "reversed": "impulsiveness, careless words"
+   },
+   {
+    "rank": "Queen",
+    "upright": "clear boundaries, independence, honesty",
+    "reversed": "coldness, bitterness"
+   },
+   {
+    "rank": "King",
+    "upright": "intellectual power, truth, authority",
+    "reversed": "misuse of power, manipulation"
+   }
+  ],
+  "Pentacles": [
+   {
+    "rank": "Ace",
+    "upright": "a new work or money opportunity, grounding",
+    "reversed": "a missed chance, poor planning"
+   },
+   {
+    "rank": "Two",
+    "upright": "juggling priorities, adaptability",
+    "reversed": "overwhelm, disorganization"
+   },
+   {
+    "rank": "Three",
+    "upright": "teamwork, craftsmanship, learning",
+    "reversed": "lack of teamwork, mediocrity"
+   },
+   {
+    "rank": "Four",
+    "upright": "security, saving, control",
+    "reversed": "greed, loosening control"
+   },
+   {
+    "rank": "Five",
+    "upright": "hardship, insecurity, feeling left out",
+    "reversed": "recovery, help arriving"
+   },
+   {
+    "rank": "Six",
+    "upright": "generosity, giving and receiving",
+    "reversed": "strings attached, imbalance"
+   },
+   {
+    "rank": "Seven",
+    "upright": "patience, long-term investment, assessing progress",
+    "reversed": "impatience, wasted effort"
+   },
+   {
+    "rank": "Eight",
+    "upright": "skill, diligence, apprenticeship",
+    "reversed": "perfectionism, lack of focus"
+   },
+   {
+    "rank": "Nine",
+    "upright": "independence, self-sufficiency, comfort",
+    "reversed": "overwork, superficiality"
+   },
+   {
+    "rank": "Ten",
+    "upright": "legacy, family, lasting stability",
+    "reversed": "family conflict, instability"
+   },
+   {
+    "rank": "Page",
+    "upright": "study, a new skill, ambition",
+    "reversed": "procrastination, lack of progress"
+   },
+   {
+    "rank": "Knight",
+    "upright": "hard work, routine, reliability",
+    "reversed": "boredom, stagnation"
+   },
+   {
+    "rank": "Queen",
+    "upright": "nurturing, practicality, generosity",
+    "reversed": "self-neglect, work-home imbalance"
+   },
+   {
+    "rank": "King",
+    "upright": "abundance, security, discipline",
+    "reversed": "stubbornness, materialism"
+   }
+  ]
+ },
+ "spreads": {
+  "single": [
+   "the card"
+  ],
+  "three": [
+   "the situation",
+   "what blocks or challenges you",
+   "advice"
+  ],
+  "choice": [
+   "if you choose option A",
+   "if you choose option B",
+   "what you need to know about yourself"
+  ],
+  "relationship": [
+   "you",
+   "the other person, as you see them",
+   "the bond between you",
+   "what helps",
+   "what to watch"
+  ],
+  "week": [
+   "Monday",
+   "Tuesday",
+   "Wednesday",
+   "Thursday",
+   "Friday",
+   "Saturday",
+   "Sunday"
+  ],
+  "celtic_cross": [
+   "the heart of the matter",
+   "what crosses you",
+   "the root",
+   "the recent past",
+   "what could be",
+   "the near future",
+   "yourself",
+   "your surroundings",
+   "hopes and fears",
+   "where this is heading"
+  ]
+ },
+ "rank_themes": {
+  "Ace": "a new beginning",
+  "Two": "a choice or a balance",
+  "Three": "growth and first results",
+  "Four": "stability and rest",
+  "Five": "conflict or loss",
+  "Six": "harmony and recovery",
+  "Seven": "a challenge to persevere through",
+  "Eight": "movement and effort",
+  "Nine": "something nearly complete",
+  "Ten": "completion and its weight",
+  "Page": "curiosity and learning",
+  "Knight": "action and pursuit",
+  "Queen": "inner mastery",
+  "King": "outer mastery"
+ },
+ "question_template": "Where in {domain} are you meeting {theme}?"
+}
