@@ -1,0 +1,476 @@
+<title>Daemon World</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: the encounter screen (scene + text box + commands) on the left in a phone frame; the guide and the
+   controls for reviewing (who, time of day, weather) on the right. Single dark world. */
+:root {
+  color-scheme: dark;
+  --night: #0e0b16;
+  --frame: #171324;
+  --line: #3a3150;
+  --ink: #f1ecf8;
+  --ink-dim: #a99fbe;
+  --box: #120f1c;
+  --box-edge: #e9e1f7;
+  --gold: #f0c35a;
+  --gold-ink: #241a06;
+  --font-pixel: "Pixelify Sans", "Courier New", ui-monospace, monospace;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+html, body { background: var(--night); color: var(--ink); }
+[hidden] { display: none !important; }
+body { font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 32px; }
+.page { max-width: 1060px; margin: 0 auto; display: grid; gap: 24px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .page { grid-template-columns: 420px minmax(0, 1fr); align-items: start; } }
+.phone { width: 100%; max-width: 420px; justify-self: center; background: var(--frame); border: 1px solid var(--line); border-radius: 26px; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr); }
+.hud { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); font-family: var(--font-pixel); font-size: 12.5px; }
+.hud div { background: #0c0a14; padding: 7px 10px; min-width: 0; }
+.hud b { display: block; color: var(--gold); font-weight: 600; letter-spacing: .06em; font-size: 11px; }
+.hud span { color: var(--ink); }
+.hud small { color: var(--ink-dim); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#scene { display: block; width: 100%; aspect-ratio: 256 / 176; image-rendering: pixelated; image-rendering: crisp-edges; background: #000; cursor: pointer; }
+.box { margin: 10px; border: 3px double var(--box-edge); border-radius: 10px; background: var(--box); padding: 12px 14px; font-family: var(--font-pixel); font-size: 16px; line-height: 1.4; min-height: 112px; display: grid; gap: 8px; align-content: start; position: relative; }
+.box .name { color: var(--gold); font-weight: 600; letter-spacing: .05em; }
+.box .text { min-height: 3em; }
+.box .more { position: absolute; right: 12px; bottom: 8px; color: var(--gold); animation: bob .8s infinite alternate; }
+@keyframes bob { to { transform: translateY(3px) } }
+.menu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 10px; }
+.menu button, .choices button { font: inherit; font-size: 15px; color: var(--ink); background: none; border: 0; text-align: left; padding: 3px 4px 3px 16px; cursor: pointer; position: relative; border-radius: 4px; }
+.menu button:hover, .menu button:focus-visible, .choices button:hover, .choices button:focus-visible, .menu button.sel, .choices button.sel { outline: none; color: var(--gold); }
+.menu button.sel::before, .choices button.sel::before, .menu button:hover::before, .choices button:hover::before { content: "▶"; position: absolute; left: 0; font-size: 11px; top: 6px; }
+.choices { display: grid; gap: 2px; }
+.say { display: flex; gap: 6px; margin: 0 10px 12px; }
+.say input { flex: 1; min-width: 0; font: 15px var(--font-pixel); color: var(--ink); background: #0c0a14; border: 2px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.say input:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+.say button { font: 600 14px var(--font-pixel); color: var(--gold-ink); background: var(--gold); border: 0; border-radius: 8px; padding: 0 14px; cursor: pointer; }
+.toast { margin: 0 10px 10px; font-family: var(--font-pixel); font-size: 13px; color: var(--ink-dim); text-align: center; }
+.guide { display: grid; gap: 16px; min-width: 0; align-content: start; }
+h1 { font-family: var(--font-pixel); font-weight: 600; font-size: clamp(26px, 4vw, 32px); margin: 0 0 6px; letter-spacing: .03em; }
+.guide p { margin: 0; color: var(--ink-dim); max-width: 64ch; }
+.controls { display: grid; gap: 12px; background: var(--frame); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.controls label, .controls .lbl { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.seg button { font: inherit; font-size: 14px; color: var(--ink); background: var(--night); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--night); border-color: var(--ink); }
+.seg button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+input[type=range] { width: 100%; accent-color: var(--gold); margin-top: 6px; }
+.guide dl { margin: 0; display: grid; gap: 10px; }
+.guide dt { font-family: var(--font-pixel); color: var(--gold); }
+.guide dd { margin: 2px 0 0; color: var(--ink-dim); }
+.sim { font-size: 13.5px; border-top: 1px solid var(--line); padding-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .box .more { animation: none; } }
+</style>
+
+<div class="page">
+  <div class="phone">
+    <div class="hud">
+      <div><b>HERE</b><span id="hereClock"></span><small id="hereInfo"></small></div>
+      <div><b>ROOTS</b><span id="rootsClock"></span><small id="rootsInfo"></small></div>
+    </div>
+    <canvas id="scene" width="256" height="176" aria-label="Your daemon in its world"></canvas>
+    <div class="box" id="box" aria-live="polite">
+      <div class="name" id="who"></div>
+      <div class="text" id="text"></div>
+      <div class="choices" id="choices" hidden></div>
+      <div class="menu" id="menu" hidden role="menu"></div>
+      <span class="more" id="more" hidden>▼</span>
+    </div>
+    <form class="say" id="sayForm"><input id="say" autocomplete="off" placeholder="Say something…" aria-label="Say something to your daemon"><button type="submit">Say</button></form>
+    <div class="toast" id="toast" aria-live="polite"></div>
+  </div>
+
+  <aside class="guide">
+    <div>
+      <h1>Daemon World</h1>
+      <p>The daemon faces you, alive, in front of its world. The world is drawn from where you are (the real sky, sun, moon and weather of your city) and from where you come from (your roots' festivities, symbols and clock). The text box below is the chat.</p>
+    </div>
+    <div class="controls">
+      <div><span class="lbl" id="whoLbl">Who</span>
+        <div class="seg" role="group" aria-labelledby="whoLbl" id="profiles"></div></div>
+      <div><label for="hour">Time of day here: <span id="hourLbl"></span></label><input type="range" id="hour" min="0" max="23.75" step="0.25"></div>
+      <div><span class="lbl" id="wxLbl">Weather</span>
+        <div class="seg" role="group" aria-labelledby="wxLbl" id="weathers"></div></div>
+    </div>
+    <dl>
+      <dt>Alive</dt><dd>It breathes, blinks, twitches an ear, wags, tilts its head while you write, talks with its mouth, eats, and shows how it feels.</dd>
+      <dt>Here</dt><dd>Sky colour from the real sunrise and sunset, the moon only when it's really up (lit on the correct side for the hemisphere), live weather, the city's silhouette.</dd>
+      <dt>Roots</dt><dd>The festivity of your culture today, its symbols in the scene, and your home clock. A Salvadoran in St. Petersburg sees Día de los Difuntos; a Mexican in Guadalajara sees an ofrenda; a Brazilian in São Paulo sees Finados.</dd>
+      <dt>Living together</dt><dd>Lunch sets a table in the scene; a plate you set for someone stays, and the daemon remembers their name.</dd>
+    </dl>
+    <p class="sim">Prototype: replies are scripted. Sky values are the engine's real ones for Monday 2 November 2026; weather was fetched live from MET Norway on 5 November. The layout follows the classic creature-facing-you RPG screen; the art, backgrounds and menus are our own.</p>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------------- people, places and roots ----------------
+  const PROFILES = {
+    spb: {
+      label: "Salvadoran in St. Petersburg", daemon: "LUCERO", kind: "cadejo", hemisphere: "N",
+      here: { city: "St. Petersburg", skyline: "spb", ground: "river", tz: 3 },
+      roots: { place: "San Salvador", tz: -6, info: "Día de los Difuntos", motif: "coronas" },
+      sun: [8.4, 17.0], moon: { up: [0.23, 15.58], phase: "Last quarter", pct: 42, sign: "Leo", waning: true }, startHour: 16,
+      weather: { live: ["3.7°", "cloudy", "cloud"], temp: 3.7 },
+      intro: ["Buenas. It's the Day of the Dead.", "In San Salvador it's 7 in the morning; your family is waking up. Here the light is already going: sunset at 17:01."],
+      lunch: { food: "ayote en miel", line1: "Your family will sit down at noon in San Salvador. That's 9 tonight here.", line2: "We can eat now, and again with them later. Who should have a plate?" },
+      rootsTalk: ["Last night was La Calabiuza in Tonacatepeque: la Siguanaba, el Cipitío, la Carreta Chillona… and el Cadejo.", "The white Cadejo walks with travellers at night so they get home safe. So, you know. I take that seriously.", "Today is for the cemetery: clean the graves, dress them with flowers and wreaths, then eat together."],
+      skyTalk: ["Sunset 17:01, and it's 3.7° and cloudy.", "The moon is a last quarter, 42%, in Leo. It rises at 00:14, after midnight: let go, forgive, clear out.", "The Neva has no tides to speak of, so no tide reading here."],
+      crisis: "Please call 112 now if you're in danger, or someone you trust. I'm staying right here.",
+    },
+    gdl: {
+      label: "Mexican in Guadalajara", daemon: "ITZEL", kind: "xolo", hemisphere: "N",
+      here: { city: "Guadalajara", skyline: "gdl", ground: "street", tz: -6 },
+      roots: null,
+      sun: [6.95, 18.28], moon: { up: [1.88, 14.13], phase: "Waning crescent", pct: 39, sign: "Leo", waning: true }, startHour: 14,
+      weather: { live: ["27°", "clear", "clear"], temp: 27 },
+      intro: ["¡Llegaste! Día de Muertos, the second day.", "The ofrenda is still up: cempasúchil, candles, pan de muerto. The marigolds' smell shows them the way home."],
+      lunch: { food: "pan de muerto", line1: "Today the family eats together, and the dead get their plates first.", line2: "Who's on your ofrenda this year?" },
+      rootsTalk: ["Yesterday was for the little ones, today for the grown-ups.", "Cempasúchil petals make a path so they can find the ofrenda. Salt to purify, water for the long road."],
+      skyTalk: ["27° and clear. Sunset 18:17.", "The moon, a waning crescent at 39%, is just setting at 14:08. Tonight it rises at 01:53."],
+      crisis: "Please call Línea de la Vida, 800 911 2000 (free, 24 hours), or 911 if you're in danger. I'm here.",
+    },
+    sp: {
+      label: "Brazilian in São Paulo", daemon: "BRASA", kind: "caramelo", hemisphere: "S",
+      here: { city: "São Paulo", skyline: "sp", ground: "wet", tz: -3 },
+      roots: null,
+      sun: [5.32, 18.35], moon: { up: [1.65, 12.37], phase: "Last quarter", pct: 42, sign: "Leo", waning: true }, startHour: 12,
+      weather: { live: ["22.9°", "heavy rain", "rain"], temp: 22.9 },
+      intro: ["Oi! It's Finados.", "Rain over São Paulo today, like it often is on Finados. People still go to the cemeteries with flowers and candles."],
+      lunch: { food: "bolo e café", line1: "After the cemetery, a coffee and a cake with whoever's around. That's how it goes.", line2: "Who would you bring flowers to today?" },
+      rootsTalk: ["Finados, the day of the dead: chrysanthemums, candles, a visit.", "In the south it's spring, so the flowers are everywhere anyway."],
+      skyTalk: ["22.9° and heavy rain. Sunset 18:21.", "Down here the moon's lit side is the other way round from the north: tonight's last quarter rises at 01:39."],
+      crisis: "Please call CVV on 188 (free, 24 hours), or 192 if you're in danger. I'm here.",
+    },
+  };
+  const WEATHER = [["live", "As fetched"], ["clear", "Clear"], ["cloud", "Cloudy"], ["rain", "Rain"], ["snow", "Snow"], ["fog", "Fog"]];
+  const MAJORS = /*TAROT*/;
+
+  // ---------------- state ----------------
+  let P = PROFILES.spb, profileKey = "spb";
+  const S = { hour: 16, wx: "live", mood: 0, lunch: false, plates: [], candle: 0, cards: [], talking: false, wave: 0, tilt: 0, eating: 0, emote: null, emoteUntil: 0, jump: 0, calm: false };
+
+  // ---------------- pixel drawing ----------------
+  const cv = $("scene"), g = cv.getContext("2d");
+  g.imageSmoothingEnabled = false;
+  const off = document.createElement("canvas"); off.width = 256; off.height = 176; const o = off.getContext("2d");
+  const dcv = document.createElement("canvas"); dcv.width = 256; dcv.height = 176; const dg = dcv.getContext("2d");
+  const SCALE = 1.5; // the daemon is drawn at pixel size, then enlarged with crisp pixels
+  const W = 256, H = 176, GROUND = 150;
+  const R = (c, x, y, w, h, col) => { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+  const rr = (c, x, y, w, h, col) => { R(c, x + 1, y, w - 2, h, col); R(c, x, y + 1, w, h - 2, col); };
+  const orr = (c, x, y, w, h, col, line) => { rr(c, x - 1, y - 1, w + 2, h + 2, line); rr(c, x, y, w, h, col); };
+  function tri(c, x, y, w, h, col, dir = 0) { for (let i = 0; i < h; i++) { const ww = Math.max(1, Math.round(w * (i + 1) / h)); R(c, x + (w - ww) / 2 + dir * (h - i) * 0.3, y + i, ww, 1, col); } }
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  const rgb = a => `rgb(${a[0]},${a[1]},${a[2]})`;
+  function hash(n) { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); }
+
+  // ---------------- the world ----------------
+  function skyColors() {
+    const [rise, set] = P.sun, h = S.hour;
+    const DAY = [[74, 124, 201], [169, 205, 234]], DUSK = [[52, 44, 98], [231, 138, 92]], NIGHT = [[10, 12, 36], [40, 44, 86]];
+    const d = Math.min(Math.abs(h - rise), Math.abs(h - set));
+    const isDay = h > rise && h < set;
+    if (d < 0.75) return { top: mix(DUSK[0], isDay ? DAY[0] : NIGHT[0], d / 0.75), bot: mix(DUSK[1], isDay ? DAY[1] : NIGHT[1], d / 0.75), dark: isDay ? 0.12 : 0.3, isDay };
+    return isDay ? { top: DAY[0], bot: DAY[1], dark: 0, isDay } : { top: NIGHT[0], bot: NIGHT[1], dark: 0.42, isDay };
+  }
+  function moonUp() { const [r, s] = P.moon.up, h = S.hour; return r < s ? h > r && h < s : h > r || h < s; }
+  function wxKind() { return S.wx === "live" ? P.weather.live[2] : S.wx; }
+
+  function drawWorld(c, t) {
+    const sky = skyColors(), wx = wxKind();
+    for (let y = 0; y < GROUND; y++) R(c, 0, y, W, 1, rgb(mix(sky.top, sky.bot, y / GROUND)));
+    if (!sky.isDay && wx !== "cloud" && wx !== "fog") for (let i = 0; i < 60; i++) { const x = hash(i) * W, y = hash(i + 99) * 90; if ((t * 2 + i) % 7 > 0.6) R(c, x, y, 1, 1, i % 5 ? "#c9cbe8" : "#fff8d6"); }
+    // sun
+    if (sky.isDay && wx !== "rain" && wx !== "fog") { const f = (S.hour - P.sun[0]) / (P.sun[1] - P.sun[0]); const sx = 20 + f * 216, sy = 70 - Math.sin(f * Math.PI) * 52; for (let r = 9; r > 0; r -= 3) { c.globalAlpha = r === 9 ? 0.25 : r === 6 ? 0.45 : 1; rr(c, sx - r, sy - r, r * 2, r * 2, "#ffe9a8"); } c.globalAlpha = 1; }
+    // moon, lit on the correct side for the hemisphere
+    if (moonUp()) {
+      const [r, s] = P.moon.up; let span = s - r; if (span < 0) span += 24; let f = (S.hour - r); if (f < 0) f += 24; f /= span;
+      const mx = 30 + f * 196, my = 74 - Math.sin(f * Math.PI) * 50, rad = 7;
+      const litLeft = P.moon.waning === (P.hemisphere === "N");
+      for (let yy = -rad; yy <= rad; yy++) for (let xx = -rad; xx <= rad; xx++) if (xx * xx + yy * yy <= rad * rad) {
+        const halfW = Math.sqrt(rad * rad - yy * yy), lit = P.moon.pct / 100, edge = halfW * (1 - 2 * lit);
+        const inLit = litLeft ? xx <= -edge : xx >= edge;
+        R(c, mx + xx, my + yy, 1, 1, inLit ? "#f4f0dc" : "rgba(40,44,80,0.55)");
+      }
+    }
+    // clouds
+    if (wx === "cloud" || wx === "rain" || wx === "snow") {
+      const n = wx === "cloud" ? 7 : 10, shade = wx === "rain" ? "#6b7084" : "#a9adbd";
+      for (let i = 0; i < n; i++) { const x = ((hash(i) * 300 + t * (4 + i)) % 320) - 40, y = 8 + hash(i + 7) * 40; rr(c, x, y, 34 + hash(i + 3) * 30, 9, shade); rr(c, x + 8, y - 5, 20, 8, shade); }
+    }
+    // skyline (here)
+    const sil = rgb(mix(sky.top, [8, 8, 18], 0.55)), win = sky.isDay ? null : "#ffd67a";
+    if (P.here.skyline === "spb") {
+      R(c, 0, 104, W, 26, sil); [[8, 22], [40, 30], [70, 18], [150, 26], [200, 20], [228, 28]].forEach(([x, w], i) => R(c, x, 96 - i % 2 * 4, w, 10, sil));
+      R(c, 118, 54, 3, 50, "#c9a640"); tri(c, 116, 40, 7, 16, "#e3c25a"); R(c, 112, 96, 16, 10, sil);
+      rr(c, 170, 82, 22, 18, sil); tri(c, 176, 72, 10, 12, sil); R(c, 180, 66, 2, 7, "#c9a640");
+    } else if (P.here.skyline === "gdl") {
+      R(c, 0, 108, W, 22, sil); R(c, 100, 72, 12, 38, sil); R(c, 140, 72, 12, 38, sil); tri(c, 99, 54, 14, 20, "#d9a441"); tri(c, 139, 54, 14, 20, "#d9a441"); R(c, 104, 96, 44, 14, sil);
+      [20, 214].forEach(x => { R(c, x, 84, 3, 26, sil); for (let k = -1; k <= 1; k += 2) { R(c, x + k * 6, 82, 8, 3, "#2f5b3a"); } R(c, x - 6, 80, 15, 3, "#2f5b3a"); });
+    } else {
+      R(c, 0, 110, W, 20, sil); [[10, 18, 40], [34, 22, 58], [64, 16, 34], [90, 26, 70], [124, 20, 48], [150, 30, 62], [190, 18, 44], [214, 24, 56]].forEach(([x, w, h]) => R(c, x, 130 - h, w, h, sil));
+    }
+    if (win) for (let i = 0; i < 40; i++) { const x = hash(i + 300) * W, y = 92 + hash(i + 400) * 34; if (hash(i + 500) > 0.45) R(c, x, y, 2, 2, win); }
+    // ground (here)
+    const gtop = 130;
+    if (P.here.ground === "river") {
+      R(c, 0, gtop, W, 4, "#3a3a46"); for (let x = 0; x < W; x += 6) R(c, x, gtop - 6, 1, 6, "#1d1c26"); R(c, 0, gtop - 6, W, 1, "#1d1c26");
+      for (let y = gtop + 4; y < H; y++) R(c, 0, y, W, 1, rgb(mix([26, 34, 58], [12, 16, 30], (y - gtop) / 46)));
+      for (let i = 0; i < 18; i++) { const x = (hash(i) * W + t * 6 * (i % 3 + 1)) % W; R(c, x, gtop + 8 + hash(i + 9) * 36, 6, 1, "rgba(160,180,220,0.25)"); }
+    } else if (P.here.ground === "street") {
+      for (let y = gtop; y < H; y++) R(c, 0, y, W, 1, rgb(mix([150, 92, 70], [96, 58, 48], (y - gtop) / 46)));
+      for (let x = 0; x < W; x += 16) for (let y = gtop; y < H; y += 10) R(c, x + (y / 10 % 2) * 8, y, 1, 10, "rgba(0,0,0,0.12)");
+    } else {
+      for (let y = gtop; y < H; y++) R(c, 0, y, W, 1, rgb(mix([70, 74, 82], [40, 42, 50], (y - gtop) / 46)));
+      for (let i = 0; i < 8; i++) R(c, hash(i + 40) * W, gtop + 10 + hash(i + 50) * 30, 18 + hash(i) * 14, 2, "rgba(170,190,220,0.25)");
+    }
+    // roots, in the scene
+    drawRoots(c, t, sky);
+    // weather particles
+    if (wx === "rain") for (let i = 0; i < 90; i++) { const x = (hash(i) * 300 + t * 40) % 290 - 20, y = (hash(i + 17) * H + t * 160 + i * 9) % H; R(c, x, y, 1, 4, "rgba(190,210,240,0.55)"); }
+    if (wx === "snow") for (let i = 0; i < 80; i++) { const x = (hash(i) * W + Math.sin(t + i) * 6) % W, y = (hash(i + 5) * H + t * (14 + i % 5 * 4)) % H; R(c, x, y, i % 4 ? 1 : 2, i % 4 ? 1 : 2, "#f4f6ff"); }
+    if (wx === "fog") { c.globalAlpha = 0.35; for (let i = 0; i < 6; i++) R(c, 0, 70 + i * 14 + Math.sin(t + i) * 3, W, 8, "#c8cbd8"); c.globalAlpha = 1; }
+  }
+
+  function drawRoots(c, t, sky) {
+    const motif = P.roots ? P.roots.motif : profileKey === "gdl" ? "ofrenda" : "finados";
+    if (motif === "coronas") { // Salvadoran wreaths and candles along the shore
+      [[18, 144], [232, 146]].forEach(([x, y], k) => { for (let a = 0; a < 16; a++) { const ang = a / 16 * Math.PI * 2; R(c, x + Math.cos(ang) * 9, y + Math.sin(ang) * 9, 3, 3, ["#e84a6f", "#f3c84a", "#ffffff", "#8ad16b", "#c06be0"][(a + k) % 5]); } R(c, x - 1, y + 9, 2, 12, "#5a3d22"); });
+    } else if (motif === "ofrenda") { // papel picado across the top, marigold petals below
+      for (let s = 0; s < 2; s++) { const y0 = 6 + s * 16; R(c, 0, y0, W, 1, "#3a2a20"); for (let x = 4; x < W; x += 14) { const col = ["#e84a6f", "#f39c34", "#4fb3e8", "#8ad16b", "#c06be0"][(x / 14 + s) % 5 | 0]; R(c, x, y0 + 1 + Math.sin(t * 2 + x) * 0.6, 10, 9, col); R(c, x + 3, y0 + 4, 4, 3, "rgba(0,0,0,0.25)"); } }
+      for (let i = 0; i < 40; i++) R(c, hash(i + 70) * W, 160 + hash(i + 71) * 14, 2, 2, i % 3 ? "#f39c34" : "#f7c33f");
+    } else { // Finados: chrysanthemums and candles
+      [[16, 148], [238, 150]].forEach(([x, y]) => { R(c, x - 6, y, 12, 8, "#6b5a7a"); for (let a = 0; a < 7; a++) R(c, x - 6 + hash(a + x) * 12, y - 4 - hash(a) * 6, 3, 3, a % 2 ? "#fff6c8" : "#f2d24b"); });
+    }
+    // candles (one per plate, plus the daemon's)
+    const lit = S.candle > 0 || S.lunch;
+    if (lit) [[44, 156], [212, 156]].forEach(([x, y]) => { R(c, x, y, 3, 8, "#efe7d6"); const fl = Math.sin(t * 12 + x) > 0 ? 0 : 1; R(c, x + 1, y - 3 - fl, 1, 3, "#ffcf5a"); R(c, x + 1, y - 2, 1, 1, "#fff2b0"); });
+  }
+
+  // ---------------- the daemon, front on ----------------
+  const KINDS = {
+    cadejo: { fur: "#eef0f7", shade: "#c5cbe0", line: "#2a2440", chest: "#ffffff", eye: "#f2a93b", inner: "#e6b3c6", nose: "#3b3350", ears: "point", glow: true },
+    xolo: { fur: "#4b505d", shade: "#3a3e49", line: "#16181d", chest: "#5b6070", eye: "#3a2716", inner: "#8d6c7b", nose: "#141518", ears: "bat", glow: false },
+    caramelo: { fur: "#c98a45", shade: "#a86e33", line: "#3a2410", chest: "#f2d4a2", eye: "#2a1a0e", inner: "#8a5a2a", nose: "#2a1a0e", ears: "flop", glow: false },
+  };
+  let blinkT = 0, nextBlink = 2, earT = 0, nextEar = 3;
+  function drawDaemon(c, t, dt) {
+    const k = KINDS[P.kind], cx = 128, base = 148;
+    nextBlink -= dt; if (nextBlink < 0) { blinkT = 0.16; nextBlink = 2.5 + Math.random() * 4; } blinkT = Math.max(0, blinkT - dt);
+    nextEar -= dt; if (nextEar < 0) { earT = 0.25; nextEar = 3 + Math.random() * 5; } earT = Math.max(0, earT - dt);
+    S.jump = Math.max(0, S.jump - dt * 2);
+    const breathe = Math.sin(t * 2) > 0 ? 1 : 0, jumpY = -Math.round(Math.sin(S.jump * Math.PI) * 10);
+    const tilt = Math.round(S.tilt), eat = S.eating > 0, headY = base - 58 + breathe + jumpY + (eat ? 6 : 0);
+    // glow (the Cadejo is a spirit)
+    if (k.glow) { const gr = c.createRadialGradient(cx, base - 40, 4, cx, base - 40, 46); gr.addColorStop(0, "rgba(170,195,255,0.35)"); gr.addColorStop(1, "rgba(170,195,255,0)"); c.fillStyle = gr; c.fillRect(cx - 50, base - 90, 100, 100); }
+    // shadow
+    c.globalAlpha = 0.35; rr(c, cx - 22 + Math.abs(jumpY) / 2, base - 2, 44 - Math.abs(jumpY), 5, "#000"); c.globalAlpha = 1;
+    // tail behind, wagging (faster when happy)
+    const wag = Math.sin(t * (6 + S.mood * 10)) * (3 + S.mood * 4);
+    for (let i = 0; i < 6; i++) R(c, cx + 13 + i * 2 + (i > 2 ? wag * (i - 2) / 3 : 0), base - 14 - i * 3 + jumpY, 4, 4, i === 0 ? k.line : k.fur);
+    // body, sitting
+    orr(c, cx - 15, base - 28 + jumpY + breathe, 30, 26, k.fur, k.line);
+    rr(c, cx - 7, base - 24 + jumpY + breathe, 14, 16, k.chest);
+    rr(c, cx + 8, base - 22 + jumpY + breathe, 6, 18, k.shade);
+    // front legs and paws
+    for (const s of [-1, 1]) { orr(c, cx + s * 7 - 3, base - 12 + jumpY, 6, 11, k.fur, k.line); rr(c, cx + s * 7 - 4, base - 3 + jumpY, 8, 3, k.shade); }
+    // ears
+    const hx = cx + tilt, earTw = earT > 0 ? -2 : 0;
+    for (const s of [-1, 1]) {
+      const ex = hx + s * 12, tw = s === 1 ? earTw : 0, droop = Math.round(S.mood < -0.3 ? 4 : 0);
+      if (k.ears === "point") { tri(c, ex - 6, headY - 14 + droop + tw, 12, 15, k.line, s * 0.2); tri(c, ex - 5, headY - 12 + droop + tw, 10, 13, k.fur, s * 0.2); tri(c, ex - 2, headY - 7 + droop + tw, 4, 7, k.inner, s * 0.2); }
+      else if (k.ears === "bat") { tri(c, ex - 8 + s * 3, headY - 20 + droop + tw, 16, 22, k.line, s * 0.5); tri(c, ex - 7 + s * 3, headY - 18 + droop + tw, 14, 20, k.fur, s * 0.5); tri(c, ex - 3 + s * 3, headY - 11 + droop + tw, 6, 12, k.inner, s * 0.5); }
+      else { orr(c, ex + (s < 0 ? -9 : 3), headY - 2 + droop - tw, 7, 16, k.shade, k.line); }
+    }
+    // head
+    orr(c, hx - 17, headY - 4, 34, 26, k.fur, k.line);
+    rr(c, hx - 9, headY + 10, 18, 11, k.chest);
+    // eyes
+    const happy = S.mood > 0.5 || eat;
+    for (const s of [-1, 1]) {
+      const ex = hx + s * 8 - 2, ey = headY + 3;
+      if (blinkT > 0 || S.calm) R(c, ex, ey + 3, 5, 1, k.line);
+      else if (happy) { R(c, ex, ey + 3, 1, 1, k.line); R(c, ex + 1, ey + 2, 3, 1, k.line); R(c, ex + 4, ey + 3, 1, 1, k.line); }
+      else { rr(c, ex, ey, 5, 6, k.eye); R(c, ex + 1, ey + 1, 2, 2, "#fff"); if (S.mood < -0.3) R(c, ex - 1, ey - 2 + (s > 0 ? 0 : 0), 6, 1, k.line); }
+      if (k.glow && !(blinkT > 0) && !happy) { c.save(); c.globalCompositeOperation = "lighter"; c.globalAlpha = 0.35; rr(c, ex - 2, ey - 2, 9, 10, "#ffb347"); c.restore(); }
+    }
+    // nose and mouth (moves while talking)
+    rr(c, hx - 3, headY + 11, 6, 4, k.nose);
+    const open = S.talking && Math.sin(t * 22) > 0;
+    if (eat) { rr(c, hx - 3, headY + 17, 6, 3, "#8a2f45"); }
+    else if (open) { rr(c, hx - 3, headY + 16, 6, 4, "#8a2f45"); R(c, hx - 1, headY + 18, 2, 1, "#e46a8a"); }
+    else { R(c, hx - 4, headY + 17, 3, 1, k.line); R(c, hx + 1, headY + 17, 3, 1, k.line); R(c, hx - 1, headY + 16, 2, 1, k.line); }
+    if (S.mood > 0.6 && !S.talking && !eat) rr(c, hx - 2, headY + 18, 4, 3, "#e46a8a"); // tongue when happy
+    // blush
+    c.globalAlpha = 0.35; for (const s of [-1, 1]) rr(c, hx + s * 12 - 3, headY + 11, 6, 3, "#ff8fae"); c.globalAlpha = 1;
+    // emote
+    if (S.emote && t < S.emoteUntil) drawEmote(c, hx + 20, headY - 22, S.emote, t);
+  }
+  const EMOTES = {
+    heart: [".XX.XX.", "XXXXXXX", "XXXXXXX", ".XXXXX.", "..XXX..", "...X..."],
+    note: ["..XXX", "..X.X", "..X.X", "XXX.X", "XXX..", "XX..."],
+    ask: [".XXX.", "X...X", "...X.", "..X..", ".....", "..X.."],
+    dots: [".......", ".......", "X..X..X", "......."],
+    zz: ["XXXX.", "..X..", ".X...", "XXXX."],
+  };
+  function drawEmote(c, x, y, name, t) {
+    const bm = EMOTES[name], col = name === "heart" ? "#ff5a7a" : "#2a2440", bob = Math.sin(t * 6) > 0 ? 0 : 1;
+    rr(c, x - 3, y - 3 + bob, bm[0].length + 6, bm.length + 6, "#fff"); R(c, x, y + bm.length + 3 + bob, 3, 2, "#fff");
+    bm.forEach((row, j) => [...row].forEach((ch, i) => { if (ch === "X") R(c, x + i, y + j + bob, 1, 1, col); }));
+  }
+  function emote(name, secs = 2.2) { S.emote = name; S.emoteUntil = performance.now() / 1000 + secs; }
+
+  // lunch table, plates and cards in front of the daemon
+  function drawFront(c, t) {
+    if (S.lunch) {
+      R(c, 60, 156, 136, 20, "#7a4d2c"); R(c, 60, 154, 136, 4, "#f4efe4");
+      for (let x = 62; x < 194; x += 6) R(c, x, 157, 3, 2, ["#e84a6f", "#3f8fd6", "#f3c84a"][(x / 6 | 0) % 3]);
+      const dishColor = profileKey === "spb" ? "#e8892f" : profileKey === "gdl" ? "#d9a35a" : "#7a4a2a";
+      rr(c, 118, 148, 20, 8, "#fff"); rr(c, 121, 146, 14, 6, dishColor); if (S.eating > 0) R(c, 126, 146, 4, 2, "#fff4c0");
+      S.plates.forEach((p, i) => { const x = 76 + i * 30 - (i > 1 ? 0 : 0); const px = i % 2 ? 160 + (i >> 1) * 18 : 76 - (i >> 1) * 0; rr(c, px, 149, 16, 6, "#fff"); rr(c, px + 3, 147, 10, 4, dishColor); R(c, px + 6, 140, 2, 7, "#efe7d6"); R(c, px + 6, 137 - (Math.sin(t * 11 + i) > 0 ? 1 : 0), 2, 3, "#ffcf5a"); });
+    }
+    S.cards.forEach((cd, i) => {
+      const age = t - cd.t0, f = Math.min(1, Math.max(0, (age - 0.4 - i * 0.5) / 0.6)), sx = Math.abs(Math.cos(f * Math.PI)), face = f > 0.5;
+      const x = [10, 216, 176][i], y = [8, 8, 66][i] + Math.sin(t * 1.5 + i) * 2, w = 30, h = 46;
+      c.save(); c.translate(x + w / 2, y); c.scale(Math.max(0.05, sx), 1); c.translate(-(x + w / 2), -y);
+      orr(c, x, y, w, h, face ? "#efe6d0" : "#3b2f5c", "#120f1c");
+      if (!face) { for (let yy = 4; yy < h - 4; yy += 4) R(c, x + 4 + (yy % 8), y + yy, 3, 1, "#8f7fc0"); }
+      else { const col = cd.rev ? "#7a3a5a" : "#8a5a2b"; rr(c, x + 8, y + 10, 14, 14, col); R(c, x + 13, y + 6, 4, 26, col); R(c, x + 6, y + 36, 18, 2, "#2a2016"); for (let n = 0; n <= cd.i % 6; n++) R(c, x + 6 + n * 3, y + 40, 2, 2, "#2a2016"); }
+      c.restore();
+    });
+  }
+
+  // ---------------- loop ----------------
+  let last = performance.now() / 1000;
+  function frame(now) {
+    const t = now / 1000 * (reduce ? 0.3 : 1), dt = Math.min(0.05, now / 1000 - last); last = now / 1000;
+    S.eating = Math.max(0, S.eating - dt); S.tilt += ((document.activeElement === $("say") && $("say").value ? 3 : 0) - S.tilt) * Math.min(1, dt * 8);
+    S.mood += (0 - S.mood) * Math.min(1, dt * 0.05);
+    o.clearRect(0, 0, W, H); drawWorld(o, t);
+    const sky = skyColors();
+    if (S.wave > 0.01) { for (let y = 0; y < H; y++) g.drawImage(off, 0, y, W, 1, Math.sin(y * 0.18 + t * 5) * S.wave * 4, y, W, 1); S.wave = Math.max(0, S.wave - dt * 0.35); }
+    else g.drawImage(off, 0, 0);
+    if (sky.dark > 0) { g.fillStyle = `rgba(10,12,40,${sky.dark * 0.6})`; g.fillRect(0, 0, W, H); }
+    dg.clearRect(0, 0, W, H); drawDaemon(dg, t, dt);
+    g.imageSmoothingEnabled = false; g.drawImage(dcv, 128 - 128 * SCALE, 170 - 148 * SCALE, W * SCALE, H * SCALE);
+    drawFront(g, t);
+    requestAnimationFrame(frame);
+  }
+
+  // ---------------- dialogue ----------------
+  const who = $("who"), text = $("text"), menu = $("menu"), choices = $("choices"), more = $("more");
+  let queue = [], typing = null, waitClick = null;
+  function typeLine(line) {
+    return new Promise(res => {
+      text.textContent = ""; S.talking = true; let i = 0;
+      const step = () => { i += reduce ? line.length : 1; text.textContent = line.slice(0, i); if (i < line.length) typing = setTimeout(step, 24); else { S.talking = false; typing = null; res(); } };
+      step();
+      typing === null; text.onclick = null;
+      skipTo = () => { if (typing) { clearTimeout(typing); typing = null; text.textContent = line; S.talking = false; res(); } };
+    });
+  }
+  let skipTo = () => {};
+  function pause() { return new Promise(res => { more.hidden = false; waitClick = () => { more.hidden = true; waitClick = null; res(); }; }); }
+  async function say(lines, then) {
+    menu.hidden = true; choices.hidden = true; who.textContent = P.daemon;
+    for (let i = 0; i < lines.length; i++) { await typeLine(lines[i]); if (i < lines.length - 1) await pause(); }
+    if (then) then(); else showMenu();
+  }
+  $("box").addEventListener("click", e => { if (e.target.closest("button")) return; if (typing) skipTo(); else if (waitClick) waitClick(); });
+  document.addEventListener("keydown", e => {
+    if (document.activeElement === $("say")) return;
+    if ((e.key === "Enter" || e.key === " ") && (typing || waitClick)) { e.preventDefault(); typing ? skipTo() : waitClick(); return; }
+    const list = !menu.hidden ? [...menu.children] : !choices.hidden ? [...choices.children] : null;
+    if (!list || !list.length) return;
+    let i = list.findIndex(b => b.classList.contains("sel"));
+    const cols = !menu.hidden ? 3 : 1;
+    if (e.key === "ArrowRight") i = Math.min(list.length - 1, i + 1); else if (e.key === "ArrowLeft") i = Math.max(0, i - 1);
+    else if (e.key === "ArrowDown") i = Math.min(list.length - 1, i + cols); else if (e.key === "ArrowUp") i = Math.max(0, i - cols);
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); list[Math.max(0, i)].click(); return; } else return;
+    e.preventDefault(); list.forEach(b => b.classList.remove("sel")); list[i].classList.add("sel"); list[i].focus();
+  });
+  function options(el, items) {
+    el.innerHTML = ""; items.forEach(([label, fn], i) => { const b = document.createElement("button"); b.type = "button"; b.textContent = label; if (i === 0) b.classList.add("sel"); b.addEventListener("click", fn); b.addEventListener("mouseenter", () => { [...el.children].forEach(x => x.classList.remove("sel")); b.classList.add("sel"); }); el.appendChild(b); });
+    el.hidden = false;
+  }
+  function choose(items) { menu.hidden = true; options(choices, items); }
+  function showMenu() { choices.hidden = true; options(menu, [["Talk", talk], ["Cards", cards], ["Lunch", lunch], ["Sky", () => say(P.skyTalk)], ["Roots", () => { emote("note"); say(P.rootsTalk); }], ["Pet", pet]]); text.textContent = text.textContent || "…"; }
+  const toast = m => { $("toast").textContent = m; };
+
+  // ---------------- what you can do together ----------------
+  function talk() {
+    choose([["How are you today?", () => { emote("heart"); S.mood = 0.6; say(["Better now. I like it when you come by before dark."]); }],
+            ["I miss home.", () => { S.mood = -0.4; emote("dots"); say(["I know. Home is far today, and close at the same time.", "Let's bring a little of it here. Lunch?"], () => choose([["Yes, lunch", lunch], ["Maybe later", () => say(["I'll keep the table ready."])]])); }],
+            ["Tell me a story", () => { emote("note"); S.wave = 1.2; say(P.rootsTalk.slice(0, 2)); }],
+            ["Back", showMenu]]);
+  }
+  function lunch() {
+    if (!S.lunch) { S.lunch = true; S.candle = 1; emote("heart"); S.mood = 0.7; S.jump = 1; }
+    say([P.lunch.line1, P.lunch.line2], () => choose([["Set a plate for someone", setPlate], ["Let's just eat", () => { S.eating = 2.5; S.mood = 0.8; emote("heart"); say([`Mm. ${P.lunch.food[0].toUpperCase() + P.lunch.food.slice(1)}. Thank you for eating with me.`]); }], ["Back", showMenu]]));
+  }
+  function setPlate() {
+    say(["Type their name below, and I'll set a plate and a candle."], () => { choose([["Back", showMenu]]); plateMode = true; $("say").placeholder = "Their name…"; $("say").focus(); });
+  }
+  let plateMode = false;
+  function cards() {
+    S.wave = 1.5; S.cards = []; emote("dots");
+    say(["Three cards for your ancestors: what they gave you, what to honour, what to let rest."], () => {
+      const t0 = performance.now() / 1000 * (reduce ? 0.3 : 1);
+      const idx = [...Array(22).keys()].sort(() => Math.random() - 0.5).slice(0, 3);
+      S.cards = idx.map(i => ({ i, rev: Math.random() < 0.3, t0 }));
+      setTimeout(() => {
+        const pos = ["What they gave you", "What to honour", "What to let rest"];
+        say(S.cards.map((c, j) => `${pos[j]}: ${MAJORS[c.i].name}${c.rev ? ", reversed" : ""}. ${c.rev ? MAJORS[c.i].reversed : MAJORS[c.i].upright}.`).concat([`The first card asks: "${MAJORS[S.cards[0].i].question}"`]), () => { showMenu(); });
+      }, reduce ? 300 : 2200);
+    });
+  }
+  function pet() { S.mood = 1; S.jump = 1; emote("heart"); say(["!!"]); }
+  $("scene").addEventListener("click", pet);
+
+  // free text
+  $("sayForm").addEventListener("submit", e => {
+    e.preventDefault(); const v = $("say").value.trim(); if (!v) return; $("say").value = "";
+    if (plateMode) { plateMode = false; $("say").placeholder = "Say something…"; S.plates.push(v); S.mood = 0.4; emote("heart", 3); toast(`${P.daemon[0] + P.daemon.slice(1).toLowerCase()} will remember: ${v}`); say([`A plate for ${v}, and a candle. They're at the table with us.`, `Tell me one thing about ${v}, when you want to.`]); return; }
+    const t = v.toLowerCase();
+    if (/(want to die|kill myself|suicid|don't want to live|dont want to live|quiero morir|no quiero vivir|хочу умереть|не хочу жить)/.test(t)) { S.calm = true; S.mood = 0; S.wave = 0; say(["I'm here, and what you feel matters. No cards now; I want you safe.", P.crisis]); return; }
+    if (/(miss|extraño|nostalg|home|casa|mamá|abuel)/.test(t)) { S.mood = -0.3; emote("dots"); say(["Then they're with us today. That's what this day is for.", "Want to set a plate for them?"], () => choose([["Set a plate", setPlate], ["Not now", showMenu]])); return; }
+    if (/(happy|feliz|great|bien|good|хорошо)/.test(t)) { S.mood = 0.9; S.jump = 1; emote("heart"); say(["That makes my tail go. Tell me more!"]); return; }
+    if (/(sad|triste|tired|cansad|грустно)/.test(t)) { S.mood = -0.5; emote("dots"); say(["Then I'll just sit with you. No cards, no questions."]); return; }
+    emote("ask"); say(["Mm. Tell me a little more?"]);
+  });
+
+  // ---------------- review controls ----------------
+  const fmt = h => { h = ((h % 24) + 24) % 24; return `${String(Math.floor(h)).padStart(2, "0")}:${String(Math.round((h % 1) * 60)).padStart(2, "0")}`; };
+  function hud() {
+    const wx = S.wx === "live" ? P.weather.live : [P.weather.temp + "°", WEATHER.find(w => w[0] === S.wx)[1].toLowerCase()];
+    $("hereClock").textContent = `${P.here.city} ${fmt(S.hour)}`;
+    $("hereInfo").textContent = `${wx[0]} ${wx[1]} · ${P.moon.phase.toLowerCase()} ${P.moon.pct}%`;
+    if (P.roots) { $("rootsClock").textContent = `${P.roots.place} ${fmt(S.hour - P.here.tz + P.roots.tz)}`; $("rootsInfo").textContent = P.roots.info; }
+    else { $("rootsClock").textContent = `${P.here.city}`; $("rootsInfo").textContent = profileKey === "gdl" ? "Día de Muertos" : "Finados"; }
+    $("hourLbl").textContent = fmt(S.hour);
+  }
+  function load(key) {
+    profileKey = key; P = PROFILES[key];
+    Object.assign(S, { hour: P.startHour, mood: 0.3, lunch: false, plates: [], candle: 0, cards: [], calm: false, wave: 0.8 });
+    $("hour").value = P.startHour; hud(); toast("");
+    document.querySelectorAll("#profiles button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === key)));
+    emote("heart"); S.jump = 1; text.textContent = ""; say(P.intro);
+  }
+  $("profiles").innerHTML = Object.entries(PROFILES).map(([k, p]) => `<button type="button" data-k="${k}">${p.label}</button>`).join("");
+  $("profiles").addEventListener("click", e => { const b = e.target.closest("button"); if (b) load(b.dataset.k); });
+  $("weathers").innerHTML = WEATHER.map(([k, l]) => `<button type="button" data-w="${k}" aria-pressed="${k === "live"}">${l}</button>`).join("");
+  $("weathers").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; S.wx = b.dataset.w; document.querySelectorAll("#weathers button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); hud(); });
+  $("hour").addEventListener("input", e => { S.hour = +e.target.value; hud(); });
+
+  load("spb");
+  requestAnimationFrame(frame);
+})();
+</script>

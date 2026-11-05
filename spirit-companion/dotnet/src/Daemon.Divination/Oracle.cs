@@ -16,6 +16,9 @@ public sealed record UserContext(string UserId, string TimeZoneId = "UTC")
     public double? Longitude { get; init; }
     /// <summary>ISO country code (MX, BR, AR, CO, PE, CL, RU…) for festivities and hemisphere.</summary>
     public string? Country { get; init; }
+    /// <summary>Where the user's roots are, when different from where they live (e.g. lives in RU, roots in SV): festivities and a second clock.</summary>
+    public string? RootsCountry { get; init; }
+    public string? RootsTimeZoneId { get; init; }
     /// <summary>Current weather where the user is, fetched by the server (see <see cref="IWeatherProvider"/>), if they shared a location.</summary>
     public WeatherNow? Weather { get; init; }
     /// <summary>The schools this user has unlocked; null means all (tests, staff). The "calendar" school is always open.</summary>

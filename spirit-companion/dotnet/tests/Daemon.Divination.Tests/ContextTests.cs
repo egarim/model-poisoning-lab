@@ -194,3 +194,25 @@ public class DayContextTests
         Assert.True(new Oracle("s"u8.ToArray()).Run("draw_tarot", null, u).Locked);
     }
 }
+
+public class RootsTests
+{
+    [Fact]
+    public void Salvadoran_in_St_Petersburg_on_the_Day_of_the_Dead()
+    {
+        var u = new UserContext("j", "Europe/Moscow") { Country = "RU", Latitude = 59.94, Longitude = 30.31, RootsCountry = "SV", RootsTimeZoneId = "America/El_Salvador" };
+        var c = DayContext.Build(new DateTimeOffset(2026, 11, 2, 13, 0, 0, TimeSpan.Zero), u); // 16:00 in St Petersburg, 07:00 in San Salvador
+        Assert.Empty(c["festivities_today"]!.AsArray());
+        var roots = c["roots"]!;
+        Assert.Equal("2026-11-02 07:00", roots["local_time"]!.GetValue<string>());
+        Assert.Contains(roots["festivities_today"]!.AsArray(), f => f!["id"]!.GetValue<string>() == "difuntos_sv");
+        Assert.Contains(roots["just_passed"]!.AsArray(), f => f!["id"]!.GetValue<string>() == "calabiuza");
+        Assert.Equal("ancestors", c["suggested_spread"]!["spread"]!.GetValue<string>());
+        Assert.Contains("your roots", c["suggested_spread"]!["because"]!.GetValue<string>());
+        Assert.Contains(c["coming_up"]!.AsArray(), f => f!["id"]!.GetValue<string>() == "unity_day_ru");
+    }
+
+    [Fact]
+    public void No_roots_block_when_living_at_home() =>
+        Assert.Null(DayContext.Build(DateTimeOffset.UtcNow, new UserContext("v", "America/Mexico_City") { Country = "MX", RootsCountry = "MX" })["roots"]);
+}

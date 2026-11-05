@@ -7,7 +7,7 @@ renderer = (HERE / "renderer.js").read_text(encoding="utf-8")
 species = (HERE / "species.js").read_text(encoding="utf-8")
 tarot = json.loads((HERE.parent / "dotnet/src/Daemon.Divination/Data/tarot.json").read_text(encoding="utf-8"))
 majors = json.dumps([{k: c[k] for k in ("name", "upright", "reversed", "question")} for c in tarot["major"]], ensure_ascii=False, separators=(",", ":"))
-for template, out in [("forge.template.html", "daemon.html"), ("chat.template.html", "chat.html")]:
+for template, out in [("forge.template.html", "daemon.html"), ("chat.template.html", "chat.html"), ("world.template.html", "world.html")]:
     page = (HERE / template).read_text(encoding="utf-8")
     page = page.replace("/*RENDERER*/", renderer).replace("/*SPECIES*/", species).replace("/*SPECS*/", specs).replace("/*TAROT*/", majors)
     (HERE / out).write_text(page, encoding="utf-8")

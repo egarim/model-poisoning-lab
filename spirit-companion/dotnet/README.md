@@ -4,7 +4,7 @@ The divination engine, ported from the Python prototype in `../divination/` and 
 Code draws and calculates; the model only interprets.
 
 ```bash
-dotnet test        # 60 tests, offline
+dotnet test        # 62 tests, offline
 ```
 
 ## What it does
@@ -19,7 +19,7 @@ dotnet test        # 60 tests, offline
 | `sky_now` | astrology | moon phase, illumination and sign; the next four moon phases in local time; which planets are retrograde; moonrise, moonset, sunrise and sunset where the user is (if shared) |
 | `birth_chart` | astrology | Sun to Pluto by sign and degree, retrogrades; ascendant, midheaven and whole-sign houses with birth time and place |
 | `maya_day_sign` | maya | Tzolk'in day sign and tone |
-| `day_context` | calendar (free) | the user's day: festivities today and coming up, moon and its specials, eclipses, retrogrades, tide strength, weather omens, elements of the day, a suggested spread, explanations with examples |
+| `day_context` | calendar (free) | the user's day (and their roots: a second country's festivities and clock, e.g. a Salvadoran in St. Petersburg): festivities today and coming up, moon and its specials, eclipses, retrogrades, tide strength, weather omens, elements of the day, a suggested spread, explanations with examples |
 | `moon_circles` | calendar (free) | the next new and full moons as circles (intentions, release) with spreads; the year's eclipses |
 | `history_reading` | calendar (free) | anniversaries on this day; for an event, the sky at that moment and the deck's card for it |
 

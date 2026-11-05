@@ -125,6 +125,29 @@ public static class DayContext
             foreach (var (k, v) in weather["elements"]!.AsObject()) elements[k] += v!.GetValue<int>();
         }
 
+        // roots: the festivities and the clock of where the user comes from
+        JsonObject? roots = null;
+        if (u.RootsCountry is { } rc && rc != u.Country)
+        {
+            var rtz = TimeZoneInfo.FindSystemTimeZoneById(u.RootsTimeZoneId ?? u.TimeZoneId);
+            var rToday = Seeds.LocalDate(now, rtz.Id);
+            var rf = Festivities.Between(rToday.AddDays(-1), rToday.AddDays(14), rc, Festivities.IsSouthern(null, rc), rtz).Where(f => f.Kind != "seasonal").ToList();
+            var rTodays = rf.Where(f => f.Covers(rToday)).ToList();
+            foreach (var f in rTodays)
+            {
+                if (f.Data["element"] is { } el) elements[Data.S(el)]++;
+                if (spread is null && f.Data["spread"] is { } sp) { spread = Data.S(sp); spreadWhy = f.Name + " (your roots)"; }
+            }
+            roots = new JsonObject
+            {
+                ["country"] = rc,
+                ["local_time"] = Sky.Minute(TimeZoneInfo.ConvertTime(now, rtz).DateTime),
+                ["festivities_today"] = new JsonArray(rTodays.Select(f => (JsonNode)Festivities.ToJson(f, rToday)).ToArray()),
+                ["just_passed"] = new JsonArray(rf.Where(f => f.End == rToday.AddDays(-1)).Select(f => (JsonNode)Festivities.ToJson(f, rToday)).ToArray()),
+                ["coming_up"] = new JsonArray(rf.Where(f => f.Start > rToday).Take(3).Select(f => (JsonNode)Festivities.ToJson(f, rToday)).ToArray()),
+            };
+        }
+
         var explain = new JsonObject();
         var all = Data.Get("explain")["concepts"]!;
         foreach (var c in concepts.Distinct()) if (all[c] is { } x) explain[c] = x.DeepClone();
@@ -138,6 +161,7 @@ public static class DayContext
             ["hemisphere"] = south ? "southern" : "northern",
             ["festivities_today"] = new JsonArray(todays.Select(f => (JsonNode)Festivities.ToJson(f, today)).ToArray()),
             ["coming_up"] = new JsonArray(fests.Where(f => !f.Covers(today)).Take(5).Select(f => (JsonNode)Festivities.ToJson(f, today)).ToArray()),
+            ["roots"] = roots,
             ["moon"] = moon.DeepClone(),
             ["next_moon_circles"] = MoonEvents.Circles(now, 2, tz),
             ["eclipses_next_30_days"] = new JsonArray(eclipses.Select(e => (JsonNode)e.DeepClone()).ToArray()),

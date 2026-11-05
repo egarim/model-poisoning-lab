@@ -266,7 +266,8 @@
     "AR",
     "CO",
     "PE",
-    "CL"
+    "CL",
+    "SV"
    ],
    "kind": "religious",
    "explain": "Christmas; for many, a family celebration more than a religious one.",
@@ -346,7 +347,8 @@
     "AR",
     "CO",
     "PE",
-    "CL"
+    "CL",
+    "SV"
    ],
    "kind": "religious",
    "explain": "The week before Easter, Palm Sunday to Easter Sunday.",
@@ -523,6 +525,75 @@
    "explain": "Halfway between solstice and equinox.",
    "ritual": "First light, or first harvest.",
    "name_south": "Lammas (astronomical)"
+  },
+  {
+   "id": "calabiuza",
+   "name": "La Calabiuza",
+   "when": {
+    "fixed": "11-01"
+   },
+   "days": 1,
+   "countries": [
+    "SV"
+   ],
+   "kind": "folk",
+   "explain": "On the night of 1 November in Tonacatepeque, La Calabiuza fills the streets with the figures of Salvadoran folklore: la Siguanaba, el Cipitío, el Cadejo, la Carreta Chillona.",
+   "ritual": "Tell a ghost story from your family.",
+   "local": {
+    "es": "La Calabiuza"
+   }
+  },
+  {
+   "id": "difuntos_sv",
+   "name": "Day of the Dead (El Salvador)",
+   "when": {
+    "fixed": "11-02"
+   },
+   "days": 1,
+   "countries": [
+    "SV"
+   ],
+   "kind": "cultural",
+   "explain": "In El Salvador families visit the cemetery, clean and dress the graves with flowers and wreaths, and gather for a meal together; ayote en miel (pumpkin in honey) is a classic sweet of the season.",
+   "ritual": "Share a meal, or set a plate for someone you miss.",
+   "local": {
+    "es": "Día de los Difuntos"
+   },
+   "spread": "ancestors"
+  },
+  {
+   "id": "dia_de_la_cruz_sv",
+   "name": "Day of the Cross (El Salvador)",
+   "when": {
+    "fixed": "05-03"
+   },
+   "days": 1,
+   "countries": [
+    "SV"
+   ],
+   "kind": "folk",
+   "explain": "Wooden crosses in patios are dressed with fruit and paper chains, a custom tied to the start of the rainy season.",
+   "ritual": "Mention it with respect; the fruit is the season's gratitude.",
+   "local": {
+    "es": "Día de la Cruz"
+   }
+  },
+  {
+   "id": "unity_day_ru",
+   "name": "Unity Day",
+   "when": {
+    "fixed": "11-04"
+   },
+   "days": 1,
+   "countries": [
+    "RU"
+   ],
+   "kind": "civic",
+   "explain": "A Russian public holiday.",
+   "ritual": "A day off; nothing more.",
+   "local": {
+    "ru": "День народного единства"
+   }
   }
  ]
 }
