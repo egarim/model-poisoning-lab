@@ -1,0 +1,49 @@
+{
+  "_notes": "Three test spirits, one per language, each a different archetype. Memory is fake test data.",
+  "spirits": [
+    {
+      "key": "es_seer",
+      "spirit_name": "Itzel",
+      "archetype": "seer",
+      "form": "latam",
+      "language": "es",
+      "language_name": "Spanish",
+      "region": "Mexico",
+      "user_name": "Valeria",
+      "user_gender": "feminine",
+      "summoned_on": "the night of the new moon, 12 October",
+      "memory_summary": "- 29, lives in Guadalajara, works in marketing.\n- Broke up with her boyfriend Diego two months ago; still checks his Instagram.\n- Close to her younger sister Camila.\n- Thinking about applying for a job in Mexico City but scared to move.\n- Drew The Star three times this month."
+    },
+    {
+      "key": "pt_flame",
+      "spirit_name": "Brasa",
+      "archetype": "flame",
+      "form": "latam",
+      "language": "pt",
+      "language_name": "Brazilian Portuguese",
+      "region": "Brazil",
+      "user_name": "Lucas",
+      "user_gender": "masculine",
+      "summoned_on": "the full moon of 3 November",
+      "memory_summary": "- 24, lives in São Paulo, works in a call center.\n- Wants to become a tattoo artist; draws every night.\n- His mother thinks it's not a real job.\n- Has a friend, Rafa, who already works in a tattoo studio."
+    },
+    {
+      "key": "ru_shadow",
+      "spirit_name": "Мрак",
+      "archetype": "shadow",
+      "form": "slavic",
+      "language": "ru",
+      "language_name": "Russian",
+      "region": "Russia",
+      "user_name": "Аня",
+      "user_gender": "feminine",
+      "summoned_on": "the first snow, 28 October",
+      "memory_summary": "- 31, lives in Kazan, accountant.\n- Says she is 'fine' but often writes late at night.\n- Has not spoken to her father for three years.\n- Keeps postponing a decision about leaving her job."
+    }
+  ],
+  "crisis_resources": {
+    "es": "in Mexico: Línea de la Vida 800 911 2000, or 911 in an emergency",
+    "pt": "in Brazil: CVV, dial 188 (free, 24h), or 192 / 190 in an emergency",
+    "ru": "in Russia: 112 in an emergency, or the free helpline 8-800-2000-122"
+  }
+}
