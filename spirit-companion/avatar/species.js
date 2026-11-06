@@ -267,7 +267,10 @@
       // keep the folk spirit's own colours as its coat; the zodiac element only tints aura and sigil
       const e = ELEMENT_HS[spec.element] || ELEMENT_HS.water, h = e[0] + (spec.hueShift || 0);
       spec.coat = { base: [h, e[1], 52], light: [h, e[1] * 0.7, 78], dark: [h, e[1], 22], accent: [h, Math.max(45, e[1]), 58], accent2: [h + 40, Math.max(45, e[1]), 58], nose: [h, e[1] * 0.6, 18] };
-      reasons.push(`${title}, a spirit from the folklore of ${country.name}`);
+      // its name in the person's language, and the folklore it really comes from (a Slavic raven offered in Argentina is
+      // still a Slavic raven, named "cuervo")
+      if (spec.local) spec.creature = spec.local[country.lang] || spec.local.en || spec.creature;
+      reasons.push(`${title}, a spirit from ${spec.culture ? spec.culture + " folklore" : "the folklore of " + country.name}`);
     } else {
       const sp = SPECIES[kind];
       const vKeys = Object.keys(sp.variants);

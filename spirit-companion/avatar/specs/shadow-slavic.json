@@ -1,59 +1,66 @@
 {
- "id": "shadow-slavic",
- "archetype": "shadow",
- "form": "slavic",
- "creature": "ворон",
- "element": "moon",
- "hueShift": 10,
- "body": {
-  "squash": 1.07,
-  "wobble": [
-   [
-    3,
-    0.035,
-    0.9
-   ],
-   [
-    5,
-    0.022,
-    -1.4
-   ],
-   [
-    8,
-    0.012,
-    2.1
-   ]
-  ]
- },
- "eyes": {
-  "shape": "narrow",
-  "size": 0.16,
-  "spacing": 0.34,
-  "y": -0.14,
-  "special": "silverRight"
- },
- "parts": [
-  {
-   "type": "wing",
-   "style": "feather",
-   "span": 1.4,
-   "feathers": 6,
-   "layer": "back",
-   "dark": true
+  "id": "shadow-slavic",
+  "archetype": "shadow",
+  "form": "slavic",
+  "creature": "ворон",
+  "element": "moon",
+  "hueShift": 10,
+  "body": {
+    "squash": 1.07,
+    "wobble": [
+      [
+        3,
+        0.035,
+        0.9
+      ],
+      [
+        5,
+        0.022,
+        -1.4
+      ],
+      [
+        8,
+        0.012,
+        2.1
+      ]
+    ]
   },
-  {
-   "type": "beak",
-   "length": 0.42,
-   "layer": "front"
+  "eyes": {
+    "shape": "narrow",
+    "size": 0.16,
+    "spacing": 0.34,
+    "y": -0.14,
+    "special": "silverRight"
   },
-  {
-   "type": "crest",
-   "style": "feathers",
-   "count": 3,
-   "height": 0.45,
-   "layer": "back",
-   "dark": true
-  }
- ],
- "markings": []
+  "parts": [
+    {
+      "type": "wing",
+      "style": "feather",
+      "span": 1.4,
+      "feathers": 6,
+      "layer": "back",
+      "dark": true
+    },
+    {
+      "type": "beak",
+      "length": 0.42,
+      "layer": "front"
+    },
+    {
+      "type": "crest",
+      "style": "feathers",
+      "count": 3,
+      "height": 0.45,
+      "layer": "back",
+      "dark": true
+    }
+  ],
+  "markings": [],
+  "local": {
+    "es": "cuervo",
+    "pt": "corvo",
+    "ru": "ворон",
+    "en": "raven"
+  },
+  "culture": "Slavic"
 }

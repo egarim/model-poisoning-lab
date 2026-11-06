@@ -1,56 +1,63 @@
 {
- "id": "flame-latam",
- "archetype": "flame",
- "form": "latam",
- "creature": "colibrí de fuego",
- "element": "fire",
- "hueShift": 0,
- "body": {
-  "squash": 1.07,
-  "wobble": [
-   [
-    3,
-    0.035,
-    0.9
-   ],
-   [
-    5,
-    0.022,
-    -1.4
-   ],
-   [
-    8,
-    0.012,
-    2.1
-   ]
-  ]
- },
- "eyes": {
-  "shape": "round",
-  "size": 0.2,
-  "spacing": 0.36,
-  "y": -0.1
- },
- "parts": [
-  {
-   "type": "crest",
-   "style": "flame",
-   "count": 5,
-   "height": 1.1,
-   "layer": "back"
+  "id": "flame-latam",
+  "archetype": "flame",
+  "form": "latam",
+  "creature": "colibrí de fuego",
+  "element": "fire",
+  "hueShift": 0,
+  "body": {
+    "squash": 1.07,
+    "wobble": [
+      [
+        3,
+        0.035,
+        0.9
+      ],
+      [
+        5,
+        0.022,
+        -1.4
+      ],
+      [
+        8,
+        0.012,
+        2.1
+      ]
+    ]
   },
-  {
-   "type": "wing",
-   "style": "blur",
-   "span": 1.1,
-   "layer": "back"
+  "eyes": {
+    "shape": "round",
+    "size": 0.2,
+    "spacing": 0.36,
+    "y": -0.1
   },
-  {
-   "type": "beak",
-   "length": 0.75,
-   "layer": "front",
-   "slim": true
-  }
- ],
- "markings": []
+  "parts": [
+    {
+      "type": "crest",
+      "style": "flame",
+      "count": 5,
+      "height": 1.1,
+      "layer": "back"
+    },
+    {
+      "type": "wing",
+      "style": "blur",
+      "span": 1.1,
+      "layer": "back"
+    },
+    {
+      "type": "beak",
+      "length": 0.75,
+      "layer": "front",
+      "slim": true
+    }
+  ],
+  "markings": [],
+  "local": {
+    "es": "colibrí de fuego",
+    "pt": "beija-flor de fogo",
+    "ru": "огненная колибри",
+    "en": "fire hummingbird"
+  },
+  "culture": "Latin American"
 }

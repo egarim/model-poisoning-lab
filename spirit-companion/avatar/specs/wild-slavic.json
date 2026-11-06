@@ -1,62 +1,69 @@
 {
- "id": "wild-slavic",
- "archetype": "wild",
- "form": "slavic",
- "creature": "леший",
- "element": "earth",
- "hueShift": 0,
- "body": {
-  "squash": 1.07,
-  "wobble": [
-   [
-    3,
-    0.035,
-    0.9
-   ],
-   [
-    5,
-    0.022,
-    -1.4
-   ],
-   [
-    8,
-    0.012,
-    2.1
-   ]
-  ]
- },
- "eyes": {
-  "shape": "round",
-  "size": 0.17,
-  "spacing": 0.34,
-  "y": -0.12
- },
- "parts": [
-  {
-   "type": "antlers",
-   "height": 0.95,
-   "tines": 3,
-   "layer": "back"
+  "id": "wild-slavic",
+  "archetype": "wild",
+  "form": "slavic",
+  "creature": "леший",
+  "element": "earth",
+  "hueShift": 0,
+  "body": {
+    "squash": 1.07,
+    "wobble": [
+      [
+        3,
+        0.035,
+        0.9
+      ],
+      [
+        5,
+        0.022,
+        -1.4
+      ],
+      [
+        8,
+        0.012,
+        2.1
+      ]
+    ]
   },
-  {
-   "type": "wreath",
-   "style": "leaves",
-   "count": 9,
-   "layer": "top"
+  "eyes": {
+    "shape": "round",
+    "size": 0.17,
+    "spacing": 0.34,
+    "y": -0.12
   },
-  {
-   "type": "beard",
-   "length": 0.55,
-   "strands": 7,
-   "layer": "front",
-   "color": "accent",
-   "hue": -40
-  }
- ],
- "markings": [
-  {
-   "style": "bark",
-   "count": 5
-  }
- ]
+  "parts": [
+    {
+      "type": "antlers",
+      "height": 0.95,
+      "tines": 3,
+      "layer": "back"
+    },
+    {
+      "type": "wreath",
+      "style": "leaves",
+      "count": 9,
+      "layer": "top"
+    },
+    {
+      "type": "beard",
+      "length": 0.55,
+      "strands": 7,
+      "layer": "front",
+      "color": "accent",
+      "hue": -40
+    }
+  ],
+  "markings": [
+    {
+      "style": "bark",
+      "count": 5
+    }
+  ],
+  "local": {
+    "es": "leshi",
+    "pt": "léchi",
+    "ru": "леший",
+    "en": "leshy"
+  },
+  "culture": "Slavic"
 }
