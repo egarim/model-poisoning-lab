@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Engine and notebook tests
+        run: dotnet test dotnet/LittleSouls.slnx
+      - name: Build the pages (fails on unfilled brand names or a visible "daemon")
+        run: python3 avatar/tools/build.py
+      - name: Render the persona prompts
+        run: python3 run_tests.py --dry-run

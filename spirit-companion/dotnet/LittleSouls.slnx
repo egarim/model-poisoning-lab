@@ -1,8 +1,10 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Daemon.Divination/Daemon.Divination.csproj" />
+    <Project Path="src/LittleSouls.Companion/LittleSouls.Companion.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Daemon.Divination.Tests/Daemon.Divination.Tests.csproj" />
+    <Project Path="tests/LittleSouls.Companion.Tests/LittleSouls.Companion.Tests.csproj" />
   </Folder>
 </Solution>
