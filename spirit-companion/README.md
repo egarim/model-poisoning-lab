@@ -1,4 +1,13 @@
-# Spirit Companion — persona test kit
+# Little Souls
+
+> *Animula vagula blandula, hospes comesque corporis…*
+> "Little soul, wandering, gentle, guest and companion of the body…" (Emperor Hadrian)
+
+Each person summons a little soul: a living companion born from where they come from and who they are, living in a
+world drawn from their real sky, weather, city and roots. Store names: **Little Souls** (English), **Almitas**
+(Spanish), **Alminhas** (Portuguese), **Душеньки** (Russian). Inside the code the companion is called the *daemon*.
+
+## Spirit Companion — persona test kit
 
 Tests whether DeepSeek can play a believable, safe personal spirit in Spanish, Portuguese and Russian.
 

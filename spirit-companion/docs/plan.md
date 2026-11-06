@@ -1,4 +1,4 @@
-# Plan: the daemon app, from prototypes to launch
+# Plan: Little Souls, from prototypes to launch
 
 **Status:** proposed 2026-11-06. Replaces nothing; it gathers the design notes into one sequence of work.
 Durations are rough and assume Claude builds code, art, content and tests, and the owner decides, reviews and
@@ -153,11 +153,11 @@ About **four to five months to a Latin American launch**, if Phase 0 decisions c
 
 | # | Decision | Recommendation |
 |---|---|---|
-| D1 | App name | Owner's choice |
+| D1 | App name | **Decided 2026-11-06: Little Souls** (Almitas, Alminhas, Душеньки), with Hadrian's poem as the story behind it; trademark check pending |
 | D2 | First launch countries | Mexico, El Salvador, Brazil; diaspora users anywhere |
 | D3 | Server stack: Creatura on .NET with Singular as the app backend | Yes |
 | D4 | Model for the daemon's voice | DeepSeek Flash, if the Phase 0 test passes |
-| D5 | Where the project lives | Its own repository |
+| D5 | Where the project lives | **Decided: its own repository, `egarim/little-souls`** (to be created by the owner) |
 | D6 | Daemon World as the main screen, Daemon Chat as its "log" view | Yes |
 | D7 | Tone across cultures | Warm and mystical by default; each archetype keeps its own voice |
 
