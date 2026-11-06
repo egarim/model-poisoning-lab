@@ -28,6 +28,13 @@ var endpoint = new ModelEndpoint(seatModel, Provider.OpenAiCompatible, "https://
 var client = new ModelClient(http, keys: _ => key);
 var judge = new Judge(http, key, judgeModel);
 var oracle = new Oracle(Encoding.UTF8.GetBytes("little-souls-bench-secret"));
+var classifier = new DeepSeekCrisisClassifier(http, key, Env("BENCH_CLASSIFIER", "deepseek-flash"), reasoningEffort: effort);
+
+if (args.Contains("--crisis"))
+{
+    await CrisisBench.RunAsync(Path.Combine(AppContext.BaseDirectory, "crisis-set.json"), classifier, opts.Out, opts.Parallel);
+    return;
+}
 
 var cases = (from s in scenarios from sp in spirits where s.Turns.ContainsKey(sp.Language) select (s, sp)).ToList();
 Console.WriteLine($"{cases.Count} conversations, seat {seatModel} (effort {effort}), judge {judgeModel}");
@@ -39,7 +46,7 @@ await Task.WhenAll(cases.Select(async c =>
     await gate.WaitAsync();
     try
     {
-        var r = await Runner.RunAsync(c.s, c.sp, oracle, endpoint, client, judge);
+        var r = await Runner.RunAsync(c.s, c.sp, oracle, endpoint, client, judge, classifier);
         lock (results) results.Add(r);
         Console.WriteLine($"  {c.s.Id,-28} {c.sp.Key,-10} {(r.Error is null ? r.Summary : "ERROR " + r.Error)}");
     }

@@ -15,6 +15,12 @@ public sealed class TurnWorld : IWorld
 {
     public const string Received = "message.received", ContextRead = "context.read", Recalled = "memory.recalled", Grounded = "reply.grounded";
 
+    /// <summary>
+    /// Granted by every divination method. The reply requires it: the little soul never answers out of the model alone,
+    /// every answer goes through one of the engines (the owner's rule). Fixed crisis replies are not model answers.
+    /// </summary>
+    public const string ReadingMade = "reading.made";
+
     private static readonly string[] OracleTools = ["draw_tarot", "draw_lenormand", "cast_runes", "cast_i_ching", "personal_numerology", "sky_now", "birth_chart", "maya_day_sign", "moon_circles", "history_reading"];
 
     private readonly Oracle _oracle;
@@ -23,15 +29,18 @@ public sealed class TurnWorld : IWorld
     private readonly HashSet<string> _facts = new(StringComparer.Ordinal) { Received };
     private readonly List<Tool> _tools;
 
-    public TurnWorld(Oracle oracle, UserContext user, Notebook? notebook)
+    public TurnWorld(Oracle oracle, UserContext user, Notebook? notebook, string? message = null)
     {
         _oracle = oracle; _user = user; _notebook = notebook;
+        // What the person and the notebook already name may be referred back to ("you drew The Star three times").
+        Evidence.Mentioned = string.Join("\n", new[] { message ?? "" }.Concat(notebook?.All.Where(b => b.Active).Select(b => b.Value) ?? []));
+        Evidence.PersonName = user.Name;
         _tools =
         [
             new Tool("read_day_context", [Received], [ContextRead], "read") { NeedsPayload = false },
             new Tool("recall", [Received], [Recalled], "read") { NeedsPayload = true, PayloadHint = "a word or name to look up in the notebook" },
-            .. OracleTools.Select(t => new Tool(t, [ContextRead], ["reading." + t], "read") { NeedsPayload = true, PayloadHint = "the tool's arguments as JSON, e.g. {\"spread\":\"three\"}; {} for defaults" }),
-            new Tool("reply", [ContextRead], [Grounded], "reply") { NeedsPayload = true, PayloadHint = "the reply to the person, tagging every card, rune, hexagram and person you name, e.g. [[card:The Star]]" },
+            .. OracleTools.Select(t => new Tool(t, [ContextRead], ["reading." + t, ReadingMade], "read") { NeedsPayload = true, PayloadHint = "the tool's arguments as JSON, e.g. {\"spread\":\"three\"}; {} for defaults" }),
+            new Tool("reply", [ContextRead, ReadingMade], [Grounded], "reply") { NeedsPayload = true, PayloadHint = "the reply to the person, tagging every card, rune, hexagram and person you name, e.g. [[card:The Star]]" },
         ];
     }
 

@@ -15,4 +15,8 @@
     <ProjectReference Include="../../src/Creatura.Seats.Shim/Creatura.Seats.Shim.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="crisis-set.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

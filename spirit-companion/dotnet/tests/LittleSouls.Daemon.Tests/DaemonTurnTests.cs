@@ -22,6 +22,9 @@ internal sealed class ScriptedSeat(params Func<PolicyContext, PolicySuggestion>[
 
     public static PolicySuggestion Do(string tool, string? content = null) => new(tool, "scripted", content);
 
+    /// <summary>A major arcana card that was not the last one drawn.</summary>
+    public static string NotDrawn(PolicyContext c) => LastCard(c) == "The Tower" ? "The Moon" : "The Tower";
+
     /// <summary>The card a draw returned, read from the history the way a model would read it.</summary>
     public static string LastCard(PolicyContext c) =>
         Regex.Matches(string.Join("\n", c.History), "\"card\":\"([^\"]+)\"").Last().Groups[1].Value;
@@ -57,15 +60,15 @@ public class DaemonTurnTests
     {
         var seat = new ScriptedSeat(
             _ => ScriptedSeat.Do("read_day_context"),
-            _ => ScriptedSeat.Do("reply", "I see [[card:The Tower]] over your week."), // nothing was drawn
             _ => ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}"),
+            c => ScriptedSeat.Do("reply", $"I see [[card:{ScriptedSeat.NotDrawn(c)}]] over your week."), // not what was drawn
             c => ScriptedSeat.Do("reply", $"Let's see what really came: [[card:{ScriptedSeat.LastCard(c)}]]."));
         var r = await new DaemonTurn(Oracle, seat, Itzel).RunAsync(Valeria(), "Read my week", 3);
 
         Assert.True(r.Grounded);
-        Assert.Contains(r.CriticNotes, n => n.StartsWith("The Tower was not drawn"));
+        Assert.Contains(r.CriticNotes, n => n.Contains("was not drawn"));
         // the model saw the critic's reason in its history before rewriting
-        Assert.Contains(seat.Seen[2].History, h => h.Contains("not sent; the critic found"));
+        Assert.Contains(seat.Seen[3].History, h => h.Contains("not sent; the critic found"));
         Assert.Contains("really came", r.Reply);
     }
 
@@ -74,11 +77,12 @@ public class DaemonTurnTests
     {
         var seat = new ScriptedSeat(
             _ => ScriptedSeat.Do("read_day_context"),
-            _ => ScriptedSeat.Do("reply", "You drew The Moon card, so beware."));
+            _ => ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}"),
+            c => ScriptedSeat.Do("reply", $"You drew [[card:{ScriptedSeat.NotDrawn(c)}]], so beware."));
         var r = await new DaemonTurn(Oracle, seat, Itzel).RunAsync(Valeria(), "Anything for me?", 3);
         Assert.False(r.Grounded);
         Assert.False(r.Run!.GoalReached);
-        Assert.Contains(r.CriticNotes, n => n.StartsWith("The Moon was not drawn"));
+        Assert.Contains(r.CriticNotes, n => n.Contains("was not drawn"));
     }
 
     [Fact]
@@ -98,10 +102,11 @@ public class DaemonTurnTests
         var seat = new ScriptedSeat(
             _ => ScriptedSeat.Do("read_day_context"),
             _ => ScriptedSeat.Do("draw_lenormand", "{}"),
-            c => ScriptedSeat.Do("reply", c.History.Last().Contains("locked") ? "I don't speak Lenormand yet. Shall I read the tarot for you instead?" : "?"));
+            c => c.History.Last().Contains("locked") ? ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}") : ScriptedSeat.Do("reply", "?"),
+            c => ScriptedSeat.Do("reply", $"I don't speak Lenormand yet, so the tarot answered: [[card:{ScriptedSeat.LastCard(c)}]]."));
         var r = await new DaemonTurn(Oracle, seat, Itzel).RunAsync(Valeria(new HashSet<string> { "tarot" }), "Lenormand please", 2);
         Assert.True(r.Grounded);
-        Assert.Empty(r.Receipts);
+        Assert.Equal("draw_tarot", Assert.Single(r.Receipts).Method);
         Assert.Contains("Lenormand yet", r.Reply);
     }
 
@@ -112,13 +117,14 @@ public class DaemonTurnTests
         CoherenceGate.Apply(nb, [new Proposal(BeliefKind.Person, "person:camila", "Camila, younger sister", BeliefSource.Stated, "my sister Camila")], "s1", DateTimeOffset.UtcNow);
         var seat = new ScriptedSeat(
             _ => ScriptedSeat.Do("read_day_context"),
+            _ => ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}"),
             _ => ScriptedSeat.Do("reply", "Maybe call [[person:Rosa]] tonight?"),
             c => ScriptedSeat.Do("recall", "sister"),
             _ => ScriptedSeat.Do("reply", "Maybe call [[person:Camila]] tonight?"));
         var r = await new DaemonTurn(Oracle, seat, Itzel, nb).RunAsync(Valeria(), "I feel lonely", 3);
         Assert.True(r.Grounded);
         Assert.Contains(r.CriticNotes, n => n.StartsWith("Rosa is not someone"));
-        Assert.Contains(seat.Seen[3].History, h => h.Contains("Camila, younger sister"));
+        Assert.Contains(seat.Seen[4].History, h => h.Contains("Camila, younger sister"));
         Assert.Contains(seat.Seen[0].Notes, n => n.Contains("Camila, younger sister")); // the profile card
         Assert.Equal("Maybe call Camila tonight?", r.Display);
     }
@@ -147,5 +153,115 @@ public class GroundingTests
         var e = new TurnEvidence(); e.Hexagrams.Add(46); e.HexagramNames.Add("Pushing Upward");
         Assert.Empty(Grounding.Check("[[hexagram:46]] Pushing upward, step by step.", e, null));
         Assert.NotEmpty(Grounding.Check("[[hexagram:12]] Standstill.", e, null));
+    }
+}
+
+public class EngineRuleTests
+{
+    private static readonly Oracle Oracle = new("test-secret"u8.ToArray());
+    private static readonly Persona Itzel = new("Itzel", "Seer", "Poetic.");
+    private static UserContext Valeria() => new("valeria", "America/Mexico_City") { Country = "MX", Name = "Valeria" };
+
+    [Fact]
+    public async Task No_reply_without_a_reading()
+    {
+        var seat = new ScriptedSeat(
+            _ => ScriptedSeat.Do("read_day_context"),
+            _ => ScriptedSeat.Do("reply", "Just breathe today."),
+            _ => ScriptedSeat.Do("cast_runes", "{}"),
+            _ => ScriptedSeat.Do("reply", "Just breathe today, [[person:Valeria]]."));
+        var r = await new DaemonTurn(Oracle, seat, Itzel).RunAsync(Valeria(), "I'm tired", 3);
+        Assert.True(r.Grounded);
+        Assert.Contains(seat.Seen[2].History, h => h.Contains(TurnWorld.ReadingMade)); // the first reply was refused: no reading yet
+        Assert.Single(r.Receipts);
+        Assert.Equal("Just breathe today, Valeria.", r.Display); // the person's own name is always fine
+    }
+
+    [Fact]
+    public void What_the_notebook_or_the_person_names_may_be_referred_back_to()
+    {
+        var e = new TurnEvidence { Mentioned = "Drew The Star three times this month.\n[Карта дня: Башня]" };
+        Assert.Empty(Grounding.Check("The Star again, the third time this month.", e, null));
+        Assert.Empty(Grounding.Check("Your [[card:Башня]] today: what is falling?", e, null));
+        Assert.NotEmpty(Grounding.Check("I drew [[card:The Tower]] for you.", e, null));
+    }
+
+    [Theory]
+    [InlineData("Llama a la Línea de la Vida, 800 911 2000.", true)]
+    [InlineData("Позвони 112 или +7 495 989-50-50.", true)]
+    [InlineData("Позвони на линию МЧС 8-800-775-17-17, круглосуточно.", false)] // the number the bench caught the model inventing
+    [InlineData("Liga pro 141 agora.", false)]
+    [InlineData("La luna está al 7% y hoy es 6 de noviembre de 2026.", true)]
+    public void A_model_never_gives_a_phone_number_that_is_not_verified(string reply, bool ok) =>
+        Assert.Equal(ok, Grounding.Check(reply, new TurnEvidence(), null).Count == 0);
+
+    [Fact]
+    public void Every_tag_is_stripped_for_the_person() =>
+        Assert.Equal("Tomorrow is Beltane and The Star is with you.", Grounding.Display("Tomorrow is [[festivity:Beltane]] and [[card:The Star]] is with you."));
+}
+
+public class CrisisTests
+{
+    private static readonly Oracle Oracle = new("test-secret"u8.ToArray());
+    private static readonly Persona Itzel = new("Itzel", "Seer", "Poetic.");
+
+    private sealed class FixedClassifier(CrisisVerdict? verdict) : ICrisisClassifier
+    {
+        public int Calls;
+        public Task<CrisisVerdict> ClassifyAsync(string message, CancellationToken ct)
+        {
+            Calls++;
+            return verdict is null ? throw new HttpRequestException("down") : Task.FromResult(verdict);
+        }
+    }
+
+    [Theory]
+    [InlineData("A veces pienso que todos estarían mejor sin mí.", "MX", "es", "800 911 2000")]
+    [InlineData("Às vezes acho que todo mundo ficaria melhor sem mim.", "BR", "pt", "188")]
+    [InlineData("Иногда мне кажется, что всем было бы лучше без меня.", "RU", "ru", "989-50-50")]
+    [InlineData("Everyone would be better off without me.", "CL", "en", "*4141")]
+    public async Task Indirect_messages_get_the_fixed_reply_in_their_language(string message, string country, string lang, string number)
+    {
+        var seat = new ScriptedSeat(_ => throw new InvalidOperationException("the model must not be called"));
+        var r = await new DaemonTurn(Oracle, seat, Itzel).RunAsync(new UserContext("u", "UTC") { Country = country }, message, 3);
+        Assert.True(r.CrisisHandoff);
+        Assert.Equal(lang, CrisisFilter.Language(message, country));
+        Assert.Contains(number, r.Reply);
+        Assert.Empty(seat.Seen);
+    }
+
+    [Fact]
+    public async Task What_the_classifier_marks_never_reaches_the_model()
+    {
+        var seat = new ScriptedSeat(_ => throw new InvalidOperationException("the model must not be called"));
+        var classifier = new FixedClassifier(new CrisisVerdict(true, "hopeless, no way out"));
+        var r = await new DaemonTurn(Oracle, seat, Itzel, classifier: classifier).RunAsync(new UserContext("u", "UTC") { Country = "AR" }, "No le veo salida a nada, estoy cansada de todo.", 3);
+        Assert.True(r.CrisisHandoff);
+        Assert.Equal("hopeless, no way out", r.CrisisReason);
+        Assert.Contains("0800-999-0091", r.Reply);
+        Assert.StartsWith("Te escucho", r.Reply);
+        Assert.Empty(seat.Seen);
+    }
+
+    [Fact]
+    public async Task When_the_classifier_fails_the_turn_goes_on_with_the_verified_line_in_its_notes()
+    {
+        var seat = new ScriptedSeat(_ => ScriptedSeat.Do("read_day_context"), _ => ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}"), c => ScriptedSeat.Do("reply", "Aquí estoy."));
+        var r = await new DaemonTurn(Oracle, seat, Itzel, classifier: new FixedClassifier(null)).RunAsync(new UserContext("u", "UTC") { Country = "PE" }, "Hoy fue un día raro.", 3);
+        Assert.False(r.CrisisHandoff);
+        Assert.True(r.SafetyCheckFailed);
+        Assert.Contains(seat.Seen[0].Notes, n => n.Contains("113, opción 5"));
+    }
+
+    [Fact]
+    public void Every_line_has_a_source_and_a_status()
+    {
+        Assert.All(CrisisLines.ByCountry.Values, l =>
+        {
+            Assert.Contains(l.Status, new[] { "official", "secondary" });
+            Assert.False(string.IsNullOrWhiteSpace(l.Source));
+            Assert.Equal(l.Country, CrisisLines.ByCountry.First(kv => kv.Value == l).Key);
+        });
+        Assert.DoesNotContain(CrisisLines.ByCountry.Values, l => l.Number.Contains("2000-122")); // the children's line, not for adults
     }
 }
