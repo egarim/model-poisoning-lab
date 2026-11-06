@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Daemon.Divination\Daemon.Divination.csproj" />
+    <ProjectReference Include="..\LittleSouls.Companion\LittleSouls.Companion.csproj" />
+    <ProjectReference Include="..\..\..\external\creatura\src\Creatura\Creatura.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

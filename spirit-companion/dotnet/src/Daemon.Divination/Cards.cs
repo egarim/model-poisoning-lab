@@ -13,6 +13,9 @@ public static class Tarot
 
     public static int DeckSize => DeckCache.Value.Count;
 
+    /// <summary>Every card's name in English (the canonical names the critic checks).</summary>
+    public static IReadOnlyList<string> CardNames => DeckCache.Value.Select(c => c.Name).ToList();
+
     private static List<Card> BuildDeck()
     {
         var d = Data.Get("tarot");
@@ -62,6 +65,8 @@ public static class Lenormand
 {
     public static IReadOnlyList<string> Spreads => Data.Get("lenormand")["spreads"]!.AsObject().Select(p => p.Key).ToList();
 
+    public static IReadOnlyList<string> CardNames => Data.Get("lenormand")["cards"]!.AsArray().Select(c => Data.S(c!["name"])).ToList();
+
     public static JsonObject Draw(DrawRng rng, string spread = "three")
     {
         var d = Data.Get("lenormand");
@@ -89,6 +94,8 @@ public static class Lenormand
 /// <summary>Elder Futhark runes: 24 runes; the nine symmetric ones never fall reversed.</summary>
 public static class Runes
 {
+    public static IReadOnlyList<string> Names => Data.Get("runes")["runes"]!.AsArray().Select(r => Data.S(r![0])).ToList();
+
     public static JsonObject Cast(DrawRng rng, int count = 1)
     {
         var d = Data.Get("runes");

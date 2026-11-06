@@ -2,9 +2,12 @@
   <Folder Name="/src/">
     <Project Path="src/Daemon.Divination/Daemon.Divination.csproj" />
     <Project Path="src/LittleSouls.Companion/LittleSouls.Companion.csproj" />
+    <Project Path="src/LittleSouls.Daemon/LittleSouls.Daemon.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Daemon.Divination.Tests/Daemon.Divination.Tests.csproj" />
     <Project Path="tests/LittleSouls.Companion.Tests/LittleSouls.Companion.Tests.csproj" />
+    <Project Path="tests/LittleSouls.Daemon.Tests/LittleSouls.Daemon.Tests.csproj" />
   </Folder>
+  <Project Path="../external/creatura/src/Creatura/Creatura.csproj" />
 </Solution>

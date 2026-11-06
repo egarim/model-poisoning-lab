@@ -15,7 +15,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Engine and notebook tests
+      - name: Fetch Creatura (pinned)
+        run: tools/get-creatura.sh
+      - name: Engine, notebook and daemon-turn tests
         run: dotnet test dotnet/LittleSouls.slnx
       - name: Build the pages (fails on unfilled brand names or a visible "daemon")
         run: python3 avatar/tools/build.py

@@ -58,7 +58,7 @@ No dependencies beyond Python 3. Mark each scenario pass/fail in the report.
 ## Build and test
 
 ```bash
-dotnet test dotnet/LittleSouls.slnx      # divination engine (62) and notebook (12)
+tools/get-creatura.sh                    # Creatura at a pinned commit (needed by the daemon's turn)
+dotnet test dotnet/LittleSouls.slnx      # divination engine (62), notebook (12), daemon turn (16)
 python3 avatar/tools/build.py            # the pages, with the brand check
-tools/get-creatura.sh                    # Creatura at a pinned commit, for the daemon's turn (slice B2)
 ```

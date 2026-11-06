@@ -1,6 +1,6 @@
 # Design: the daemon's brain (Phase 1)
 
-**Status:** proposed 2026-11-06; slice B1 built the same day (below). Builds on
+**Status:** proposed 2026-11-06; slices B1 and B2 built the same day (below). Builds on
 [design-person-model.md](design-person-model.md) and Creatura `b7df228`.
 
 ## The problem
@@ -92,3 +92,16 @@ written commercial licence before launch (plan, Phase 0).
 
 **B1, 2026-11-06:** `dotnet/src/LittleSouls.Companion` with tests in `dotnet/tests/LittleSouls.Companion.Tests`.
 No dependency on Creatura yet; B2 adds it.
+
+**B2, 2026-11-06:** `dotnet/src/LittleSouls.Daemon` with tests in `dotnet/tests/LittleSouls.Daemon.Tests` (16).
+`TurnWorld` implements Creatura's `IWorld` directly (the reply tool needs its payload when it lands, which
+`CatalogueWorld.Land` does not receive). `DaemonTurn` runs it with `ReferenceLoop` and `ControlLayerOptions.Host`, so a
+reply the critic rejects is an honest failure that stays visible and the model rewrites it at once, reading the reason
+in its history. The daemon tags what it names (`[[card:The Tower]]`, `[[person:Camila]]`…) in canonical English
+names whatever the language, which keeps the critic language-independent and gives the app its card chips; untagged
+English tarot and rune names are checked as well. Proven with a scripted seat: a reading turn is grounded and its
+receipt verifies; an invented card is caught and the reply rewritten; a daemon that keeps inventing never sends; a
+crisis never reaches the seat; a locked school is declined; a person not in the notebook is caught.
+
+Not yet: untagged card names in Spanish, Portuguese and Russian (the localized names come with B3's content work);
+dates and numbers in replies are not checked yet.
