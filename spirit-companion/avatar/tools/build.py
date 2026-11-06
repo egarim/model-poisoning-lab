@@ -22,11 +22,12 @@ def check_visible(page, out):
         if hit:
             raise SystemExit(f"{out}: visible text says 'daemon' (use the brand words): ...{src[max(0, hit.start()-60):hit.end()+30].strip()}...")
 
-for template, out in [("forge.template.html", "daemon.html"), ("chat.template.html", "chat.html"), ("world.template.html", "world.html")]:
+for template, out in [("forge.template.html", "daemon.html"), ("chat.template.html", "chat.html"), ("world.template.html", "world.html"),
+                      ("app.template.html", "../dotnet/src/LittleSouls.Host/wwwroot/index.html")]:
     page = (HERE / template).read_text(encoding="utf-8")
     page = page.replace("/*RENDERER*/", renderer).replace("/*SPECIES*/", species).replace("/*SPECS*/", specs).replace("/*TAROT*/", majors)
     for k, v in BRAND.items():
         page = page.replace(k, v)
     check_visible(page, out)
     (HERE / out).write_text(page, encoding="utf-8")
-    print(f"built {out}: {len(page) // 1024} KB")
+    print(f"built {pathlib.Path(out).name if out.startswith('..') else out}: {len(page) // 1024} KB")

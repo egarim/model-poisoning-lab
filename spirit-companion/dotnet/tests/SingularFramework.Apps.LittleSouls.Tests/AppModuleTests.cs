@@ -34,6 +34,7 @@ public class ProvisioningTests
             Assert.Equal("delete", App.Access![c].Closing);
         }
         Assert.True(App.Access!["profile"].OwnerKeyed);
+        Assert.True(App.SelfSignup == true && App.OpenMembership == true); // Singular refuses sign-up without open membership
         Assert.True(App.Access!["daemon"].OwnerKeyed);
     }
 

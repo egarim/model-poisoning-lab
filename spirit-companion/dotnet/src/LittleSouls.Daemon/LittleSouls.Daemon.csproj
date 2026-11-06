@@ -13,4 +13,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="../../../archetypes.json" LogicalName="archetypes.json" Link="archetypes.json" />
+  </ItemGroup>
+
 </Project>

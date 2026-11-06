@@ -12,7 +12,7 @@ namespace SingularFramework.Apps.LittleSouls;
 /// <summary>The app slug and the collections it declares, in one place. Provisioning: provision/little-souls.app.json.</summary>
 public static class LittleSoulsApp
 {
-    public const string Slug = "little-souls";
+    public const string Slug = "littlesouls"; // no hyphen: Singular uses the slug in database identifiers
 
     /// <summary>One per person (owner-keyed): birth data, where they live, their roots, the four traits, consents.</summary>
     public const string Profile = "profile";
@@ -37,7 +37,7 @@ public static class LittleSoulsApp
     public const string Outbox = "outbox";
 
     /// <summary>The subject the app's jobs write as.</summary>
-    public const string SystemSubject = "system:little-souls";
+    public const string SystemSubject = "system:littlesouls";
 
     /// <summary>Schools open on the free plan: the daemon's native school is added from the daemon document.</summary>
     public static readonly IReadOnlySet<string> FreeSchools = new HashSet<string> { "tarot", "astrology", "calendar" };

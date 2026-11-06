@@ -77,7 +77,7 @@ public sealed class AssistantEngineContext
 public sealed record AssistantEngineResult(string Answer, JsonArray Proposals, JsonArray Cards, int PromptTokens, int CompletionTokens);
 
 // registration, next to the existing options
-new AssistantApp("little-souls", Readable: [...], Proposable: ["notebook"], Engine: sp => sp.GetRequiredService<DaemonEngine>());
+new AssistantApp("littlesouls", Readable: [...], Proposable: ["notebook"], Engine: sp => sp.GetRequiredService<DaemonEngine>());
 ```
 
 With no engine set, today's loop runs, so other apps don't change. It's the generic seam Creatura's mobile note asks
@@ -170,6 +170,23 @@ message or a session close happens once even if a run repeats.
   quarantines lapse by session, so sessions close either way.
 - **`NotebookForgetHook`:** when a person deletes a belief in the Grimoire, its fingerprint goes to the daemon's
   `notebook.forgotten`, so the gate never learns it again.
+
+**Running, 2026-11-06: `dotnet/src/LittleSouls.Host`.** Singular's `Program.cs` has no plugin loader and Cosmos is wired
+by editing it, which we don't do. The host compiles Singular's API source unchanged (as `Creatura.Shim` compiles Creatura)
+and brings Little Souls in through an ASP.NET **hosting startup** in its own assembly, which ASP.NET runs while Singular's
+`Program.cs` builds the host: `AddLittleSoulsApp`, the turn models, and a startup filter that serves the web app at
+`/souls/` and appends the little soul's endpoints after Singular's pipeline, so Singular's authentication and app-context
+resolution have already run: `GET state`, `PUT profile`, `POST summon`, `POST turn` under `/api/app/littlesouls/`, all
+through `DocumentAccess` as the person (the profile hook's age gate answers 422). The turn runs `DaemonTurn` (crisis
+filter, classifier, reading required, grounding critic, time claims, the assertion check) and streams Singular's events
+(`tool`, `card`, `delta`, `done`); the reply is sent only after every check. This is the engine seam (G2) done from our
+side for our own endpoints; Singular's built-in assistant path still lacks it. `tools/run-local.sh` brings it all up;
+`tools/e2e-browser.js` drives it in a browser.
+
+Found on the way, in our code: the provisioning needed `openMembership` with `selfSignup` (Singular refuses one without the
+other), and the slug became `littlesouls` (Singular uses it in database identifiers, where a hyphen fails). In Singular at
+the pin, worked around and not changed: `scripts/bring-up.sh` asks for a `minio` service the compose file now calls `s3`,
+and `--seed-demo` fails on a demo template; a host shutting down holds its port for up to 28 s.
 
 **Not yet:** the vector index on `memories.embedding` is set by an operator (Singular's provisioning request has no
 field for it); the jobs' document reads and writes are only exercised

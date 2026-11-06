@@ -1,5 +1,5 @@
 {
- "slug": "little-souls",
+ "slug": "littlesouls",
  "displayName": "Little Souls",
  "collections": [
   "~profile",
@@ -14,6 +14,7 @@
   "outbox"
  ],
  "selfSignup": true,
+ "openMembership": true,
  "readScopes": {
   "entitlements": "person"
  },
@@ -262,6 +263,10 @@
     },
     "notebook": {
      "type": "object"
+    },
+    "look": {
+     "type": "object",
+     "description": "How it looks: the spec the summoning drew (avatar/species.js)."
     }
    }
   },

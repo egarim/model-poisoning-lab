@@ -77,6 +77,7 @@ Backend and front end are on **Singular Framework** (see [design-singular.md](de
 
 | Work | Done when |
 |---|---|
+| Web app on the Little Souls server (**running locally**: sign-up, age gate and consents, summoning, chat with readings, crisis handoff; `tools/run-local.sh`) | Runs in a browser end to end |
 | Expo app from a `singular-js` starter: sign-in (Keycloak, Google, Apple), **age gate and consents** (a profile collection; Singular has none) | Runs on Android |
 | Summoning ritual: birthplace, roots, birth date, four questions → three daemons with reasons | A user summons a daemon |
 | **Daemon World** screen: pixel world from real sky and weather, the daemon renderer ported to React Native Skia, chat as text box and menu | Matches the prototype on a mid-range Android phone at 60 fps |

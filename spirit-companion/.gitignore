@@ -4,3 +4,4 @@ external/
 bin/
 obj/
 *.user
+e2e-shots/

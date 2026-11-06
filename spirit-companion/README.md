@@ -56,11 +56,26 @@ No dependencies beyond Python 3. Mark each scenario pass/fail in the report.
 - [docs/design-person-model.md](docs/design-person-model.md): the daemon's notebook about its person, how it learns interactively, and the privacy rules.
 - [avatar/README.md](avatar/README.md): the procedural daemon avatar, species and summoning.
 
+## Run the app
+
+The whole app runs locally: Singular's services in Docker, the Little Souls server (Singular's API compiled unchanged plus
+the Little Souls module, `dotnet/src/LittleSouls.Host`) and the web app it serves.
+
+```bash
+tools/get-creatura.sh && tools/get-singular.sh      # once
+DEEPSEEK_API_KEY=sk-... tools/run-local.sh           # Docker, Keycloak realm, tenant "souls", the server on :5070
+open http://localhost:5070/souls/                    # sign up, profile (18+, consents), summoning, chat
+node tools/e2e-browser.js shots/                     # the same, in a real browser, with screenshots
+```
+
+Every answer goes through a divination method and the checks (crisis filter and classifier, grounding critic, guesses
+stated as facts) before anything is sent; readings are stored with their receipts as the person.
+
 ## Build and test
 
 ```bash
 tools/get-creatura.sh                    # Creatura at a pinned commit (needed by the daemon's turn)
 tools/get-singular.sh                    # Singular Framework at a pinned commit (private; needed by the app module)
-dotnet test dotnet/LittleSouls.slnx      # engine (62), notebook (13), daemon turn (16), app module, jobs and proposals (55), all on .NET 8
+dotnet test dotnet/LittleSouls.slnx      # engine (62), notebook (13), daemon turn and safety (49), app module, jobs and proposals (55), all on .NET 8
 python3 avatar/tools/build.py            # the pages, with the brand check
 ```

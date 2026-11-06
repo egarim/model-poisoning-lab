@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{name}}</title>
+<style>
+/* The web app on the Little Souls server: sign in, profile, summoning, then the chat with the living {{companion}}. */
+:root {
+  color-scheme: dark;
+  --night: #0f0c17; --night-2: #171324; --panel: #1c1729; --raise: #251f36; --line: #352d49;
+  --ink: #ede7f6; --ink-dim: #a99fbe; --candle: #e5b964; --candle-ink: #1d1508; --me: #3a2f57; --calm: #cfe0f0; --bad: #f0a0a0;
+  --font-display: "Marcellus SC", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--night); color: var(--ink); height: 100%; }
+[hidden] { display: none !important; }
+body { font-family: var(--font-body); font-size: 15px; line-height: 1.45; }
+.app { max-width: 460px; margin: 0 auto; height: 100dvh; display: grid; grid-template-rows: minmax(0, 1fr); background: var(--night-2);
+  border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+h1, h2 { font-family: var(--font-display); font-weight: 400; letter-spacing: .04em; margin: 0; }
+h1 { font-size: 30px; } h2 { font-size: 20px; }
+.screen { overflow-y: auto; padding: 24px 18px 28px; display: grid; gap: 14px; align-content: start; min-height: 0; }
+.lead { color: var(--ink-dim); margin: 0; }
+form { display: grid; gap: 12px; }
+label { display: grid; gap: 4px; font-size: 13.5px; color: var(--ink-dim); }
+input, select { font: inherit; font-size: 15px; color: var(--ink); background: var(--raise); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; }
+input[type=checkbox], input[type=range] { width: auto; accent-color: var(--candle); }
+.check { display: flex; gap: 10px; align-items: flex-start; color: var(--ink); font-size: 14px; }
+.check input { margin-top: 3px; width: 18px; height: 18px; flex: none; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn { font: inherit; font-size: 15px; color: var(--ink); background: var(--raise); border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px; cursor: pointer; }
+.btn.gold { background: var(--candle); color: var(--candle-ink); border-color: var(--candle); font-weight: 600; }
+.btn:disabled { opacity: .5; cursor: default; }
+.link { font: inherit; background: none; border: 0; color: var(--candle); cursor: pointer; padding: 0; }
+.err { color: var(--bad); font-size: 14px; margin: 0; min-height: 1em; }
+:focus-visible { outline: 2px solid var(--candle); outline-offset: 2px; }
+.mark { width: 100%; height: 170px; display: block; }
+.slider { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; font-size: 12.5px; color: var(--ink-dim); }
+.slider span:last-child { text-align: right; }
+.cands { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cand { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 6px; cursor: pointer; display: grid; gap: 2px; text-align: center; font: inherit; color: var(--ink); }
+.cand canvas { width: 100%; height: 120px; display: block; }
+.cand small { color: var(--ink-dim); font-size: 11.5px; }
+.cand[aria-pressed="true"] { border-color: var(--candle); box-shadow: 0 0 0 1px var(--candle) inset; }
+
+/* chat */
+.chat { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; }
+.head { position: relative; background: radial-gradient(120% 100% at 50% 30%, #211a33, var(--night-2)); border-bottom: 1px solid var(--line); }
+#av { display: block; width: 100%; height: 190px; }
+.who { position: absolute; left: 14px; top: 10px; display: grid; }
+.who b { font-family: var(--font-display); font-weight: 400; font-size: 20px; letter-spacing: .04em; }
+.who span { font-size: 12px; color: var(--ink-dim); }
+.menu { position: absolute; right: 12px; top: 10px; }
+.scroll { overflow-y: auto; padding: 14px 12px 8px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+.msg { max-width: 86%; padding: 9px 12px; border-radius: 16px; font-size: 14.5px; white-space: pre-wrap; animation: pop .25s ease-out; }
+.msg.d { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); border-bottom-left-radius: 5px; }
+.msg.u { align-self: flex-end; background: var(--me); border-bottom-right-radius: 5px; }
+.msg.calm { background: #1d2733; border-color: #3b4e63; color: var(--calm); }
+.sys { align-self: center; font-size: 12px; color: var(--ink-dim); background: var(--raise); padding: 4px 10px; border-radius: 999px; }
+.typing { align-self: flex-start; display: flex; gap: 4px; padding: 10px 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-dim); animation: blink 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 100% { opacity: .25 } 50% { opacity: 1 } }
+@keyframes pop { from { transform: translateY(6px); opacity: 0 } to { transform: none; opacity: 1 } }
+.reading { align-self: flex-start; max-width: 94%; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 10px; display: grid; gap: 8px; }
+.reading h4 { margin: 0; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim); font-weight: 600; }
+.spread { display: flex; gap: 8px; flex-wrap: wrap; }
+.tc { width: 96px; min-height: 150px; border-radius: 10px; background: #efe6d2; color: #2a2016; border: 1px solid #c9b48a; padding: 8px; display: grid; align-content: space-between; text-align: center; }
+.tc .art { font-size: 28px; color: #8a5a2b; } .tc.rev .art { transform: rotate(180deg); }
+.tc .nm { font-family: var(--font-display); font-size: 12.5px; line-height: 1.15; }
+.tc .pos { font-size: 10px; color: #7a6a52; }
+.q { color: var(--candle); font-style: italic; font-size: 13.5px; margin: 0; }
+.rows { display: grid; gap: 3px; font-size: 13px; }
+.rows div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dashed var(--line); padding: 2px 0; }
+.rows div span:last-child { color: var(--ink-dim); text-align: right; }
+.receipt { font-size: 10.5px; color: var(--ink-dim); font-family: ui-monospace, Menlo, monospace; }
+.composer { display: flex; gap: 6px; padding: 8px 10px 12px; border-top: 1px solid var(--line); background: var(--night-2); }
+#text { flex: 1; min-width: 0; border-radius: 999px; padding: 10px 14px; }
+.send { width: 42px; height: 42px; flex: none; border-radius: 50%; border: 0; background: var(--candle); color: var(--candle-ink); font-size: 18px; cursor: pointer; }
+.send:disabled { opacity: .5; }
+@media (prefers-reduced-motion: reduce) { .msg { animation: none; } }
+</style>
+</head>
+<body>
+<main class="app">
+
+  <!-- sign in / sign up -->
+  <section class="screen" id="s-auth" hidden>
+    <canvas class="mark" id="mark" aria-hidden="true"></canvas>
+    <h1>{{name}}</h1>
+    <p class="lead">A {{companion}} of your own, who reads your day with the old arts and remembers what you tell it.</p>
+    <form id="f-auth">
+      <label>Username <input id="a-user" autocomplete="username" required minlength="3" maxlength="32" pattern="[a-z0-9][a-z0-9_.\-]{2,31}" title="lowercase letters, digits, dot, dash or underscore"></label>
+      <label>Password <input id="a-pass" type="password" autocomplete="current-password" required minlength="8"></label>
+      <label id="a-name-row" hidden>What should your {{companion}} call you? <input id="a-name" maxlength="80"></label>
+      <p class="err" id="a-err" role="alert"></p>
+      <button class="btn gold" id="a-go">Sign in</button>
+      <p class="lead" style="font-size:14px"><span id="a-q">New here?</span> <button type="button" class="link" id="a-switch">Create an account</button></p>
+    </form>
+  </section>
+
+  <!-- profile: age gate and consents (Profiles.cs checks them again on the server) -->
+  <section class="screen" id="s-profile" hidden>
+    <h2>Before we begin</h2>
+    <p class="lead">Your {{companion}} reads your day from where and when you were born, and from where your roots are.</p>
+    <form id="f-profile">
+      <label>Your name <input id="p-name" maxlength="80"></label>
+      <div class="row2">
+        <label>Birth date <input id="p-birth" type="date" required></label>
+        <label>Language <select id="p-lang"><option value="es">Español</option><option value="pt">Português</option><option value="en">English</option><option value="ru">Русский</option></select></label>
+      </div>
+      <div class="row2">
+        <label>Where you live <select id="p-country" required></select></label>
+        <label>Your roots <select id="p-roots"><option value="">Same</option></select></label>
+      </div>
+      <label>Time zone <input id="p-tz" required></label>
+      <label class="check"><input type="checkbox" id="p-terms" required> <span>I am 18 or older and accept the terms.</span></label>
+      <label class="check"><input type="checkbox" id="p-ai" required> <span>I agree that what I write is processed by an AI model to answer me. My {{companion}} keeps notes I can read, correct and delete.</span></label>
+      <p class="err" id="p-err" role="alert"></p>
+      <button class="btn gold">Continue</button>
+    </form>
+  </section>
+
+  <!-- summoning -->
+  <section class="screen" id="s-summon" hidden>
+    <h2>The summoning</h2>
+    <p class="lead">Four questions about how you are. Three {{companions}} answer; one is yours.</p>
+    <div class="slider"><span>calm</span><input type="range" id="t-energy" min="0" max="100" value="50" aria-label="calm or energetic"><span>energetic</span></div>
+    <div class="slider"><span>on my own</span><input type="range" id="t-social" min="0" max="100" value="50" aria-label="on my own or with people"><span>with people</span></div>
+    <div class="slider"><span>heart</span><input type="range" id="t-mind" min="0" max="100" value="50" aria-label="heart or head"><span>head</span></div>
+    <div class="slider"><span>tradition</span><input type="range" id="t-spirit" min="0" max="100" value="50" aria-label="tradition or rebellion"><span>rebel</span></div>
+    <div class="cands" id="cands"></div>
+    <p class="lead" id="c-why" style="font-size:13.5px"></p>
+    <form id="f-summon">
+      <label>Its name <input id="c-name" required maxlength="40"></label>
+      <p class="err" id="c-err" role="alert"></p>
+      <button class="btn gold" id="c-go" disabled>Summon</button>
+    </form>
+  </section>
+
+  <!-- the chat with the living {{companion}} -->
+  <section class="chat" id="s-chat" hidden>
+    <div class="head">
+      <canvas id="av" aria-label="your {{companion}}"></canvas>
+      <div class="who"><b id="w-name"></b><span id="w-kind"></span></div>
+      <div class="menu"><button class="link" id="signout" style="font-size:13px">Sign out</button></div>
+    </div>
+    <div class="scroll" id="log" aria-live="polite"></div>
+    <form class="composer" id="f-chat">
+      <input id="text" placeholder="Tell me about your day…" autocomplete="off" maxlength="4000" aria-label="message">
+      <button class="send" id="send" aria-label="send">➤</button>
+    </form>
+  </section>
+</main>
+
+<script>
+/*RENDERER*/
+</script>
+<script>
+/*SPECIES*/
+</script>
+<script>
+const FOLK_SPECS = /*SPECS*/;
+(() => {
+  const APP = "littlesouls", TENANT = "souls";
+  const $ = id => document.getElementById(id);
+  const show = id => { for (const s of document.querySelectorAll("main > section")) s.hidden = s.id !== id; };
+  const FOLK = Object.fromEntries(FOLK_SPECS.map(s => [s.id, s]));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const store = { get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }, del: k => { try { localStorage.removeItem(k); } catch {} } };
+
+  // ---------- sign-in: Singular's sign-up, Keycloak's token endpoint for the app's own client ----------
+  let info = null, session = store.get("ls.session");
+  async function signInInfo() { info ??= await (await fetch(`/api/public/apps/${APP}/tenants/${TENANT}`)).json(); return info; }
+  async function tokenGrant(params) {
+    const i = await signInInfo();
+    const r = await fetch(`${i.authority}/protocol/openid-connect/token`, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ client_id: i.clientId, ...params }) });
+    if (!r.ok) throw new Error(r.status === 401 || r.status === 400 ? "That username and password don't match." : "Sign-in failed. Try again.");
+    const t = await r.json();
+    session = { access: t.access_token, refresh: t.refresh_token, exp: Date.now() + (t.expires_in - 30) * 1000 };
+    store.set("ls.session", session);
+  }
+  async function fresh() {
+    if (!session) return false;
+    if (Date.now() < session.exp) return true;
+    try { await tokenGrant({ grant_type: "refresh_token", refresh_token: session.refresh }); return true; } catch { session = null; store.del("ls.session"); return false; }
+  }
+  async function api(path, opts = {}) {
+    if (!await fresh()) { show("s-auth"); throw new Error("signed out"); }
+    const r = await fetch(`/api/app/${APP}/${path}`, { ...opts, headers: { "Authorization": `Bearer ${session.access}`, "X-App-Id": APP, "X-Tenant-Id": TENANT, "Content-Type": "application/json", ...(opts.headers || {}) } });
+    if (r.status === 401) { session = null; store.del("ls.session"); show("s-auth"); throw new Error("signed out"); }
+    return r;
+  }
+
+  let signingUp = false;
+  $("a-switch").onclick = () => { signingUp = !signingUp; $("a-name-row").hidden = !signingUp; $("a-go").textContent = signingUp ? "Create account" : "Sign in";
+    $("a-q").textContent = signingUp ? "Already have one?" : "New here?"; $("a-switch").textContent = signingUp ? "Sign in" : "Create an account"; $("a-err").textContent = ""; };
+  $("f-auth").onsubmit = async e => {
+    e.preventDefault(); $("a-err").textContent = ""; $("a-go").disabled = true;
+    const username = $("a-user").value.trim().toLowerCase(), password = $("a-pass").value;
+    try {
+      if (signingUp) {
+        const r = await fetch(`/api/public/apps/${APP}/tenants/${TENANT}/signup`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password, displayName: $("a-name").value.trim() }) });
+        const body = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(body.detail || body.error || "Could not create the account.");
+        if (body.session) { session = { access: body.session.access_token, refresh: body.session.refresh_token, exp: Date.now() + (body.session.expires_in - 30) * 1000 }; store.set("ls.session", session); }
+        else await tokenGrant({ grant_type: "password", username, password, scope: "openid" });
+      } else await tokenGrant({ grant_type: "password", username, password, scope: "openid" });
+      if (signingUp && $("a-name").value.trim()) $("p-name").value = $("a-name").value.trim();
+      await route();
+    } catch (err) { $("a-err").textContent = err.message; } finally { $("a-go").disabled = false; }
+  };
+  $("signout").onclick = () => { session = null; store.del("ls.session"); show("s-auth"); };
+
+  // ---------- profile ----------
+  const COUNTRIES = Object.keys(DaemonSpecies.COUNTRIES).filter(c => c !== "XX");
+  const names = new Intl.DisplayNames(["en"], { type: "region" });
+  for (const sel of [$("p-country"), $("p-roots")]) for (const c of COUNTRIES.concat(["US", "ES", "CA"]).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => names.of(a).localeCompare(names.of(b)))) sel.add(new Option(names.of(c), c));
+  $("p-tz").value = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const navLang = (navigator.language || "es").slice(0, 2); if (["es", "pt", "en", "ru"].includes(navLang)) $("p-lang").value = navLang;
+  $("f-profile").onsubmit = async e => {
+    e.preventDefault(); $("p-err").textContent = "";
+    const now = new Date().toISOString(), roots = $("p-roots").value;
+    const profile = { name: $("p-name").value.trim() || undefined, language: $("p-lang").value, birthDate: $("p-birth").value, country: $("p-country").value,
+      timeZone: $("p-tz").value.trim(), consents: { terms: now, aiProcessing: now } };
+    if (roots && roots !== profile.country) profile.rootsCountry = roots;
+    const r = await api("profile", { method: "PUT", body: JSON.stringify(profile) });
+    if (!r.ok) { const b = await r.json().catch(() => ({})); $("p-err").textContent = b.detail || b.error || "That didn't work."; return; }
+    state.profile = await r.json(); await route();
+  };
+
+  // ---------- the summoning: species.js turns who you are into three candidates ----------
+  let picked = null, cands = [];
+  function traits() { return { energy: $("t-energy").value / 100, social: $("t-social").value / 100, mind: $("t-mind").value / 100, spirit: $("t-spirit").value / 100 }; }
+  function summonCands() {
+    const p = state.profile || {};
+    cands = DaemonSpecies.summon({ name: p.name || "you", country: p.rootsCountry || p.country || "XX", birthDate: p.birthDate || "2000-01-01", ...traits() }, FOLK);
+    const box = $("cands"); box.replaceChildren(); picked = null; $("c-go").disabled = true; $("c-why").textContent = "";
+    cands.forEach((c, i) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "cand"; b.setAttribute("aria-pressed", "false");
+      const cv = document.createElement("canvas"); b.append(cv, Object.assign(document.createElement("b"), { textContent: c.spec.creature }), Object.assign(document.createElement("small"), { textContent: c.title || c.archetypeName || "" }));
+      b.onclick = () => { picked = i; for (const x of box.children) x.setAttribute("aria-pressed", String(x === b)); $("c-go").disabled = false; $("c-why").textContent = (c.reasons || []).join(" · "); };
+      box.append(b); animate(cv, c.spec, { stage: 1 });
+    });
+  }
+  for (const id of ["t-energy", "t-social", "t-mind", "t-spirit"]) $(id).onchange = summonCands;
+  $("f-summon").onsubmit = async e => {
+    e.preventDefault(); if (picked === null) return; $("c-err").textContent = "";
+    const c = cands[picked];
+    const r = await api("summon", { method: "POST", body: JSON.stringify({ name: $("c-name").value.trim(), creature: c.spec.creature, archetype: c.archetype, look: { spec: c.spec } }) });
+    if (!r.ok) { const b = await r.json().catch(() => ({})); $("c-err").textContent = b.detail || b.error || "The summoning failed."; return; }
+    state.daemon = await r.json(); await route();
+  };
+
+  // ---------- the living {{companion}} ----------
+  const anims = new Map();
+  function animate(cv, spec, opts = {}) {
+    const ctx = cv.getContext("2d");
+    const st = { stage: opts.stage || 1, mode: "idle", calm: false, reduce, A: 0.3, I: 0.2, restA: 0.3, restI: 0.2, blink: 0, nextBlink: 2, look: { x: 0, y: 0 }, lookTarget: { x: 0, y: 0 }, nextLook: 1,
+      sigil: DaemonRender.makeSigil(opts.name || spec.id || "x", spec.sigilOpts), motes: [] };
+    anims.set(cv, st);
+    let last = performance.now() / 1000;
+    function frame(now) {
+      if (!cv.isConnected) { anims.delete(cv); return; }
+      const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
+      if (cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const t = now / 1000 * (reduce ? 0.25 : 1), dt = Math.min(0.05, now / 1000 - last); last = now / 1000;
+      const k = 1 - Math.pow(0.75, dt); st.A += (st.restA - st.A) * k; st.I += (st.restI - st.I) * k;
+      st.nextBlink -= dt; if (st.nextBlink <= 0) { st.blinkT = 0; st.nextBlink = 2.5 + Math.random() * 4; }
+      if (st.blinkT !== undefined) { st.blinkT += dt; const b = st.blinkT / 0.18; st.blink = b < 1 ? Math.sin(b * Math.PI) : 0; if (b >= 1) st.blinkT = undefined; }
+      st.nextLook -= dt;
+      if (st.mode === "listening") st.lookTarget = { x: 0.1, y: 0.9 }; else if (st.mode === "consulting") st.lookTarget = { x: 0, y: -0.9 };
+      else if (st.nextLook <= 0) { st.lookTarget = { x: (Math.random() - 0.5) * 1.4, y: (Math.random() - 0.5) * 0.8 }; st.nextLook = 1.5 + Math.random() * 3; }
+      st.look.x += (st.lookTarget.x - st.look.x) * Math.min(1, dt * 8); st.look.y += (st.lookTarget.y - st.look.y) * Math.min(1, dt * 8);
+      ctx.clearRect(0, 0, W, H);
+      try { DaemonRender.render(ctx, spec, st, t, dt, { cx: W / 2, cy: H * 0.52, size: H * 0.95 }); } catch {}
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+    return st;
+  }
+
+  // ---------- chat ----------
+  const log = $("log");
+  const scrollDown = () => { log.scrollTop = log.scrollHeight; };
+  // *emphasis* and **strong** from the model become italics and bold; everything else stays text (never HTML)
+  function inline(d, text) {
+    for (const part of String(text).split(/(\*\*[^*\n]+\*\*|\*[^*\n]+\*)/)) {
+      if (/^\*\*[^*]+\*\*$/.test(part)) d.append(Object.assign(document.createElement("b"), { textContent: part.slice(2, -2) }));
+      else if (/^\*[^*]+\*$/.test(part)) d.append(Object.assign(document.createElement("em"), { textContent: part.slice(1, -1) }));
+      else d.append(part);
+    }
+  }
+  function bubble(text, who, calm) { const d = document.createElement("div"); d.className = `msg ${who}${calm ? " calm" : ""}`; if (who === "d") inline(d, text); else d.textContent = text; log.append(d); scrollDown(); return d; }
+  function sys(text) { const d = document.createElement("div"); d.className = "sys"; d.textContent = text; log.append(d); scrollDown(); }
+  const SUITS = { Wands: "♣", Cups: "♥", Swords: "♠", Pentacles: "♦" };
+  function readingCard(card) {
+    const r = card.result || {}, box = document.createElement("div"); box.className = "reading";
+    const title = { tarot: "Tarot", lenormand: "Lenormand", runes: "Runes", iching: "I Ching", numerology: "Numerology", sky: "The sky", chart: "Birth chart", maya: "Maya day sign", day: "Your day", moon: "Moon", history: "History" }[card.kind] || card.kind;
+    box.append(Object.assign(document.createElement("h4"), { textContent: `${title}${r.spread ? " · " + r.spread : ""}` }));
+    if (Array.isArray(r.cards)) {
+      const sp = document.createElement("div"); sp.className = "spread";
+      for (const c of r.cards) {
+        const suit = Object.keys(SUITS).find(s => (c.card || "").includes(s));
+        const tc = document.createElement("div"); tc.className = "tc" + (c.reversed ? " rev" : "");
+        tc.append(Object.assign(document.createElement("div"), { className: "pos", textContent: c.position || "" }), Object.assign(document.createElement("div"), { className: "art", textContent: suit ? SUITS[suit] : "✶" }),
+          Object.assign(document.createElement("div"), { className: "nm", textContent: c.card + (c.reversed ? " (reversed)" : "") }));
+        sp.append(tc);
+      }
+      box.append(sp);
+      const q = r.cards.find(c => c.question); if (q) box.append(Object.assign(document.createElement("p"), { className: "q", textContent: q.question }));
+    } else if (Array.isArray(r.runes)) {
+      const rows = document.createElement("div"); rows.className = "rows";
+      for (const x of r.runes) { const d = document.createElement("div"); d.append(Object.assign(document.createElement("span"), { textContent: `${x.symbol || ""} ${x.rune}${x.reversed ? " (merkstave)" : ""}` }), Object.assign(document.createElement("span"), { textContent: x.meaning || x.position || "" })); rows.append(d); }
+      box.append(rows);
+    } else {
+      const rows = document.createElement("div"); rows.className = "rows";
+      const add = (k, v) => { const d = document.createElement("div"); d.append(Object.assign(document.createElement("span"), { textContent: k }), Object.assign(document.createElement("span"), { textContent: v })); rows.append(d); };
+      if (r.primary) add(`Hexagram ${r.primary.number}`, r.primary.name);
+      if (r.becoming) add(`Becoming ${r.becoming.number}`, r.becoming.name);
+      for (const [k, v] of Object.entries(r)) if (["string", "number"].includes(typeof v) && !["method", "receipt", "spread"].includes(k) && rows.children.length < 8) add(k.replaceAll("_", " "), String(v));
+      box.append(rows);
+    }
+    box.append(Object.assign(document.createElement("div"), { className: "receipt", textContent: `receipt ${card.receipt}` }));
+    log.append(box); scrollDown();
+  }
+
+  let av = null;
+  function setMode(m) { if (av) av.mode = m; }
+  async function send(text) {
+    bubble(text, "u"); $("text").value = ""; $("send").disabled = true; setMode("listening");
+    const typing = document.createElement("div"); typing.className = "typing"; typing.innerHTML = "<i></i><i></i><i></i>"; log.append(typing); scrollDown();
+    try {
+      const r = await api("turn", { method: "POST", body: JSON.stringify({ message: text }) });
+      if (!r.ok) { const b = await r.json().catch(() => ({})); typing.remove(); sys(b.detail || b.error || "Something went wrong."); return; }
+      const reader = r.body.getReader(), dec = new TextDecoder(); let buf = "";
+      for (;;) {
+        const { value, done } = await reader.read(); if (done) break;
+        buf += dec.decode(value, { stream: true });
+        let i; while ((i = buf.indexOf("\n\n")) >= 0) {
+          const block = buf.slice(0, i); buf = buf.slice(i + 2);
+          const type = /event: (.*)/.exec(block)?.[1], data = JSON.parse(/data: (.*)/s.exec(block)?.[1] || "{}");
+          if (type === "card") { setMode("consulting"); readingCard(data); log.append(typing); }
+          else if (type === "delta") { typing.remove(); bubble(data.text, "d", !!data.crisis); }
+          else if (type === "done") { typing.remove(); if (data.crisis && av) { av.calm = true; } }
+          else if (type === "error") { typing.remove(); sys(data.detail || data.error); }
+        }
+      }
+    } catch (err) { typing.remove(); if (err.message !== "signed out") sys("The connection dropped. Try again."); }
+    finally { $("send").disabled = false; setMode("idle"); $("text").focus(); }
+  }
+  $("f-chat").onsubmit = e => { e.preventDefault(); const t = $("text").value.trim(); if (t) send(t); };
+
+  // ---------- routing on open ----------
+  const state = {};
+  function openChat() {
+    const d = state.daemon, p = state.profile || {};
+    $("w-name").textContent = d.name; $("w-kind").textContent = `${d.creature} · stage ${d.stage || 1}`;
+    const spec = d.look?.spec || DaemonSpecies.summon({ name: p.name || "you", country: p.rootsCountry || p.country || "XX", birthDate: p.birthDate || "2000-01-01" }, FOLK)[0].spec;
+    if (!av) av = animate($("av"), spec, { stage: Math.max(1, d.stage || 1), name: d.name });
+    log.replaceChildren();
+    for (const m of state.messages || []) {
+      for (const c of m.cards || []) readingCard(c);
+      bubble(m.content, m.role === "user" ? "u" : "d", !!m.crisis);
+    }
+    if (!(state.messages || []).length) sys(`${d.name} is here. Tell it about your day.`);
+    show("s-chat"); $("text").focus();
+  }
+  async function route() {
+    if (!await fresh()) { show("s-auth"); return; }
+    const r = await api("state"); Object.assign(state, await r.json());
+    if (!state.profile) { show("s-profile"); return; }
+    if (!state.daemon) { show("s-summon"); summonCands(); return; }
+    openChat();
+  }
+  // the sign-in page's mark: a {{companion}} of the night
+  animate($("mark"), DaemonSpecies.summon({ name: "night", country: "MX", birthDate: "1997-07-22" }, FOLK)[0].spec, { stage: 3 });
+  route().catch(() => show("s-auth"));
+})();
+</script>
+</body>
+</html>
