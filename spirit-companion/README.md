@@ -35,6 +35,8 @@ No dependencies beyond Python 3. Mark each scenario pass/fail in the report.
 
 ## Design notes
 
+- **[docs/plan.md](docs/plan.md): the plan, from prototypes to a Latin American launch.**
+
 - [docs/design-voice.md](docs/design-voice.md): how the daemon speaks; why not ElevenLabs as the main voice; our own voice engine.
 - [docs/design-interface.md](docs/design-interface.md): channels, and how users send text, voice notes, photos and location.
 - [docs/design-sky-context.md](docs/design-sky-context.md): festivities, moon circles, weather, tides and history readings, with worked examples.
