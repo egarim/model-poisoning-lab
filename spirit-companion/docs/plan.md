@@ -64,8 +64,7 @@ Backend and front end are on **Singular Framework** (see [design-singular.md](de
 
 | Work | Done when |
 |---|---|
-| **Singular to .NET 10** (S1) | All Singular tests green; pull request merged |
-| **The assistant-engine seam in Singular** (S2) | The default loop unchanged; an app can supply its own; pull request merged |
+| **The assistant-engine seam in Singular** (S2), timed with the owner since Singular is under heavy development; our code already targets Singular's .NET 8 | The default loop unchanged; an app can supply its own; pull request merged |
 | `LittleSouls.Companion`: beliefs, coherence gate, quarantine counted in sessions, predictions about the person (**built: B1**) | Unit tests; Creatura core untouched |
 | The daemon turn as a Creatura world: tools from `Daemon.Divination`, the grounding critic, safety pre-filter, crisis handoff (**built: B2**, scripted seat) | Runs end to end |
 | `SingularFramework.Apps.LittleSouls` with `DaemonEngine` and a `ChatModelPolicy` over Singular's model client (S3) | A turn streams `tool`, `card`, `delta`, `proposal`, `done` from a running Singular |

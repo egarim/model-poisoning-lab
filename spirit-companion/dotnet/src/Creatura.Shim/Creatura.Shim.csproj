@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Creatura's core, compiled unchanged for .NET 8 (Singular's runtime). The source comes from tools/get-creatura.sh
+       at a pinned commit; nothing in Creatura's repository is modified. Creatura is PolyForm Noncommercial. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Creatura</RootNamespace>
+    <AssemblyName>Creatura</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <CreaturaSource>$(MSBuildThisFileDirectory)../../../external/creatura/src/Creatura/</CreaturaSource>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(CreaturaSource)**/*.cs" Exclude="$(CreaturaSource)obj/**;$(CreaturaSource)bin/**" />
+  </ItemGroup>
+
+  <Target Name="CheckCreaturaSource" BeforeTargets="BeforeBuild" Condition="!Exists('$(CreaturaSource)Core/ReferenceLoop.cs')">
+    <Error Text="Creatura's source is missing: run tools/get-creatura.sh first." />
+  </Target>
+
+</Project>

@@ -3,11 +3,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Daemon.Divination\Daemon.Divination.csproj" />
     <ProjectReference Include="..\LittleSouls.Companion\LittleSouls.Companion.csproj" />
-    <ProjectReference Include="..\..\..\external\creatura\src\Creatura\Creatura.csproj" />
+    <ProjectReference Include="..\Creatura.Shim\Creatura.Shim.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

@@ -105,3 +105,9 @@ crisis never reaches the seat; a locked school is declined; a person not in the 
 
 Not yet: untagged card names in Spanish, Portuguese and Russian (the localized names come with B3's content work);
 dates and numbers in replies are not checked yet.
+
+**.NET 8, 2026-11-06:** everything targets `net8.0` with C# 12 so it can be compiled into Singular, which stays on
+.NET 8. Creatura's source is compiled unchanged for .NET 8 by `dotnet/src/Creatura.Shim` (from `tools/get-creatura.sh`).
+Two .NET 8 differences were found by running the tests on the .NET 8 runtime: `Convert.ToHexStringLower` does not exist
+(replaced), and custom `JsonSerializerOptions` need an explicit `TypeInfoResolver`. 90 tests pass on .NET 8, built with
+both the .NET 10 and the .NET 8 SDK.

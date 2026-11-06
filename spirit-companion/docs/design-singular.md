@@ -45,7 +45,7 @@ the reply's `delta` events only after it is grounded. The person sees the daemon
 
 | # | Gap | Proposal | Where |
 |---|---|---|---|
-| G1 | **.NET 8 vs .NET 10** (blocking). Singular targets `net8.0`; our libraries and Creatura target `net10.0`, which a .NET 8 host cannot load. To my knowledge .NET 8 support ends on 10 November 2026; verify on Microsoft's support policy page. | **Move Singular to .NET 10.** Multi-targeting our code and Creatura to `net8.0` is possible but work thrown away later | Singular |
+| G1 | **.NET 8 vs .NET 10.** Singular targets `net8.0`; our code and Creatura targeted `net10.0`. **Resolved 2026-11-06 without touching Singular or Creatura:** our libraries target `net8.0` with C# 12, and `Creatura.Shim` compiles Creatura's unchanged source for `net8.0`. All 90 tests pass on the .NET 8 runtime and with the .NET 8 SDK. When Singular moves to .NET 10, ours follows by changing the target. (To my knowledge .NET 8 support ends on 10 November 2026; that is Singular's decision, not a blocker for us.) | Done | Little Souls |
 | G2 | **The assistant loop is fixed.** `AssistantService.ChatAsync` runs its own 6-round loop; no public hook sees a tool call | **An assistant-engine seam** (below): an app may supply the loop; Singular keeps everything around it | Singular |
 | G3 | **No subscriptions or entitlements.** Payments are one-off Stripe checkout (ADR 0056) | Subscriptions with Google Play billing and Mercado Pago, and entitlements a server can check (the daemon's school unlocks, Pacto) | Singular |
 | G4 | **No age or consent fields** | App-level: a `profile` collection with birth year, consents (terms, AI processing, the notebook, sensitive topics) and their dates; sign-up blocks under the age set per country | Little Souls app |
@@ -111,8 +111,8 @@ Creatura is PolyForm Noncommercial: the company needs the owner's written commer
 
 | Step | What | Where | Needs |
 |---|---|---|---|
-| S1 | Singular to .NET 10; all its tests green | `singular-framework`, a branch and a pull request | Push access for this session |
-| S2 | The assistant-engine seam with tests (the default loop unchanged) | `singular-framework`, pull request | S1 |
+| S1 | ~~Singular to .NET 10~~ Not needed: our code builds for .NET 8 (G1) | Little Souls | Done |
+| S2 | The assistant-engine seam with tests (the default loop unchanged), when Singular's development allows | `singular-framework`, pull request | Push access; the owner's timing |
 | S3 | `SingularFramework.Apps.LittleSouls`: collections, `DaemonEngine` with a scripted seat, `ChatModelPolicy` | Little Souls repository, referenced by the host | S2 |
 | S4 | Expo app from the starter: sign-in, summoning, the Daemon World screen talking to the real stream | Little Souls repository | S3 |
 | S5 | Jobs, push, preferences (G6), export (G5), subscriptions (G3) | Both | Phases 3 and 4 |
@@ -121,7 +121,7 @@ Creatura is PolyForm Noncommercial: the company needs the owner's written commer
 
 | # | Decision | Options | Recommendation |
 |---|---|---|---|
-| SF1 | .NET version | Singular to .NET 10; our code to .NET 8 | **Singular to .NET 10** |
+| SF1 | .NET version | Singular to .NET 10; our code to .NET 8 | **Decided 2026-11-06: our code to .NET 8**; Singular unchanged while it is under heavy development |
 | SF2 | How the daemon runs inside Singular | an engine seam; daemon tools inside Singular's own loop (no critic); a separate service | **The engine seam** |
 | SF3 | Who changes Singular | Claude by pull requests; the owner | **Claude by pull requests**, reviewed by the owner (it runs other apps) |
 | SF4 | Where the app module lives | the Little Souls repository; Singular's `src/` | **Little Souls repository**, referenced by the host build |

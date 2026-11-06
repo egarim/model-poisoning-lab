@@ -32,7 +32,7 @@ public sealed class DrawRng
     public string Seed { get; }
 
     /// <summary>A generator with 128 bits of fresh secure randomness as its seed.</summary>
-    public static DrawRng Fresh() => new(Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(16)));
+    public static DrawRng Fresh() => new(Convert.ToHexString(RandomNumberGenerator.GetBytes(16)).ToLowerInvariant());
 
     private static uint Rotl(uint x, int k) => (x << k) | (x >> (32 - k));
 
@@ -84,8 +84,8 @@ public static class Seeds
     /// unguessable without the server's secret (HMAC), so nobody can compute other people's cards in advance.
     /// </summary>
     public static string Daily(byte[] secret, string userId, DateOnly localDate, string method) =>
-        Convert.ToHexStringLower(HMACSHA256.HashData(secret, Encoding.UTF8.GetBytes(
-            $"daily|{userId}|{localDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}|{method}")));
+        Convert.ToHexString(HMACSHA256.HashData(secret, Encoding.UTF8.GetBytes(
+            $"daily|{userId}|{localDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}|{method}"))).ToLowerInvariant();
 
     /// <summary>The calendar date at this instant in the given IANA time zone (e.g. "America/Mexico_City").</summary>
     public static DateOnly LocalDate(DateTimeOffset instant, string timeZoneId) =>
@@ -115,9 +115,9 @@ internal static class Data
 
 internal static class Canonical
 {
-    private static readonly JsonSerializerOptions Compact = new() { WriteIndented = false, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+    private static readonly JsonSerializerOptions Compact = new() { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver(), WriteIndented = false, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 
     public static string Json(JsonNode node) => node.ToJsonString(Compact);
 
-    public static string Hash(JsonNode node) => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(Json(node))));
+    public static string Hash(JsonNode node) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Json(node)))).ToLowerInvariant();
 }

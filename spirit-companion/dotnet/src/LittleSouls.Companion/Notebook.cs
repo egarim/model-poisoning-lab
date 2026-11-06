@@ -42,7 +42,7 @@ public sealed class Notebook
     /// <summary>A forgotten key, hashed: the notebook remembers that it must not re-learn it, not what it was.</summary>
     internal bool WasForgotten(string key) => _forgotten.Contains(Fingerprint(key));
 
-    private static string Fingerprint(string key) => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(Normalize(key))));
+    private static string Fingerprint(string key) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Normalize(key)))).ToLowerInvariant();
 
     internal void Put(PersonBelief b) => _beliefs[Normalize(b.Key)] = b;
 
@@ -122,5 +122,5 @@ public sealed class Notebook
         }),
         traits = Traits.Snapshot(),
         open_questions = OpenQuestions,
-    }, new JsonSerializerOptions { WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+    }, new JsonSerializerOptions { TypeInfoResolver = new System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver(), WriteIndented = true, Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
 }

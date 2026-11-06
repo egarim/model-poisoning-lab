@@ -1,10 +1,10 @@
 # Daemon.Divination (C#)
 
-The divination engine, ported from the Python prototype in `../divination/` and improved. .NET 10, beside Creatura.
+The divination engine, ported from the Python prototype in `../divination/` and improved. Targets .NET 8 with C# 12, so it can be compiled into Singular Framework.
 Code draws and calculates; the model only interprets.
 
 ```bash
-dotnet test        # 62 tests, offline
+../tools/get-creatura.sh && dotnet test LittleSouls.slnx   # 90 tests on .NET 8 (engine 62, notebook 12, daemon turn 16)
 ```
 
 ## What it does
