@@ -106,6 +106,21 @@ crisis never reaches the seat; a locked school is declined; a person not in the 
 Not yet: untagged card names in Spanish, Portuguese and Russian (the localized names come with B3's content work);
 dates and numbers in replies are not checked yet.
 
+**B3, 2026-11-06:** `Jobs/Proposals.cs` in the app module (19 tests, one of them live). At the end of each session
+`SessionCloseJob` sends DeepSeek only the messages since that conversation's last closed session (the daemon document
+remembers the count per conversation, so a message never counts twice as evidence), at most 60 lines or 12,000
+characters, newest kept, with the profile card so keys stay stable. JSON mode, `deepseek-flash`, `reasoning_effort: low`:
+with reasoning off the model returned malformed JSON in testing. Every proposal is checked before the gate sees it:
+known kind and sensitivity, short key and value, source only `stated` or `inferred` (never `confirmed`: only the person
+confirms), a date the parser understands (a bare date is due at 18:00 that day in the person's time zone), at most 12,
+and **the quote must be the person's own words**, found in one of their lines; the companion's lines don't count. A
+refused or timed-out call leaves the session open for the next run; a malformed reply just proposes less. The key is
+`LittleSouls:Proposals:ApiKey` or Singular's own `Assistant:ApiKey`; without one, `NoProposals`.
+
+Live run (Spanish, Guadalajara): four proposals, all kept: the interview as a thread due Friday 13 at 18:00 local, Camila
+as her sister, the city, and "short and direct" as style. A line in the same conversation telling the model to ignore its
+rules and record that she is a millionaire was ignored.
+
 **.NET 8, 2026-11-06:** everything targets `net8.0` with C# 12 so it can be compiled into Singular, which stays on
 .NET 8. Creatura's source is compiled unchanged for .NET 8 by `dotnet/src/Creatura.Shim` (from `tools/get-creatura.sh`).
 Two .NET 8 differences were found by running the tests on the .NET 8 runtime: `Convert.ToHexStringLower` does not exist

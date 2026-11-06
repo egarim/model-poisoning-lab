@@ -61,6 +61,6 @@ No dependencies beyond Python 3. Mark each scenario pass/fail in the report.
 ```bash
 tools/get-creatura.sh                    # Creatura at a pinned commit (needed by the daemon's turn)
 tools/get-singular.sh                    # Singular Framework at a pinned commit (private; needed by the app module)
-dotnet test dotnet/LittleSouls.slnx      # engine (62), notebook (13), daemon turn (16), app module and jobs (36), all on .NET 8
+dotnet test dotnet/LittleSouls.slnx      # engine (62), notebook (13), daemon turn (16), app module, jobs and proposals (55), all on .NET 8
 python3 avatar/tools/build.py            # the pages, with the brand check
 ```

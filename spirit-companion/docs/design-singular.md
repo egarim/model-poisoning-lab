@@ -166,13 +166,13 @@ message or a session close happens once even if a run repeats.
 - **`little-souls-session-close`, every 10 minutes** (`SessionCloseJob`): a conversation quiet for 30 minutes ends its
   session. The proposal source (`IProposalSource`) reads it and proposes notebook changes; the `CoherenceGate` decides;
   the notebook is saved as the person (one document per belief, with the expected revision) and its bookkeeping in the
-  daemon document. Quarantines lapse by session, so sessions close even before the model proposes: until B3 the source
-  is `NoProposals`.
+  daemon document. The source is DeepSeek (B3, see design-daemon-brain.md) when a key is set, else `NoProposals`:
+  quarantines lapse by session, so sessions close either way.
 - **`NotebookForgetHook`:** when a person deletes a belief in the Grimoire, its fingerprint goes to the daemon's
   `notebook.forgotten`, so the gate never learns it again.
 
 **Not yet:** the vector index on `memories.embedding` is set by an operator (Singular's provisioning request has no
-field for it); the DeepSeek proposal source (B3, needs the key); the jobs' document reads and writes are only exercised
+field for it); the jobs' document reads and writes are only exercised
 against a running Singular, which no test does yet; the notebook gate on proposals the person confirms in chat;
 an integration test against a running Singular with Postgres; and, until the engine seam (G2), the interim loop streams
 text before any grounding check.

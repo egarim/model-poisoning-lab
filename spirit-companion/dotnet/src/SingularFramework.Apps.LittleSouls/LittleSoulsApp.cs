@@ -72,7 +72,14 @@ public static class LittleSoulsApp
 
         // The daemon's initiative, in each person's own time (Jobs/Planning.cs), and the end of each session.
         services.AddSingleton<LittleSoulsTenants>();
-        services.TryAddSingleton<IProposalSource, NoProposals>(); // replaced by the model's proposals in slice B3
+        // The notebook learns at the end of each session from DeepSeek's proposals (Jobs/Proposals.cs), when a key is set:
+        // LittleSouls:Proposals:ApiKey, or the assistant's own Assistant:ApiKey. Without one, sessions still close.
+        var proposalOptions = ProposalOptions.From(configuration);
+        services.AddSingleton(proposalOptions);
+        if (proposalOptions.IsConfigured)
+            services.AddHttpClient<IProposalSource, DeepSeekProposals>(c => c.Timeout = TimeSpan.FromSeconds(120));
+        else
+            services.TryAddSingleton<IProposalSource, NoProposals>();
         services.AddScheduledJob<DaemonRoundsJob>("*/15 * * * *", DaemonRoundsJob.Name);
         services.AddScheduledJob<SessionCloseJob>("*/10 * * * *", SessionCloseJob.Name);
 

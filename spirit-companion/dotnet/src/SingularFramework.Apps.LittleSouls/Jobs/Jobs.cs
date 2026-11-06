@@ -122,7 +122,7 @@ public sealed class DaemonRoundsJob(LittleSoulsTenants tenants, DocumentAccess d
 /// lapse), and write the notebook back.
 /// </summary>
 public sealed class SessionCloseJob(LittleSoulsTenants tenants, DocumentAccess documents, IProposalSource proposals,
-    TimeProvider? clock = null) : IScheduledJob
+    TimeProvider? clock = null, ILogger<SessionCloseJob>? log = null) : IScheduledJob
 {
     public const string Name = "little-souls-session-close";
     public static readonly TimeSpan Quiet = TimeSpan.FromMinutes(30);
@@ -131,7 +131,7 @@ public sealed class SessionCloseJob(LittleSoulsTenants tenants, DocumentAccess d
     public async Task<string> RunAsync(CancellationToken ct)
     {
         var now = _clock.GetUtcNow();
-        int closed = 0, proposed = 0, kept = 0;
+        int closed = 0, proposed = 0, kept = 0, failed = 0;
         foreach (var tenant in tenants.TenantSlugs())
         {
             if (await tenants.SystemAsync(tenant, ct) is not { } system) continue;
@@ -151,7 +151,21 @@ public sealed class SessionCloseJob(LittleSoulsTenants tenants, DocumentAccess d
                 var nb = NotebookDocuments.Load(conv.OwnerSubject, stored.Select(s => (s.Key, s.Value.Doc)), daemonDoc);
 
                 int stage = daemonDoc?["stage"]?.GetValue<int>() ?? 1;
-                var list = await proposals.ProposeAsync(JsonNode.Parse(conv.PayloadJson) as JsonObject ?? new JsonObject(), ProfileCard.Render(nb, stage, now), ct);
+                // Only the messages since this conversation's last closed session: each is read once.
+                var conversation = JsonNode.Parse(conv.PayloadJson) as JsonObject ?? new JsonObject();
+                var closedUpTo = daemonDoc?["notebook"]?["closed"] as JsonObject ?? new JsonObject();
+                int upTo = closedUpTo[conv.DocumentKey] is JsonValue u && u.TryGetValue<int>(out var n) ? n : 0;
+                var profile = await documents.GetAsync(person, LittleSoulsApp.Profile, conv.OwnerSubject, ct);
+                var slice = NewPart(conversation, upTo, profile is null ? null : JsonNode.Parse(profile.PayloadJson) as JsonObject);
+                IReadOnlyList<Proposal> list;
+                try { list = await proposals.ProposeAsync(slice, ProfileCard.Render(nb, stage, now), ct); }
+                catch (Exception e) when (e is HttpRequestException or TaskCanceledException && !ct.IsCancellationRequested)
+                {
+                    // the session stays open and the next run tries again
+                    log?.LogWarning("Proposals failed for a session in {Tenant}: {Message}", tenant, e.Message);
+                    failed++;
+                    continue;
+                }
                 proposed += list.Count;
                 var report = CoherenceGate.Apply(nb, list, sessionId, now);
                 kept += report.Added.Count + report.Reinforced.Count + report.Replaced.Count;
@@ -165,6 +179,8 @@ public sealed class SessionCloseJob(LittleSoulsTenants tenants, DocumentAccess d
                 }
                 if (daemon is not null && daemonDoc is not null)
                 {
+                    closedUpTo[conv.DocumentKey] = slice["count"]!.GetValue<int>();
+                    meta["closed"] = closedUpTo.DeepClone();
                     daemonDoc["notebook"] = meta;
                     await documents.UpsertAsync(person, LittleSoulsApp.Daemon, conv.OwnerSubject, daemonDoc.ToJsonString(), ct, daemon.Revision);
                 }
@@ -176,7 +192,20 @@ public sealed class SessionCloseJob(LittleSoulsTenants tenants, DocumentAccess d
                 closed++;
             }
         }
-        return $"{closed} sessions closed, {proposed} proposals, {kept} kept";
+        return $"{closed} sessions closed, {proposed} proposals, {kept} kept" + (failed > 0 ? $", {failed} to retry" : "");
+    }
+
+    /// <summary>The conversation from message <paramref name="upTo"/> on, with the person's time zone and the full count.</summary>
+    public static JsonObject NewPart(JsonObject conversation, int upTo, JsonObject? profile)
+    {
+        var messages = conversation["messages"] as JsonArray ?? [];
+        int from = upTo <= messages.Count ? Math.Max(0, upTo) : 0; // shorter than before: the conversation was reset
+        return new JsonObject
+        {
+            ["messages"] = new JsonArray(messages.Skip(from).Select(m => m?.DeepClone()).ToArray()),
+            ["timeZone"] = profile?["timeZone"]?.GetValue<string>() is { } tz && ProfileRules.TimeZoneExists(tz) ? tz : "UTC",
+            ["count"] = messages.Count,
+        };
     }
 }
 
