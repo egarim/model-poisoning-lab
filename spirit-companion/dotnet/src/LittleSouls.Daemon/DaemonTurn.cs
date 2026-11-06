@@ -15,7 +15,11 @@ public sealed record TurnResult(
     bool CrisisHandoff,
     IReadOnlyList<DrawReceipt> Receipts,
     IReadOnlyList<string> CriticNotes,
-    AgentRun? Run);
+    AgentRun? Run)
+{
+    /// <summary>What the methods returned this turn (one per receipt), for the app's cards and for review.</summary>
+    public IReadOnlyList<Reading> Readings { get; init; } = [];
+}
 
 /// <summary>
 /// One turn of conversation: the crisis filter first (no model), then a <see cref="TurnWorld"/> run by Creatura's
@@ -49,7 +53,7 @@ public sealed class DaemonTurn(Oracle oracle, IPolicy seat, Persona persona, Not
         bool grounded = world.Reply is not null;
         string reply = world.Reply ?? $"(no grounded reply after {MaxTicks} steps)";
         return new TurnResult(reply, Grounding.Display(reply), grounded, false,
-            world.Readings.Select(r => r.Receipt!).ToList(), world.CriticNotes, run);
+            world.Readings.Select(r => r.Receipt!).ToList(), world.CriticNotes, run) { Readings = world.Readings.ToList() };
     }
 
     /// <summary>What the seat reads, fixed parts first so the provider's prompt cache can reuse them.</summary>

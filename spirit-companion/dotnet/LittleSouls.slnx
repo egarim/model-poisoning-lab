@@ -1,10 +1,14 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Creatura.Shim/Creatura.Shim.csproj" />
+    <Project Path="src/Creatura.Seats.Shim/Creatura.Seats.Shim.csproj" />
     <Project Path="src/Daemon.Divination/Daemon.Divination.csproj" />
     <Project Path="src/LittleSouls.Companion/LittleSouls.Companion.csproj" />
     <Project Path="src/LittleSouls.Daemon/LittleSouls.Daemon.csproj" />
     <Project Path="src/SingularFramework.Apps.LittleSouls/SingularFramework.Apps.LittleSouls.csproj" />
+  </Folder>
+  <Folder Name="/bench/">
+    <Project Path="bench/LittleSouls.Bench/LittleSouls.Bench.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Daemon.Divination.Tests/Daemon.Divination.Tests.csproj" />

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Creatura's model seats, judge and bench (with the worlds they need), compiled unchanged for .NET 8 for the
+       Little Souls bench only; nothing here ships in the app module. Source from tools/get-creatura.sh. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Creatura.Seats</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS1591;CS0618</NoWarn>
+    <CreaturaSrc>$(MSBuildThisFileDirectory)../../../external/creatura/src/</CreaturaSrc>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(CreaturaSrc)Creatura.Seats/**/*.cs;$(CreaturaSrc)Creatura.Bench/**/*.cs;$(CreaturaSrc)Creatura.Worlds/**/*.cs"
+             Exclude="$(CreaturaSrc)**/obj/**;$(CreaturaSrc)**/bin/**" />
+    <ProjectReference Include="../Creatura.Shim/Creatura.Shim.csproj" />
+  </ItemGroup>
+
+</Project>
