@@ -25,7 +25,8 @@ public sealed class DeepSeekAssertionChecker(HttpClient http, string apiKey, str
         methods returned: cards, runes, numbers, the moon, the day) support.
         Do not list: questions; hedged guesses ("maybe", "quizá", "tal vez", "talvez", "может быть", "I wonder"); what a
         card, rune or hexagram means or asks, when it is presented as the symbol's meaning or question; anything the person
-        said; anything the readings returned ("your number today is 11", "the moon is waning"); general truths; the
+        said, or reflecting back what their message expresses or plainly implies (a fear or a wish they voiced, in
+        other words); their name; anything the readings returned ("your number today is 11", "the moon is waning"); general truths; the
         companion speaking about itself.
         Do list: a card used to assert a fact about their life ("Nine of Wands is you holding on for months"); invented
         durations, counts and times ("the third month", "all evening", "at 2 a.m."); verdicts about their inner life
@@ -92,7 +93,8 @@ internal sealed class CheckingSeat(IPolicy inner, IAssertionChecker checker, Tur
         {
             string readings = string.Join("\n", world.Readings.Select(r => $"{r.Method}: {r.ToolOutput()}"));
             if (world.DayContext is { } day) readings += "\nday_context: " + day.ToJsonString()[..Math.Min(1500, day.ToJsonString().Length)];
-            var notes = await checker.CheckAsync(Grounding.Display(text), world.Evidence.Mentioned, message, readings, ct);
+            string known = (world.Evidence.PersonName is { Length: > 0 } name ? $"Their name: {name}\n" : "") + world.Evidence.Mentioned;
+            var notes = await checker.CheckAsync(Grounding.Display(text), known, message, readings, ct);
             if (notes.Count > 0) world.PreChecked[text] = notes.ToList();
         }
         catch (Exception e) when (e is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException && !ct.IsCancellationRequested)
