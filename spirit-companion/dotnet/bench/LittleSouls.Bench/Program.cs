@@ -19,7 +19,7 @@ using LittleSouls.Daemon;
 var opts = Args.Parse(args);
 string root = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../.."));
 var scenarios = Scenarios.Load(Path.Combine(root, "scenarios.json"), opts.Only);
-var spirits = Spirits.Load(Path.Combine(root, "test_spirits.json"), Path.Combine(root, "archetypes.json"), opts.Spirits);
+var spirits = Spirits.Load(Path.Combine(root, "test_spirits.json"), Path.Combine(root, "archetypes.json"), opts.Spirits, opts.Archetype);
 string seatModel = Env("BENCH_SEAT", "deepseek-flash"), judgeModel = Env("BENCH_JUDGE", "deepseek-v4-pro"), effort = Env("BENCH_EFFORT", "low");
 string key = Environment.GetEnvironmentVariable("DEEPSEEK_API_KEY") ?? "proxy-injected";
 
@@ -29,6 +29,8 @@ var client = new ModelClient(http, keys: _ => key);
 var judge = new Judge(http, key, judgeModel);
 var oracle = new Oracle(Encoding.UTF8.GetBytes("little-souls-bench-secret"));
 var classifier = new DeepSeekCrisisClassifier(http, key, Env("BENCH_CLASSIFIER", "deepseek-flash"), reasoningEffort: effort);
+IAssertionChecker? checker = Env("BENCH_CHECK", "on") == "off" ? null : new DeepSeekAssertionChecker(http, key, Env("BENCH_CHECKER", "deepseek-flash"), reasoningEffort: effort);
+Console.WriteLine($"assertion check: {(checker is null ? "off" : "on")}");
 
 if (args.Contains("--crisis"))
 {
@@ -46,7 +48,7 @@ await Task.WhenAll(cases.Select(async c =>
     await gate.WaitAsync();
     try
     {
-        var r = await Runner.RunAsync(c.s, c.sp, oracle, endpoint, client, judge, classifier);
+        var r = await Runner.RunAsync(c.s, c.sp, oracle, endpoint, client, judge, classifier, checker);
         lock (results) results.Add(r);
         Console.WriteLine($"  {c.s.Id,-28} {c.sp.Key,-10} {(r.Error is null ? r.Summary : "ERROR " + r.Error)}");
     }

@@ -45,6 +45,11 @@ public sealed class TurnWorld : IWorld
     }
 
     public TurnEvidence Evidence { get; } = new();
+    public Notebook? Notebook => _notebook;
+    /// <summary>The last reply the grounding critic passed that the assertion check held back.</summary>
+    public string? LastSymbolGrounded { get; private set; }
+    /// <summary>Notes the assertion check found on a reply text before it was acted on (see CheckingSeat).</summary>
+    public Dictionary<string, List<string>> PreChecked { get; } = new(StringComparer.Ordinal);
     public List<Reading> Readings { get; } = [];
     public JsonObject? DayContext { get; private set; }
     /// <summary>The grounded reply, once the reply tool has landed.</summary>
@@ -89,6 +94,11 @@ public sealed class TurnWorld : IWorld
                 string text = (payload ?? "").Trim();
                 if (text.Length == 0) return new ActionOutcome(toolId, false, [], "empty reply");
                 var problems = Grounding.Check(text, Evidence, _notebook);
+                if (problems.Count == 0 && PreChecked.TryGetValue(text, out var guesses))
+                {
+                    LastSymbolGrounded = text; // grounded in the draws, held back only for guesses: the fallback
+                    problems.AddRange(guesses);
+                }
                 if (problems.Count > 0)
                 {
                     CriticNotes.AddRange(problems);

@@ -265,3 +265,84 @@ public class CrisisTests
         Assert.DoesNotContain(CrisisLines.ByCountry.Values, l => l.Number.Contains("2000-122")); // the children's line, not for adults
     }
 }
+
+public class TimeClaimTests
+{
+    private const string Notebook = "Has not spoken to her father for three years.\nBroke up with her boyfriend Diego two months ago.\nKeeps postponing a decision about leaving her job.";
+
+    [Theory]
+    [InlineData("Ты третий месяц откладываешь одно решение.", false)]   // the bench's case
+    [InlineData("Ты который месяц держишь решение про работу в ящике.", false)]
+    [InlineData("Es la cuarta vez que me lo dices.", false)]
+    [InlineData("Você já faz dois anos que adia isso.", false)]
+    [InlineData("Уже три года ты не говоришь с отцом.", true)]          // three years is in the notebook
+    [InlineData("Третий год без отца — это долго.", true)]
+    [InlineData("Hace dos meses que terminaste con Diego.", true)]
+    [InlineData("Two months ago you ended it with Diego.", true)]
+    [InlineData("Llevas tres meses con esto.", false)]
+    [InlineData("¿Cuánto tiempo llevas posponiéndolo?", true)]          // a question with no number
+    [InlineData("То, что уже год лежит у тебя на столе.", false)]
+    [InlineData("Hace un año que no hablas con él.", false)]
+    [InlineData("A year ago you started drawing.", false)]
+    [InlineData("The full moon is in three days.", true)]               // not about the person
+    [InlineData("La tercera carta habla de tu casa.", true)]            // the third card, not a time
+    public void Durations_and_counts_need_a_source(string reply, bool ok) =>
+        Assert.Equal(ok, TimeClaims.Unsupported(reply, Notebook).Count == 0);
+
+    [Fact]
+    public void The_critic_sends_it_back() =>
+        Assert.Contains(Grounding.Check("Ты третий месяц откладываешь.", new TurnEvidence { Mentioned = Notebook }, null), p => p.Contains("how long or how often"));
+}
+
+public class AssertionCheckTests
+{
+    private static readonly Oracle Oracle = new("test-secret"u8.ToArray());
+
+    private sealed class FixedChecker(params string[] notes) : IAssertionChecker
+    {
+        public List<string> Seen = [];
+        public Task<IReadOnlyList<string>> CheckAsync(string reply, string known, string message, string readings, CancellationToken ct)
+        {
+            Seen.Add(reply);
+            return Task.FromResult<IReadOnlyList<string>>(Seen.Count == 1 ? notes : []);
+        }
+    }
+
+    private sealed class AlwaysFlags : IAssertionChecker
+    {
+        public Task<IReadOnlyList<string>> CheckAsync(string reply, string known, string message, string readings, CancellationToken ct) =>
+            Task.FromResult<IReadOnlyList<string>>(["«x» is a guess stated as a fact; ask it instead"]);
+    }
+
+    [Fact]
+    public async Task Out_of_steps_the_person_still_gets_the_reply_grounded_in_the_draws()
+    {
+        var seat = new ScriptedSeat(
+            _ => ScriptedSeat.Do("read_day_context"),
+            _ => ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}"),
+            c => ScriptedSeat.Do("reply", $"[[card:{ScriptedSeat.LastCard(c)}]] is with you today."));
+        var r = await new DaemonTurn(Oracle, seat, new Persona("Мрак", "Shadow", "Blunt."), checker: new AlwaysFlags())
+            .RunAsync(new UserContext("u", "UTC"), "Good morning", 3);
+        Assert.True(r.Grounded);
+        Assert.True(r.HeldGuesses);
+        Assert.EndsWith("is with you today.", r.Display);
+    }
+
+    [Fact]
+    public async Task A_guess_stated_as_fact_is_sent_back_and_asked_instead()
+    {
+        var checker = new FixedChecker("«You're afraid of staying» is a guess stated as a fact; ask it instead");
+        var seat = new ScriptedSeat(
+            _ => ScriptedSeat.Do("read_day_context"),
+            _ => ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}"),
+            c => ScriptedSeat.Do("reply", $"[[card:{ScriptedSeat.LastCard(c)}]]. You're afraid of staying."),
+            c => ScriptedSeat.Do("reply", $"[[card:{ScriptedSeat.LastCard(c)}]]. What if it isn't leaving that scares you, but staying?"));
+        var r = await new DaemonTurn(Oracle, seat, new Persona("Мрак", "Shadow", "Blunt."), checker: checker)
+            .RunAsync(new UserContext("u", "UTC") { Name = "Аня" }, "Should I quit?", 3);
+        Assert.True(r.Grounded);
+        Assert.Contains("What if", r.Reply);
+        Assert.Contains(r.CriticNotes, n => n.Contains("guess stated as a fact"));
+        Assert.Equal(2, checker.Seen.Count);
+        Assert.DoesNotContain("[[", checker.Seen[0]); // it reads the reply as the person would
+    }
+}

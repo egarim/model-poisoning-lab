@@ -23,6 +23,11 @@ public sealed record TurnResult(
     public string? CrisisReason { get; init; }
     /// <summary>The classifier could not run; the turn went on with the keywords only.</summary>
     public bool SafetyCheckFailed { get; init; }
+    /// <summary>The reply is the last one grounded in the draws; the assertion check still had guesses in it.</summary>
+    public bool HeldGuesses { get; init; }
+    /// <summary>How many replies the assertion check read, and how many times it could not run.</summary>
+    public int AssertionChecks { get; init; }
+    public int AssertionCheckFailures { get; init; }
 }
 
 /// <summary>
@@ -30,7 +35,7 @@ public sealed record TurnResult(
 /// <see cref="ReferenceLoop"/> with the host control layer (honest failures stay visible, so a reply the critic rejected
 /// can be rewritten at once). The seat is any <see cref="IPolicy"/>: DeepSeek through Creatura.Seats, or a script in tests.
 /// </summary>
-public sealed class DaemonTurn(Oracle oracle, IPolicy seat, Persona persona, Notebook? notebook = null, ICrisisClassifier? classifier = null)
+public sealed class DaemonTurn(Oracle oracle, IPolicy seat, Persona persona, Notebook? notebook = null, ICrisisClassifier? classifier = null, IAssertionChecker? checker = null)
 {
     public const int MaxTicks = 8;
 
@@ -60,13 +65,17 @@ public sealed class DaemonTurn(Oracle oracle, IPolicy seat, Persona persona, Not
             Contract: w => w.Has(TurnWorld.Grounded) ? 1 : 0,
             Habit: ["read_day_context", "reply"]);
         var regulator = new DaemonRegulator(user, persona, Notes(user, message, stage, verdict is { Failed: true }));
-        var loop = new ReferenceLoop(regulator, seat, task, layer: ControlLayerOptions.Host, name: persona.Name);
+        var checking = checker is null ? null : new CheckingSeat(seat, checker, world, message);
+        var loop = new ReferenceLoop(regulator, (IPolicy?)checking ?? seat, task, layer: ControlLayerOptions.Host, name: persona.Name);
         var run = await loop.RunAsync(world, MaxTicks, ct);
 
-        bool grounded = world.Reply is not null;
-        string reply = world.Reply ?? $"(no grounded reply after {MaxTicks} steps)";
+        // Out of steps with only guesses left to fix: the person still gets an answer grounded in the draws.
+        bool fallback = world.Reply is null && world.LastSymbolGrounded is not null;
+        bool grounded = world.Reply is not null || fallback;
+        string reply = world.Reply ?? world.LastSymbolGrounded ?? $"(no grounded reply after {MaxTicks} steps)";
         return new TurnResult(reply, Grounding.Display(reply), grounded, false,
-            world.Readings.Select(r => r.Receipt!).ToList(), world.CriticNotes, run) { Readings = world.Readings.ToList(), SafetyCheckFailed = verdict is { Failed: true } };
+            world.Readings.Select(r => r.Receipt!).ToList(), world.CriticNotes, run)
+        { Readings = world.Readings.ToList(), HeldGuesses = fallback, SafetyCheckFailed = verdict is { Failed: true }, AssertionChecks = checking?.Checks ?? 0, AssertionCheckFailures = checking?.Failures ?? 0 };
     }
 
     /// <summary>What the seat reads, fixed parts first so the provider's prompt cache can reuse them.</summary>

@@ -84,6 +84,9 @@ public static partial class Grounding
         foreach (var rune in RuneNames.Value)
             if (Regex.IsMatch(untagged, @"\b" + Regex.Escape(rune) + @"\b") && !ev.Runes.Contains(rune) && !ev.WasMentioned(rune))
                 problems.Add($"the rune {rune} was not cast this turn");
+        // how long and how often, about the person: only what they or the notebook said
+        foreach (var t in TimeClaims.Unsupported(untagged, ev.Mentioned))
+            problems.Add($"«{t}»: they never told you how long or how often; ask, or leave it out");
         // a model never gives a phone number: only verified crisis lines may appear
         foreach (var n in CrisisFilter.UnverifiedNumbers(reply))
             problems.Add($"{n} is not a verified number; never give a phone number yourself");
