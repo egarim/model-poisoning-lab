@@ -1,6 +1,6 @@
 # Design: Little Souls on Singular Framework
 
-**Status:** proposed 2026-11-06. Nothing built in Singular yet. Based on `egarim/singular-framework` at `0c34f9c`
+**Status:** proposed 2026-11-06; the app module (S3, first part) built the same day, see "Built". Nothing changed in Singular. Based on `egarim/singular-framework` at `0c34f9c`
 (read-only in this session). Decisions at the end are open.
 
 ## The problem, in the owner's words
@@ -126,3 +126,27 @@ Creatura is PolyForm Noncommercial: the company needs the owner's written commer
 | SF3 | Who changes Singular | Claude by pull requests; the owner | **Claude by pull requests**, reviewed by the owner (it runs other apps) |
 | SF4 | Where the app module lives | the Little Souls repository; Singular's `src/` | **Little Souls repository**, referenced by the host build |
 | SF5 | Subscriptions | in Singular for every app; only in Little Souls | **In Singular**, since other apps will want them |
+
+## Built
+
+**S3, first part, 2026-11-06:** `dotnet/src/SingularFramework.Apps.LittleSouls` (14 tests in
+`dotnet/tests/SingularFramework.Apps.LittleSouls.Tests`), compiled against Singular's own `SingularFramework.Platform`
+at `0c34f9c` (fetched by `tools/get-singular.sh`; Singular is not modified).
+
+- **Collections and provisioning** (`provision/little-souls.app.json`, embedded): `profile` and `daemon` (one per
+  person), `notebook`, `memories`, `readings`, `receipts`, `plates`, `conversations`, all owner-scoped and deleted with
+  the account; `entitlements` written by administrators and read by the person it names. A JSON Schema per collection.
+  The tests parse it with Singular's own `ProvisionApp` and access rules.
+- **Hooks:** `ProfileHook` (age gate, default 18, configurable; terms and AI-processing consents; valid time zones;
+  location only with consent and stored at one decimal, about 11 km); `ReceiptsHook` (a receipt is never changed).
+- **The assistant, interim:** registered with `AddAssistant`; the 11 divination tools are Singular app tools. Each runs
+  as the person, emits a `card` event (kinds: tarot, lenormand, runes, iching, numerology, sky, chart, maya, day, moon,
+  history), and stores the reading and its receipt as the person. Receipts are verifiable after storage (tested).
+  Schools come from the profile's daemon (its native school) and `entitlements`; Pacto opens all.
+- **Why receipts are written as the person:** owner-scoped, so they are deleted with the account; a forged receipt gains
+  nothing because verification recomputes the draw from the seed.
+
+**Not yet:** the vector index on `memories.embedding` is set by an operator (Singular's provisioning request has no
+field for it); jobs (morning omen, follow-ups, moon circles, session close); the notebook gate on confirmed proposals;
+an integration test against a running Singular with Postgres; and, until the engine seam (G2), the interim loop streams
+text before any grounding check.

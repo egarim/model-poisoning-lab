@@ -7,6 +7,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      SINGULAR_TOKEN: ${{ secrets.SINGULAR_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -20,8 +22,18 @@ jobs:
           python-version: "3.12"
       - name: Fetch Creatura (pinned)
         run: tools/get-creatura.sh
-      - name: Engine, notebook and daemon-turn tests
+      - name: Fetch Singular Framework (private; needs the SINGULAR_TOKEN secret)
+        if: env.SINGULAR_TOKEN != ''
+        run: tools/get-singular.sh
+      - name: All tests (with the Singular app module)
+        if: env.SINGULAR_TOKEN != ''
         run: dotnet test dotnet/LittleSouls.slnx
+      - name: Tests without Singular (engine, notebook, daemon turn)
+        if: env.SINGULAR_TOKEN == ''
+        run: |
+          dotnet test dotnet/tests/Daemon.Divination.Tests
+          dotnet test dotnet/tests/LittleSouls.Companion.Tests
+          dotnet test dotnet/tests/LittleSouls.Daemon.Tests
       - name: Build the pages (fails on unfilled brand names or a visible "daemon")
         run: python3 avatar/tools/build.py
       - name: Render the persona prompts

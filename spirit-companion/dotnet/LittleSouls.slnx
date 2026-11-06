@@ -4,11 +4,14 @@
     <Project Path="src/Daemon.Divination/Daemon.Divination.csproj" />
     <Project Path="src/LittleSouls.Companion/LittleSouls.Companion.csproj" />
     <Project Path="src/LittleSouls.Daemon/LittleSouls.Daemon.csproj" />
+    <Project Path="src/SingularFramework.Apps.LittleSouls/SingularFramework.Apps.LittleSouls.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Daemon.Divination.Tests/Daemon.Divination.Tests.csproj" />
     <Project Path="tests/LittleSouls.Companion.Tests/LittleSouls.Companion.Tests.csproj" />
     <Project Path="tests/LittleSouls.Daemon.Tests/LittleSouls.Daemon.Tests.csproj" />
+    <Project Path="tests/SingularFramework.Apps.LittleSouls.Tests/SingularFramework.Apps.LittleSouls.Tests.csproj" />
   </Folder>
   <Project Path="../external/creatura/src/Creatura/Creatura.csproj" />
+  <Project Path="../external/singular-framework/src/SingularFramework.Platform/SingularFramework.Platform.csproj" />
 </Solution>

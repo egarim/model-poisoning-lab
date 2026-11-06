@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Little Souls as an app on Singular Framework, like SingularFramework.Apps.Cosmos: collections, hooks, the
+       assistant's tools and (later) jobs, wired into a host by one AddLittleSoulsApp() call. Needs Singular's source
+       from tools/get-singular.sh (private repository, pinned commit). -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>SingularFramework.Apps.LittleSouls</RootNamespace>
+    <SingularPlatform>$(MSBuildThisFileDirectory)../../../external/singular-framework/src/SingularFramework.Platform/SingularFramework.Platform.csproj</SingularPlatform>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SingularPlatform)" />
+    <ProjectReference Include="../Daemon.Divination/Daemon.Divination.csproj" />
+    <ProjectReference Include="../LittleSouls.Companion/LittleSouls.Companion.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="provision/little-souls.app.json" LogicalName="little-souls.app.json" />
+  </ItemGroup>
+
+  <Target Name="CheckSingularSource" BeforeTargets="CollectPackageReferences;ResolveProjectReferences" Condition="!Exists('$(SingularPlatform)')">
+    <Error Text="Singular Framework's source is missing: run tools/get-singular.sh first." />
+  </Target>
+
+</Project>

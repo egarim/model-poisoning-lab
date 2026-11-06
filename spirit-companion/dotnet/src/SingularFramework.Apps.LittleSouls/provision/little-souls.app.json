@@ -1,0 +1,496 @@
+{
+ "slug": "little-souls",
+ "displayName": "Little Souls",
+ "collections": [
+  "~profile",
+  "~daemon",
+  "~notebook",
+  "~memories",
+  "~readings",
+  "~receipts",
+  "~plates",
+  "~conversations",
+  "entitlements"
+ ],
+ "selfSignup": true,
+ "readScopes": {
+  "entitlements": "person"
+ },
+ "access": {
+  "profile": {
+   "ownerKeyed": true,
+   "closing": "delete"
+  },
+  "daemon": {
+   "ownerKeyed": true,
+   "closing": "delete"
+  },
+  "notebook": {
+   "closing": "delete"
+  },
+  "memories": {
+   "closing": "delete"
+  },
+  "readings": {
+   "closing": "delete"
+  },
+  "receipts": {
+   "write": "admins",
+   "closing": "delete"
+  },
+  "plates": {
+   "closing": "delete"
+  },
+  "conversations": {
+   "closing": "delete"
+  },
+  "entitlements": {
+   "read": "addressed",
+   "create": "admins",
+   "write": "admins"
+  }
+ },
+ "schemas": {
+  "profile": {
+   "type": "object",
+   "required": [
+    "birthDate",
+    "country",
+    "timeZone",
+    "consents"
+   ],
+   "properties": {
+    "name": {
+     "type": "string",
+     "maxLength": 80
+    },
+    "language": {
+     "type": "string",
+     "enum": [
+      "es",
+      "pt",
+      "en",
+      "ru"
+     ]
+    },
+    "birthDate": {
+     "type": "string",
+     "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "birthTime": {
+     "type": "string",
+     "pattern": "^\\d{2}:\\d{2}$"
+    },
+    "birthPlace": {
+     "type": "object",
+     "properties": {
+      "country": {
+       "type": "string",
+       "maxLength": 2
+      },
+      "latitude": {
+       "type": "number"
+      },
+      "longitude": {
+       "type": "number"
+      },
+      "timeZone": {
+       "type": "string",
+       "maxLength": 64
+      }
+     }
+    },
+    "country": {
+     "type": "string",
+     "pattern": "^[A-Z]{2}$"
+    },
+    "rootsCountry": {
+     "type": "string",
+     "pattern": "^[A-Z]{2}$"
+    },
+    "timeZone": {
+     "type": "string",
+     "maxLength": 64
+    },
+    "rootsTimeZone": {
+     "type": "string",
+     "maxLength": 64
+    },
+    "location": {
+     "type": "object",
+     "properties": {
+      "latitude": {
+       "type": "number"
+      },
+      "longitude": {
+       "type": "number"
+      },
+      "sharedAt": {
+       "type": "string",
+       "maxLength": 40
+      }
+     }
+    },
+    "traits": {
+     "type": "object",
+     "properties": {
+      "energy": {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 1
+      },
+      "social": {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 1
+      },
+      "mind": {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 1
+      },
+      "spirit": {
+       "type": "number",
+       "minimum": 0,
+       "maximum": 1
+      }
+     }
+    },
+    "consents": {
+     "type": "object",
+     "required": [
+      "terms",
+      "aiProcessing"
+     ],
+     "properties": {
+      "terms": {
+       "type": "string",
+       "maxLength": 40
+      },
+      "aiProcessing": {
+       "type": "string",
+       "maxLength": 40
+      },
+      "notebook": {
+       "type": "string",
+       "maxLength": 40
+      },
+      "voice": {
+       "type": "string",
+       "maxLength": 40
+      },
+      "location": {
+       "type": "string",
+       "maxLength": 40
+      }
+     }
+    }
+   }
+  },
+  "daemon": {
+   "type": "object",
+   "required": [
+    "name",
+    "creature",
+    "archetype"
+   ],
+   "properties": {
+    "name": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "creature": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "archetype": {
+     "type": "string",
+     "enum": [
+      "keeper",
+      "trickster",
+      "seer",
+      "wild",
+      "healer",
+      "shadow",
+      "wanderer",
+      "flame"
+     ]
+    },
+    "stage": {
+     "type": "integer",
+     "minimum": 1,
+     "maximum": 5
+    },
+    "spiritForm": {
+     "type": "boolean"
+    },
+    "summonedAt": {
+     "type": "string",
+     "maxLength": 40
+    }
+   }
+  },
+  "notebook": {
+   "type": "object",
+   "required": [
+    "kind",
+    "key",
+    "value",
+    "source"
+   ],
+   "properties": {
+    "kind": {
+     "type": "string",
+     "enum": [
+      "Fact",
+      "Person",
+      "Thread",
+      "Pattern",
+      "Style",
+      "Goal"
+     ]
+    },
+    "key": {
+     "type": "string",
+     "maxLength": 120
+    },
+    "value": {
+     "type": "string",
+     "maxLength": 400
+    },
+    "source": {
+     "type": "string",
+     "enum": [
+      "Inferred",
+      "Stated",
+      "Confirmed"
+     ]
+    },
+    "supported": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "contradicted": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "sensitivity": {
+     "type": "string",
+     "enum": [
+      "None",
+      "Health",
+      "Sexuality",
+      "Religion",
+      "Politics",
+      "Ethnicity"
+     ]
+    },
+    "consentedAt": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "dueAt": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "closed": {
+     "type": "boolean"
+    },
+    "quarantinedUntilSession": {
+     "type": "integer"
+    },
+    "history": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "maxLength": 400
+     },
+     "maxItems": 20
+    },
+    "evidence": {
+     "type": "array",
+     "maxItems": 20,
+     "items": {
+      "type": "object",
+      "properties": {
+       "session": {
+        "type": "string",
+        "maxLength": 64
+       },
+       "quote": {
+        "type": "string",
+        "maxLength": 160
+       },
+       "at": {
+        "type": "string",
+        "maxLength": 40
+       }
+      }
+     }
+    }
+   }
+  },
+  "memories": {
+   "type": "object",
+   "required": [
+    "text",
+    "at"
+   ],
+   "properties": {
+    "text": {
+     "type": "string",
+     "maxLength": 1000
+    },
+    "at": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "session": {
+     "type": "string",
+     "maxLength": 64
+    },
+    "embedding": {
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "maxItems": 2000
+    }
+   }
+  },
+  "readings": {
+   "type": "object",
+   "required": [
+    "method",
+    "receipt",
+    "at"
+   ],
+   "properties": {
+    "method": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "receipt": {
+     "type": "string",
+     "maxLength": 64
+    },
+    "at": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "question": {
+     "type": "string",
+     "maxLength": 500
+    },
+    "result": {
+     "type": "object"
+    }
+   }
+  },
+  "receipts": {
+   "type": "object",
+   "required": [
+    "method",
+    "seedKind",
+    "at",
+    "args",
+    "resultHash"
+   ],
+   "properties": {
+    "method": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "seed": {
+     "type": "string",
+     "maxLength": 128
+    },
+    "seedKind": {
+     "type": "string",
+     "enum": [
+      "random",
+      "daily",
+      "computed"
+     ]
+    },
+    "at": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "args": {
+     "type": "string",
+     "maxLength": 2000
+    },
+    "resultHash": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    }
+   }
+  },
+  "plates": {
+   "type": "object",
+   "required": [
+    "name",
+    "at"
+   ],
+   "properties": {
+    "name": {
+     "type": "string",
+     "maxLength": 80
+    },
+    "festivity": {
+     "type": "string",
+     "maxLength": 60
+    },
+    "candleLitAt": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "at": {
+     "type": "string",
+     "maxLength": 40
+    }
+   }
+  },
+  "entitlements": {
+   "type": "object",
+   "required": [
+    "person",
+    "plan"
+   ],
+   "properties": {
+    "person": {
+     "type": "string",
+     "maxLength": 128
+    },
+    "plan": {
+     "type": "string",
+     "enum": [
+      "free",
+      "pacto"
+     ]
+    },
+    "schools": {
+     "type": "array",
+     "items": {
+      "type": "string",
+      "enum": [
+       "tarot",
+       "lenormand",
+       "runes",
+       "iching",
+       "numerology",
+       "astrology",
+       "maya",
+       "calendar"
+      ]
+     }
+    },
+    "until": {
+     "type": "string",
+     "maxLength": 40
+    }
+   }
+  }
+ }
+}

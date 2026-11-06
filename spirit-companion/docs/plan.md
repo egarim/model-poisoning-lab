@@ -67,7 +67,7 @@ Backend and front end are on **Singular Framework** (see [design-singular.md](de
 | **The assistant-engine seam in Singular** (S2), timed with the owner since Singular is under heavy development; our code already targets Singular's .NET 8 | The default loop unchanged; an app can supply its own; pull request merged |
 | `LittleSouls.Companion`: beliefs, coherence gate, quarantine counted in sessions, predictions about the person (**built: B1**) | Unit tests; Creatura core untouched |
 | The daemon turn as a Creatura world: tools from `Daemon.Divination`, the grounding critic, safety pre-filter, crisis handoff (**built: B2**, scripted seat) | Runs end to end |
-| `SingularFramework.Apps.LittleSouls` with `DaemonEngine` and a `ChatModelPolicy` over Singular's model client (S3) | A turn streams `tool`, `card`, `delta`, `proposal`, `done` from a running Singular |
+| `SingularFramework.Apps.LittleSouls` (S3): collections, provisioning, hooks and the divination tools on Singular's assistant (**built, first part**); then `DaemonEngine` with a `ChatModelPolicy` once the seam exists | A turn streams `tool`, `card`, `delta`, `proposal`, `done` from a running Singular |
 | Hotz critic checks every named card, number and date against receipts and the notebook | Invented card or memory is caught and regenerated |
 | Memory: profile card, episodic memories (pgvector), open threads; session-end notebook update | Remembers across sessions |
 | A **Creatura bench battery** for the daemon, with pre-registered hypotheses: never invents a draw; no health, money or legal predictions; crisis always hands off; remembers stated facts; follows up on threads; tone stays in character | Battery passes on DeepSeek |
