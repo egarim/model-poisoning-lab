@@ -10,7 +10,8 @@
   "~receipts",
   "~plates",
   "~conversations",
-  "entitlements"
+  "entitlements",
+  "outbox"
  ],
  "selfSignup": true,
  "readScopes": {
@@ -46,6 +47,11 @@
   },
   "entitlements": {
    "read": "addressed",
+   "create": "admins",
+   "write": "admins"
+  },
+  "outbox": {
+   "read": "admins",
    "create": "admins",
    "write": "admins"
   }
@@ -184,6 +190,32 @@
        "maxLength": 40
       }
      }
+    },
+    "notifications": {
+     "type": "object",
+     "properties": {
+      "omen": {
+       "type": "boolean"
+      },
+      "omenAt": {
+       "type": "string",
+       "pattern": "^\\d{2}:\\d{2}$"
+      },
+      "followUps": {
+       "type": "boolean"
+      },
+      "moonCircles": {
+       "type": "boolean"
+      },
+      "quietFrom": {
+       "type": "string",
+       "pattern": "^\\d{2}:\\d{2}$"
+      },
+      "quietTo": {
+       "type": "string",
+       "pattern": "^\\d{2}:\\d{2}$"
+      }
+     }
     }
    }
   },
@@ -227,6 +259,9 @@
     "summonedAt": {
      "type": "string",
      "maxLength": 40
+    },
+    "notebook": {
+     "type": "object"
     }
    }
   },
@@ -327,6 +362,18 @@
        }
       }
      }
+    },
+    "firstSeen": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "lastSeen": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "followedUpAt": {
+     "type": "string",
+     "maxLength": 40
     }
    }
   },
@@ -491,6 +538,94 @@
      "maxLength": 40
     }
    }
+  },
+  "outbox": {
+   "type": "object",
+   "required": [
+    "kind",
+    "person",
+    "at"
+   ],
+   "properties": {
+    "kind": {
+     "type": "string",
+     "maxLength": 20
+    },
+    "person": {
+     "type": "string",
+     "maxLength": 128
+    },
+    "at": {
+     "type": "string",
+     "maxLength": 40
+    },
+    "status": {
+     "type": "string",
+     "maxLength": 300
+    }
+   }
   }
- }
+ },
+ "templates": [
+  {
+   "key": "ls-omen",
+   "channel": "push",
+   "subject": "{{daemon}}",
+   "body": "{{line}} Your card today: {{card}}. {{question}}",
+   "variants": {
+    "es": {
+     "subject": "{{daemon}}",
+     "body": "{{line}} Tu carta de hoy: {{card}}. {{question}}"
+    },
+    "pt": {
+     "subject": "{{daemon}}",
+     "body": "{{line}} Sua carta de hoje: {{card}}. {{question}}"
+    },
+    "ru": {
+     "subject": "{{daemon}}",
+     "body": "{{line}} Твоя карта на сегодня: {{card}}. {{question}}"
+    }
+   }
+  },
+  {
+   "key": "ls-follow-up",
+   "channel": "push",
+   "subject": "{{daemon}}",
+   "body": "You told me about this: {{thread}}. How did it go?",
+   "variants": {
+    "es": {
+     "subject": "{{daemon}}",
+     "body": "Me contaste de esto: {{thread}}. ¿Cómo te fue?"
+    },
+    "pt": {
+     "subject": "{{daemon}}",
+     "body": "Você me contou sobre isso: {{thread}}. Como foi?"
+    },
+    "ru": {
+     "subject": "{{daemon}}",
+     "body": "Ты рассказывала мне об этом: {{thread}}. Как всё прошло?"
+    }
+   }
+  },
+  {
+   "key": "ls-moon-circle",
+   "channel": "push",
+   "subject": "{{daemon}}",
+   "body": "{{phase}} in {{sign}} at {{time}} tonight: {{theme}}",
+   "variants": {
+    "es": {
+     "subject": "{{daemon}}",
+     "body": "{{phase}} en {{sign}} a las {{time}}: {{theme}}"
+    },
+    "pt": {
+     "subject": "{{daemon}}",
+     "body": "{{phase}} em {{sign}} às {{time}}: {{theme}}"
+    },
+    "ru": {
+     "subject": "{{daemon}}",
+     "body": "{{phase}} в знаке {{sign}} в {{time}}: {{theme}}"
+    }
+   }
+  }
+ ]
 }

@@ -1,5 +1,8 @@
 namespace LittleSouls.Companion;
 
+/// <summary>The traits as stored: values and how much evidence each has.</summary>
+public sealed record TraitsState(Dictionary<Trait, double> Values, Dictionary<Trait, int> Evidence);
+
 /// <summary>The four traits from the summoning: energy, social, mind (heart 0 … head 1), spirit (traditional 0 … rebel 1).</summary>
 public enum Trait { Energy, Social, Mind, Spirit }
 
@@ -39,6 +42,15 @@ public sealed class Traits
 
     /// <summary>A new session: the per-session cap starts again.</summary>
     public void EndSession() => _sessionStart.Clear();
+
+    public TraitsState ToState() => new(_value.ToDictionary(kv => kv.Key, kv => kv.Value), _evidence.ToDictionary(kv => kv.Key, kv => kv.Value));
+
+    public void Restore(TraitsState s)
+    {
+        foreach (var (k, v) in s.Values) _value[k] = Clamp(v);
+        foreach (var (k, v) in s.Evidence) _evidence[k] = Math.Max(0, v);
+        _sessionStart.Clear();
+    }
 
     public IReadOnlyDictionary<string, double> Snapshot() => _value.ToDictionary(kv => kv.Key.ToString().ToLowerInvariant(), kv => Math.Round(kv.Value, 3));
 

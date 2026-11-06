@@ -146,7 +146,33 @@ at `0c34f9c` (fetched by `tools/get-singular.sh`; Singular is not modified).
 - **Why receipts are written as the person:** owner-scoped, so they are deleted with the account; a forged receipt gains
   nothing because verification recomputes the draw from the seed.
 
+**S3, second part, the jobs, 2026-11-06** (`Jobs/`, 22 more tests, 36 in the project). Each job runs as the app's
+system subject in every tenant that has the app, and records what it did in the system-only `outbox` collection, so a
+message or a session close happens once even if a run repeats.
+
+- **`little-souls-rounds`, every 15 minutes** (`DaemonRoundsJob`; the decisions are pure, in `Rounds.Decide`):
+  - *Morning omen*, on by default at 07:30 in the person's own time zone: their card of the day (the same draw the app
+    shows, with its receipt) and one line about the day, most personal first: a festivity of their roots ("Today is Día
+    de los Difuntos back home."), one where they live, an eclipse, a supermoon, then the moon.
+  - *Follow-up* on an open thread they told the daemon about ("how did the interview go?"): from bond stage 3, between
+    18:00 and 21:00 local, the earliest due thread not closed and not asked yet; the thread is then marked
+    `followedUpAt` as the person.
+  - *Moon circle* reminder at 19:00 local on a new or full moon day, off by default.
+  - **Budget:** the omen and moon reminders are subscriptions the person turned on, so they come at the time they chose
+    even inside quiet hours. A follow-up is the daemon's own initiative: at most one a local day, never in quiet hours
+    (default 22:00 to 08:00).
+  - Push templates `ls-omen`, `ls-follow-up`, `ls-moon-circle` (en, es, pt, ru) are in the provisioning; a missing
+    template, an unbound push service or a refused recipient is logged and counted, not retried.
+- **`little-souls-session-close`, every 10 minutes** (`SessionCloseJob`): a conversation quiet for 30 minutes ends its
+  session. The proposal source (`IProposalSource`) reads it and proposes notebook changes; the `CoherenceGate` decides;
+  the notebook is saved as the person (one document per belief, with the expected revision) and its bookkeeping in the
+  daemon document. Quarantines lapse by session, so sessions close even before the model proposes: until B3 the source
+  is `NoProposals`.
+- **`NotebookForgetHook`:** when a person deletes a belief in the Grimoire, its fingerprint goes to the daemon's
+  `notebook.forgotten`, so the gate never learns it again.
+
 **Not yet:** the vector index on `memories.embedding` is set by an operator (Singular's provisioning request has no
-field for it); jobs (morning omen, follow-ups, moon circles, session close); the notebook gate on confirmed proposals;
+field for it); the DeepSeek proposal source (B3, needs the key); the jobs' document reads and writes are only exercised
+against a running Singular, which no test does yet; the notebook gate on proposals the person confirms in chat;
 an integration test against a running Singular with Postgres; and, until the engine seam (G2), the interim loop streams
 text before any grounding check.

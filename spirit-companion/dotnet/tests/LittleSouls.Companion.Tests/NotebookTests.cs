@@ -172,3 +172,38 @@ public class NotebookTests
         Assert.Contains("\"traits\"", json);
     }
 }
+
+public class NotebookStateTests
+{
+    private static readonly DateTimeOffset T0 = new(2026, 11, 6, 20, 0, 0, TimeSpan.Zero);
+
+    [Fact]
+    public void A_notebook_survives_being_stored_and_loaded()
+    {
+        var nb = new Notebook("u1");
+        nb.Traits.Seed(0.3, 0.4, 0.3, 0.5);
+        CoherenceGate.Apply(nb,
+        [
+            new Proposal(BeliefKind.Fact, "fact:job", "loves her job", BeliefSource.Stated, "I love my job"),
+            new Proposal(BeliefKind.Person, "person:diego", "Diego, her ex", BeliefSource.Stated, "Diego"),
+            new Proposal(BeliefKind.Fact, "fact:faith", "goes to mass", BeliefSource.Stated, "mass") { Sensitivity = Sensitivity.Religion },
+        ], "s1", T0);
+        nb.EndSession();
+        CoherenceGate.Apply(nb, [new Proposal(BeliefKind.Fact, "fact:job", "dreads Mondays", BeliefSource.Inferred, "ugh Monday")], "s2", T0);
+        nb.Forget("person:diego");
+
+        // through JSON, as the app stores it
+        var json = System.Text.Json.JsonSerializer.Serialize(nb.ToState());
+        var back = Notebook.FromState(System.Text.Json.JsonSerializer.Deserialize<NotebookState>(json)!);
+
+        Assert.Equal(1, back.Session);
+        Assert.True(back.IsQuarantined("fact:job"));
+        Assert.Single(back.OpenQuestions);
+        Assert.Single(back.AwaitingConsent);
+        Assert.Equal(0.3, back.Traits[Trait.Energy]);
+        var again = CoherenceGate.Apply(back, [new Proposal(BeliefKind.Person, "person:diego", "Diego, her ex", BeliefSource.Inferred, "Diego")], "s3", T0);
+        Assert.Contains(again.Dropped, d => d.Why.Contains("forgotten")); // forgotten stays forgotten after a reload
+        for (int i = 0; i < CoherenceGate.QuarantineSessions; i++) back.EndSession();
+        Assert.False(back.IsQuarantined("fact:job"));
+    }
+}

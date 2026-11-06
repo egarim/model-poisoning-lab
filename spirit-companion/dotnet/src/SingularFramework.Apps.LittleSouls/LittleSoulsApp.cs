@@ -1,7 +1,10 @@
 using Daemon.Divination;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using SingularFramework.Apps.LittleSouls.Jobs;
 using SingularFramework.Platform.Assistant;
+using SingularFramework.Platform.Jobs;
 using XafPlatform.Platform.Data;
 
 namespace SingularFramework.Apps.LittleSouls;
@@ -29,6 +32,9 @@ public static class LittleSoulsApp
     public const string Conversations = "conversations";
     /// <summary>The person's plan and unlocked schools. Written by administrators (the payment flow, later); read by the person it names.</summary>
     public const string Entitlements = "entitlements";
+
+    /// <summary>What the jobs sent and which sessions they closed, so nothing happens twice. System-only.</summary>
+    public const string Outbox = "outbox";
 
     /// <summary>The subject the app's jobs write as.</summary>
     public const string SystemSubject = "system:little-souls";
@@ -62,6 +68,13 @@ public static class LittleSoulsApp
 
         services.AddDocumentHook<ProfileHook>(collection: Profile, on: [DocumentOperation.Create, DocumentOperation.Update]);
         services.AddDocumentHook<ReceiptsHook>(collection: Receipts);
+        services.AddDocumentHook<NotebookForgetHook>(collection: Notebook, on: [DocumentOperation.Delete]);
+
+        // The daemon's initiative, in each person's own time (Jobs/Planning.cs), and the end of each session.
+        services.AddSingleton<LittleSoulsTenants>();
+        services.TryAddSingleton<IProposalSource, NoProposals>(); // replaced by the model's proposals in slice B3
+        services.AddScheduledJob<DaemonRoundsJob>("*/15 * * * *", DaemonRoundsJob.Name);
+        services.AddScheduledJob<SessionCloseJob>("*/10 * * * *", SessionCloseJob.Name);
 
         // Until Singular has an assistant-engine seam (docs/design-singular.md, G2), the daemon runs inside Singular's own
         // assistant loop with the divination methods as app tools. Every card still comes from the engine, with a receipt;

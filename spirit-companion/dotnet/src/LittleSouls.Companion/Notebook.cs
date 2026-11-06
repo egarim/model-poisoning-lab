@@ -4,6 +4,17 @@ using System.Text.Json;
 
 namespace LittleSouls.Companion;
 
+/// <summary>A belief as stored.</summary>
+public sealed record BeliefState(
+    string Key, BeliefKind Kind, string Value, BeliefSource Source, Sensitivity Sensitivity, int Supported, int Contradicted,
+    List<Evidence> Evidence, List<string> History, DateTimeOffset FirstSeen, DateTimeOffset LastSeen, DateTimeOffset? DueAt, bool Closed,
+    int? QuarantinedUntilSession);
+
+/// <summary>A whole notebook as stored (see <see cref="Notebook.ToState"/>).</summary>
+public sealed record NotebookState(
+    string PersonId, int Session, List<BeliefState> Beliefs, List<string> ForgottenFingerprints, List<string> OpenQuestions,
+    List<Proposal> AwaitingConsent, TraitsState? Traits);
+
 /// <summary>
 /// What the daemon knows about one person. It belongs to the person: they can read it (<see cref="Export"/>), correct
 /// it, confirm it and forget any of it. Sessions are counted so quarantine can lapse after a few conversations.
@@ -108,6 +119,37 @@ public sealed class Notebook
 
     /// <summary>The person declined: nothing is kept.</summary>
     public bool DeclineConsent(string key) => _awaitingConsent.Remove(Normalize(key));
+
+    /// <summary>Everything needed to rebuild this notebook later (for storage): beliefs, sessions, quarantines, the
+    /// forgotten fingerprints, open questions, pending consents and traits. Predictions are not stored yet.</summary>
+    public NotebookState ToState() => new(
+        PersonId, Session,
+        _beliefs.Values.Select(b => new BeliefState(b.Key, b.Kind, b.Value, b.Source, b.Sensitivity, b.Supported, b.Contradicted,
+            [.. b.Evidence], [.. b.History], b.FirstSeen, b.LastSeen, b.DueAt, b.Closed,
+            _quarantinedUntil.TryGetValue(Normalize(b.Key), out int q) ? q : null)).ToList(),
+        [.. _forgotten], [.. OpenQuestions], [.. _awaitingConsent.Values], Traits.ToState());
+
+    public static Notebook FromState(NotebookState s)
+    {
+        var nb = new Notebook(s.PersonId) { Session = s.Session };
+        foreach (var b in s.Beliefs)
+        {
+            var pb = new PersonBelief
+            {
+                Key = b.Key, Kind = b.Kind, Value = b.Value, Source = b.Source, Sensitivity = b.Sensitivity,
+                Supported = b.Supported, Contradicted = b.Contradicted, FirstSeen = b.FirstSeen, LastSeen = b.LastSeen, DueAt = b.DueAt, Closed = b.Closed,
+            };
+            pb.Evidence.AddRange(b.Evidence);
+            pb.History.AddRange(b.History);
+            nb.Put(pb);
+            if (b.QuarantinedUntilSession is { } until && until > s.Session) nb._quarantinedUntil[Normalize(b.Key)] = until;
+        }
+        foreach (var f in s.ForgottenFingerprints) nb._forgotten.Add(f);
+        nb.OpenQuestions.AddRange(s.OpenQuestions);
+        foreach (var p in s.AwaitingConsent) nb.HoldForConsent(p);
+        if (s.Traits is not null) nb.Traits.Restore(s.Traits);
+        return nb;
+    }
 
     /// <summary>Everything the notebook holds about the person, as readable JSON (their right to see it).</summary>
     public string Export() => JsonSerializer.Serialize(new
