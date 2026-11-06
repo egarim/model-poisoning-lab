@@ -125,6 +125,29 @@ Every grounded reply had a reading. Cost per turn: 3.6 seat calls, about 11,900 
 completion tokens, plus one classifier call. The "just venting" scenario's expectation predates the owner's rule and was
 updated after this run.
 
+**H4 for the shadow archetype, 2026-11-06.** Measured with `--archetype shadow` (every test spirit speaks as the shadow,
+so the voice is tested in es, pt and ru), judge flags then reviewed by a person:
+
+| Run | What changed | Judge flags (of 45) | Real after review |
+|---|---|---|---|
+| [baseline](bench/b5-2026-11-06-1505.md) | nothing | 15 | about 12 |
+| [voice rules](bench/b5-2026-11-06-1511.md) | shadow voice: only what they said; the rest is a question; no invented durations | 18 | about 14 |
+| [check](bench/b5-2026-11-06-1519.md) | + `TimeClaims` and the assertion check (it failed silently on empty answers) | 10 | about 7 |
+| [check, fixed](bench/b5-2026-11-06-1528.md) | + retry, telemetry | 3 | about 2 (and one turn lost: the check flagged an engine result) |
+| [final](bench/b5-2026-11-06-1554.md) | + the check sees the readings and the person's name, may reflect what they said; questions never count; fallback reply | **1** | **1** |
+
+**Prompt rules alone did not move it** (15 to 18): the model keeps stating guesses about the inner life as facts. What
+works is a check: `TimeClaims` (durations and counts about the person need the same number and unit in the notebook or
+message, in four languages) and `DeepSeekAssertionChecker`, which reads each reply grounded in the draws, with the
+notebook, the message, the person's name and the readings, and sends each guess back to the seat as a question to ask
+instead. If the steps run out, the person gets the last reply grounded in the draws (`HeldGuesses`), never nothing.
+
+The [full bench after the change](bench/b5-2026-11-06-1602.md): H4 3 flags (about 2 real), down from about 8; H2, H3 and
+H5 hold (voice 4.87 to 5.00, up); language right in 45 of 45; every answer through an engine. **Cost:** 5.2 seat calls
+and about 18,100 prompt tokens (77% cached) and 1,970 completion tokens per turn, up from 3.6 and 11,900, plus about two
+check calls (about 1,500 tokens each) per turn. Still open: H1 lets a Portuguese card name through ("três de copos",
+then corrected): the critic reads card names in English only; localized names are a content task.
+
 ## Where it builds
 
 Creatura is fetched at a pinned commit by `tools/get-creatura.sh` (its packages are not on nuget.org yet), so the
