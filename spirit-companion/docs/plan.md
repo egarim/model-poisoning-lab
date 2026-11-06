@@ -36,7 +36,7 @@ Backend and front end are on **Singular Framework** (see [design-singular.md](de
    creatura-js (later: offline readings, on-device model)
             │ Singular's assistant stream (delta, tool, card, proposal, done); data, files, push via singular-js
             ▼
- Server: Singular Framework (.NET 10, Postgres + pgvector, Keycloak, files, cron jobs, Expo push)
+ Server: Singular Framework (.NET 8, Postgres + pgvector, Keycloak, files, cron jobs, Expo push); our code targets .NET 8 to match
    App module SingularFramework.Apps.LittleSouls, with DaemonEngine plugged into Singular's assistant-engine seam:
    Daemon agent = Creatura loop + control layer + Hotz critic (checks claims against receipts and the notebook)
    Tools: Daemon.Divination (readings, day context, roots) · memory · follow-ups
