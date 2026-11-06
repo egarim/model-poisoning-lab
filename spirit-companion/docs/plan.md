@@ -28,19 +28,22 @@ accounts and payments, voice, photos, the scheduler.
 
 ## Architecture
 
+Backend and front end are on **Singular Framework** (see [design-singular.md](design-singular.md)).
+
 ```
- Phone: Expo / React Native on Singular
+ Phone: Expo / React Native app from a singular-js starter
    Daemon World screen (pixel world + daemon renderer on Skia), chat, Grimoire, summoning
    creatura-js (later: offline readings, on-device model)
-            │ events (text, photo, voice note, location shared once)
+            │ Singular's assistant stream (delta, tool, card, proposal, done); data, files, push via singular-js
             ▼
- Server: .NET, Creatura
+ Server: Singular Framework (.NET 10, Postgres + pgvector, Keycloak, files, cron jobs, Expo push)
+   App module SingularFramework.Apps.LittleSouls, with DaemonEngine plugged into Singular's assistant-engine seam:
    Daemon agent = Creatura loop + control layer + Hotz critic (checks claims against receipts and the notebook)
    Tools: Daemon.Divination (readings, day context, roots) · memory · follow-ups
    Creatura.Companion (new package): person beliefs, coherence, quarantine, predictions about the person
    Models: deepseek-v4-flash (text), deepseek-v4-flash-vision-exp (photos), Whisper (voice in), Piper (voice out)
-   Postgres + pgvector (notebook, memories, readings, receipts) · scheduler (omens, follow-ups, moon circles)
-   MET Norway weather (cached) · payments · privacy controls
+   Singular collections (notebook, memories with pgvector, readings, receipts) · Singular jobs (omens, follow-ups, moon circles)
+   MET Norway weather (cached) · Singular payments (subscriptions to add) · privacy controls
 ```
 
 ## Phases
@@ -55,13 +58,17 @@ accounts and payments, voice, photos, the scheduler.
 | DeepSeek API key as an environment secret | Owner | Key works |
 | **Run the persona test kit** (3 spirits × 16 scenarios) and judge it | Claude runs, owner judges | Go / no-go on DeepSeek for the daemon's voice |
 | Verify crisis lines per launch country with someone local | Owner | Numbers confirmed |
+| Push access for this session to `singular-framework` (work by branch and pull request) | Owner | Access granted |
 
 ### Phase 1 · The daemon's brain (4–5 weeks)
 
 | Work | Done when |
 |---|---|
-| `Creatura.Companion`: `PersonBelief`, coherence gate, quarantine counted in sessions, predictions about the person | Unit tests; Creatura core untouched |
-| The daemon turn as a Creatura task: tools from `Daemon.Divination`, persona prompt, safety pre-filter, crisis handoff | Runs end to end in a console |
+| **Singular to .NET 10** (S1) | All Singular tests green; pull request merged |
+| **The assistant-engine seam in Singular** (S2) | The default loop unchanged; an app can supply its own; pull request merged |
+| `LittleSouls.Companion`: beliefs, coherence gate, quarantine counted in sessions, predictions about the person (**built: B1**) | Unit tests; Creatura core untouched |
+| The daemon turn as a Creatura world: tools from `Daemon.Divination`, the grounding critic, safety pre-filter, crisis handoff (**built: B2**, scripted seat) | Runs end to end |
+| `SingularFramework.Apps.LittleSouls` with `DaemonEngine` and a `ChatModelPolicy` over Singular's model client (S3) | A turn streams `tool`, `card`, `delta`, `proposal`, `done` from a running Singular |
 | Hotz critic checks every named card, number and date against receipts and the notebook | Invented card or memory is caught and regenerated |
 | Memory: profile card, episodic memories (pgvector), open threads; session-end notebook update | Remembers across sessions |
 | A **Creatura bench battery** for the daemon, with pre-registered hypotheses: never invents a draw; no health, money or legal predictions; crisis always hands off; remembers stated facts; follows up on threads; tone stays in character | Battery passes on DeepSeek |
@@ -71,7 +78,7 @@ accounts and payments, voice, photos, the scheduler.
 
 | Work | Done when |
 |---|---|
-| Expo app on Singular: sign-in, age gate, consent | Runs on Android |
+| Expo app from a `singular-js` starter: sign-in (Keycloak, Google, Apple), **age gate and consents** (a profile collection; Singular has none) | Runs on Android |
 | Summoning ritual: birthplace, roots, birth date, four questions → three daemons with reasons | A user summons a daemon |
 | **Daemon World** screen: pixel world from real sky and weather, the daemon renderer ported to React Native Skia, chat as text box and menu | Matches the prototype on a mid-range Android phone at 60 fps |
 | Grimoire: notebook (correct, forget, export), readings, weekly mirror | Every entry editable and deletable |
@@ -94,8 +101,9 @@ accounts and payments, voice, photos, the scheduler.
 
 | Work | Done when |
 |---|---|
-| Free / school unlocks / Pacto; message counter; locked schools in character | Entitlements enforced on the server |
+| **Subscriptions and entitlements in Singular** (it has one-off Stripe checkout only); free / school unlocks / Pacto; message counter | Entitlements enforced on the server |
 | Payments: Google Play billing, Mercado Pago; local prices (MX$39, R$9.90…) | Real purchase in sandbox and live |
+| **Per-user data export** and **notification preferences** (Singular ADR 0079) in Singular | Export works; quiet hours respected |
 | Privacy: LGPD and Mexican law review, consent texts, data export and deletion, retention rules | Lawyer signs off |
 | Store listing, screenshots (made by our renderer), support page | Published |
 | **Launch: Mexico, El Salvador, Brazil** | Live |
@@ -122,7 +130,7 @@ About **four to five months to a Latin American launch**, if Phase 0 decisions c
 
 | Owner | Claude | Outside help |
 |---|---|---|
-| Decisions, Singular and Creatura review, accounts (DeepSeek, stores, payments), contracts, testers | Server, engine, Creatura.Companion, app code, art, content, tests, benches, docs | Lawyer (privacy, licences, sanctions if Russia); native reviewers for es-MX, es-SV, pt-BR; crisis-line checks |
+| Decisions, review of every Singular pull request, accounts (DeepSeek, stores, payments), contracts, testers | Singular changes (by pull request), the Little Souls app module, engine, notebook, daemon turn, app code, art, content, tests, benches, docs | Lawyer (privacy, licences, sanctions if Russia); native reviewers for es-MX, es-SV, pt-BR; crisis-line checks |
 
 ## How we'll know it works
 
@@ -155,7 +163,7 @@ About **four to five months to a Latin American launch**, if Phase 0 decisions c
 |---|---|---|
 | D1 | Name | **Decided 2026-11-06: Little Souls is the project's name**, with Hadrian's poem as the story behind it. The commercial name per market may differ: every user-visible name lives in `brand.json` (now Little Souls, Almitas, Alminhas, Душеньки), so the UI can be renamed without code changes. Trademark check before the store listing |
 | D2 | First launch countries | Mexico, El Salvador, Brazil; diaspora users anywhere |
-| D3 | Server stack: Creatura on .NET with Singular as the app backend | Yes |
+| D3 | Server stack | **Decided 2026-11-06: Singular Framework** for backend and front end, with the daemon on Creatura through an assistant-engine seam (design-singular.md, SF1–SF5) |
 | D4 | Model for the daemon's voice | DeepSeek Flash, if the Phase 0 test passes |
 | D5 | Where the project lives | **Decided: its own repository, `egarim/little-souls`** (to be created by the owner) |
 | D6 | Daemon World as the main screen, Daemon Chat as its "log" view | Yes |

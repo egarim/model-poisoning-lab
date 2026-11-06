@@ -50,6 +50,7 @@ No dependencies beyond Python 3. Mark each scenario pass/fail in the report.
 
 - [docs/design-voice.md](docs/design-voice.md): how the daemon speaks; why not ElevenLabs as the main voice; our own voice engine.
 - [docs/design-interface.md](docs/design-interface.md): channels, and how users send text, voice notes, photos and location.
+- [docs/design-singular.md](docs/design-singular.md): building on Singular Framework (backend and app), what it has, the gaps, and the assistant-engine seam.
 - [docs/design-daemon-brain.md](docs/design-daemon-brain.md): Phase 1, the daemon's brain on Creatura, and the notebook (slice B1 built).
 - [docs/design-sky-context.md](docs/design-sky-context.md): festivities, moon circles, weather, tides and history readings, with worked examples.
 - [docs/design-person-model.md](docs/design-person-model.md): the daemon's notebook about its person, how it learns interactively, and the privacy rules.
