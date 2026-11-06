@@ -153,7 +153,7 @@ About **four to five months to a Latin American launch**, if Phase 0 decisions c
 
 | # | Decision | Recommendation |
 |---|---|---|
-| D1 | App name | **Decided 2026-11-06: Little Souls** (Almitas, Alminhas, Душеньки), with Hadrian's poem as the story behind it; trademark check pending |
+| D1 | Name | **Decided 2026-11-06: Little Souls is the project's name**, with Hadrian's poem as the story behind it. The commercial name per market may differ: every user-visible name lives in `brand.json` (now Little Souls, Almitas, Alminhas, Душеньки), so the UI can be renamed without code changes. Trademark check before the store listing |
 | D2 | First launch countries | Mexico, El Salvador, Brazil; diaspora users anywhere |
 | D3 | Server stack: Creatura on .NET with Singular as the app backend | Yes |
 | D4 | Model for the daemon's voice | DeepSeek Flash, if the Phase 0 test passes |

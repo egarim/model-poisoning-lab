@@ -1,0 +1,15 @@
+{
+  "_note": "The project is called Little Souls. Everything a user sees takes its names from this file, so the product can be renamed per market without touching code. 'daemon' is the internal word in code and docs only.",
+  "project": "Little Souls",
+  "poem": {
+    "latin": "Animula vagula blandula, hospes comesque corporis…",
+    "en": "Little soul, wandering, gentle, guest and companion of the body…",
+    "author": "Emperor Hadrian"
+  },
+  "display": {
+    "en": { "name": "Little Souls", "companion": "little soul", "companions": "little souls" },
+    "es": { "name": "Almitas", "companion": "almita", "companions": "almitas" },
+    "pt": { "name": "Alminhas", "companion": "alminha", "companions": "alminhas" },
+    "ru": { "name": "Душеньки", "companion": "душенька", "companions": "душеньки" }
+  }
+}

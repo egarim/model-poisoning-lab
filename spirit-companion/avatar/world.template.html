@@ -1,4 +1,4 @@
-<title>Daemon World</title>
+<title>{{name}} World</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,7 +73,7 @@ input[type=range] { width: 100%; accent-color: var(--gold); margin-top: 6px; }
       <div><b>HERE</b><span id="hereClock"></span><small id="hereInfo"></small></div>
       <div><b>ROOTS</b><span id="rootsClock"></span><small id="rootsInfo"></small></div>
     </div>
-    <canvas id="scene" width="256" height="176" aria-label="Your daemon in its world"></canvas>
+    <canvas id="scene" width="256" height="176" aria-label="Your {{companion}} in its world"></canvas>
     <div class="box" id="box" aria-live="polite">
       <div class="name" id="who"></div>
       <div class="text" id="text"></div>
@@ -81,30 +81,30 @@ input[type=range] { width: 100%; accent-color: var(--gold); margin-top: 6px; }
       <div class="menu" id="menu" hidden role="menu"></div>
       <span class="more" id="more" hidden>▼</span>
     </div>
-    <form class="say" id="sayForm"><input id="say" autocomplete="off" placeholder="Say something…" aria-label="Say something to your daemon"><button type="submit">Say</button></form>
+    <form class="say" id="sayForm"><input id="say" autocomplete="off" placeholder="Say something…" aria-label="Say something to your {{companion}}"><button type="submit">Say</button></form>
     <div class="toast" id="toast" aria-live="polite"></div>
   </div>
 
   <aside class="guide">
     <div>
-      <h1>Daemon World</h1>
-      <p>The daemon faces you, alive, in front of its world. The world is drawn from where you are (the real sky, sun, moon and weather of your city) and from where you come from (your roots' festivities, symbols and clock). The text box below is the chat.</p>
+      <h1>{{name}} World</h1>
+      <p>Your {{companion}} faces you, alive, in front of its world. The world is drawn from where you are (the real sky, sun, moon and weather of your city) and from where you come from (your roots' festivities, symbols and clock). The text box below is the chat.</p>
     </div>
     <div class="controls">
       <div><span class="lbl" id="whoLbl">Who</span>
         <div class="seg" role="group" aria-labelledby="whoLbl" id="profiles"></div></div>
       <div><label for="hour">Time of day here: <span id="hourLbl"></span></label><input type="range" id="hour" min="0" max="23.75" step="0.25"></div>
-      <div><label for="creature">Daemon</label><select id="creature"></select></div>
+      <div><label for="creature">{{Companion}}</label><select id="creature"></select></div>
       <div><span class="lbl" id="wxLbl">Weather</span>
         <div class="seg" role="group" aria-labelledby="wxLbl" id="weathers"></div></div>
     </div>
     <dl>
-      <dt>Alive</dt><dd>The original daemon art, drawn by code: it floats and breathes, blinks, looks down while you write, gathers light while it reads the cards, glows when it speaks, droops when you're sad, and wears the charm of where it was born (a flor de izote for El Salvador).</dd>
+      <dt>Alive</dt><dd>The original art from the Forge, drawn by code: it floats and breathes, blinks, looks down while you write, gathers light while it reads the cards, glows when it speaks, droops when you're sad, and wears the charm of where it was born (a flor de izote for El Salvador).</dd>
       <dt>Here</dt><dd>Sky colour from the real sunrise and sunset, the moon only when it's really up (lit on the correct side for the hemisphere), live weather, the city's silhouette.</dd>
       <dt>Roots</dt><dd>The festivity of your culture today, its symbols in the scene, and your home clock. A Salvadoran in St. Petersburg sees Día de los Difuntos; a Mexican in Guadalajara sees an ofrenda; a Brazilian in São Paulo sees Finados.</dd>
-      <dt>Living together</dt><dd>Lunch sets a table in the scene; a plate you set for someone stays, and the daemon remembers their name.</dd>
+      <dt>Living together</dt><dd>Lunch sets a table in the scene; a plate you set for someone stays, and your {{companion}} remembers their name.</dd>
     </dl>
-    <p class="sim">Prototype: replies are scripted. Sky values are the engine's real ones for Monday 2 November 2026; weather was fetched live from MET Norway on 5 November. The layout follows the classic creature-facing-you RPG screen; the daemons, backgrounds and menus are our own. Pick any creature in "Daemon" to see it in this window.</p>
+    <p class="sim">Prototype: replies are scripted. Sky values are the engine's real ones for Monday 2 November 2026; weather was fetched live from MET Norway on 5 November. The layout follows the classic creature-facing-you RPG screen; the {{companions}}, backgrounds and menus are our own. Pick any creature in "{{Companion}}" to see it in this window.</p>
   </div>
 </div>
 

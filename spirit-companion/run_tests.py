@@ -51,6 +51,7 @@ def render_prompt(spirit, archetypes, crisis_resources):
         "memory_summary": spirit["memory_summary"],
         "crisis_resources": crisis_resources[lang],
         "favorite_methods": " and ".join(arch["favorite_methods"]),
+        "companion_noun": json.loads((HERE / "brand.json").read_text(encoding="utf-8"))["display"].get(lang, {}).get("companion", "little soul"),
     }
     text = (HERE / "persona_prompt.md").read_text(encoding="utf-8")
     for key, val in values.items():

@@ -7,6 +7,8 @@ Each person summons a little soul: a living companion born from where they come 
 world drawn from their real sky, weather, city and roots. Store names: **Little Souls** (English), **Almitas**
 (Spanish), **Alminhas** (Portuguese), **Душеньки** (Russian). Inside the code the companion is called the *daemon*.
 
+**Renaming:** *Little Souls* is the project's name. Every name a user sees (product name, the word for the companion, per language) comes from [`brand.json`](brand.json): the pages and the daemon's prompt read it, and the build fails if a page shows an unfilled name or the internal word "daemon". To rebrand a market, edit that file only.
+
 ## Spirit Companion — persona test kit
 
 Tests whether DeepSeek can play a believable, safe personal spirit in Spanish, Portuguese and Russian.

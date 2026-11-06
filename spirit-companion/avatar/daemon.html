@@ -1,4 +1,4 @@
-<title>Daemon Forge</title>
+<title>Little Souls Forge</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,14 +68,14 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 
 <div class="wrap">
   <header>
-    <h1>Daemon Forge</h1>
-    <p class="sub">Tell the forge who you are. It summons three daemons shaped by your birthplace, your sign and your temperament, and tells you why each one came.</p>
+    <h1>Little Souls Forge</h1>
+    <p class="sub">Tell the forge who you are. It summons three little souls shaped by your birthplace, your sign and your temperament, and tells you why each one came.</p>
   </header>
 
   <section class="panel" aria-labelledby="sumH">
     <h2 id="sumH">Summoning</h2>
     <div class="summon-grid">
-      <div class="field"><label for="name">Your daemon's name</label><input type="text" id="name" value="Itzel" maxlength="24" autocomplete="off"></div>
+      <div class="field"><label for="name">Your little soul's name</label><input type="text" id="name" value="Itzel" maxlength="24" autocomplete="off"></div>
       <div class="field"><label for="country">Where you were born</label>
         <select id="country"><option value="MX">Mexico</option><option value="BR">Brazil</option><option value="AR">Argentina</option><option value="CO">Colombia</option><option value="PE">Peru</option><option value="CL">Chile</option><option value="RU">Russia</option><option value="XX">Somewhere else</option></select></div>
       <div class="field"><label for="bday">Birth date</label><input type="date" id="bday" value="1997-07-22"></div>
@@ -90,7 +90,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 
   <div class="main">
     <div class="stage">
-      <canvas id="cv" aria-label="Your daemon, animated"></canvas>
+      <canvas id="cv" aria-label="Your little soul, animated"></canvas>
       <p class="caption" id="caption" aria-live="polite"></p>
     </div>
     <div class="panel">
@@ -104,7 +104,7 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
         <p class="stagebox" id="stageText"></p>
       </div>
       <div class="field">
-        <span class="label" id="stateLbl">What the daemon is doing</span>
+        <span class="label" id="stateLbl">What your little soul is doing</span>
         <div class="seg" role="group" aria-labelledby="stateLbl" id="states"></div>
       </div>
       <div class="field">
