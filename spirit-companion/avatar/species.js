@@ -105,6 +105,17 @@
       parts: [{ type: "antennae", length: 0.45, layer: "back", minStage: 1 }],
       markings: [{ style: "stars" }], variants: { night: { name: "night", elementCoat: [50, 40] } }
     },
+    cadejo: {
+      // The white Cadejo of Salvadoran and Central American folklore: a spirit dog that walks night travellers home.
+      name: "Cadejo", local: { es: "cadejo", pt: "cadejo", ru: "кадехо" }, // solid body: its spirit shows in the aura, not by being see-through
+      body: { w: 1.0, squash: 1.02, cheeks: 0.06, fluff: 0.03 }, eyes: { shape: "almond", size: 0.17, spacing: 0.34, y: -0.12, iris: [35, 95, 55] },
+      parts: [
+        { type: "tail", style: "thin", length: 1.35, side: 1, layer: "back", minStage: 1 },
+        { type: "ear", style: "pointed", angle: 0.56, size: 1.5, width: 0.28, droop: 0.6, inner: "accent2", layer: "back", minStage: 1 },
+        { type: "nose", style: "round", muzzle: "light", layer: "front", minStage: 1 },
+        { type: "paws", layer: "front", minStage: 1 }],
+      variants: { white: { name: "white", base: [230, 12, 95], light: [0, 0, 100], dark: [230, 10, 70], accent2: [340, 40, 82], nose: [240, 15, 30] } }
+    },
     owl: {
       name: "Owl", local: { es: "búho", pt: "coruja", ru: "сова" },
       body: { w: 0.95, squash: 1.08 }, eyes: { shape: "round", size: 0.2, spacing: 0.33, y: -0.12, iris: [42, 95, 55] },
@@ -199,6 +210,7 @@
     PE: { name: "Peru", lang: "es", pool: ["owl:brown", "folk:flame-latam", "macaw:guacamaya", "capybara:classic", "folk:keeper-latam"], charm: { shape: "flower", hue: 345, label: "kantuta flower" } },
     CL: { name: "Chile", lang: "es", pool: ["seal:classic", "owl:brown", "jellyfish:spirit", "octopus:*", "folk:wanderer-latam"], charm: { shape: "flower", hue: 350, sat: 80, lum: 48, label: "copihue flower" } },
     RU: { name: "Russia", lang: "ru", pool: ["dog:laika", "spitz:*", "cat:russian_blue", "owl:snowy", "bullfinch:classic", "seal:classic", "folk:trickster-slavic", "folk:shadow-slavic", "folk:keeper-slavic", "folk:wild-slavic", "folk:flame-slavic"], charm: { shape: "berries", hue: 8, label: "rowan berries" } },
+    SV: { name: "El Salvador", lang: "es", pool: ["cadejo:white", "folk:flame-latam", "macaw:guacamaya", "owl:brown", "dog:caramelo", "cat:*"], charm: { shape: "flower", hue: 50, sat: 15, lum: 95, label: "flor de izote" } },
     XX: { name: "Somewhere else", lang: "en", pool: ["red_panda:classic", "panda:classic", "cat:*", "dog:golden", "spitz:*", "owl:brown", "octopus:*", "jellyfish:spirit", "wisp:spirit", "star:night", "cloud:pale"], charm: { shape: "star", hue: 48, label: "star" } }
   };
   const FAVOURITES = ["red_panda:classic", "panda:classic", "cat:*", "dog:*", "spitz:*", "octopus:*", "jellyfish:spirit", "wisp:spirit"];
