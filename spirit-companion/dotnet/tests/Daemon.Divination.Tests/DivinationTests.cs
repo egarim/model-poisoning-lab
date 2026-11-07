@@ -100,6 +100,117 @@ public class CardTests
     }
 }
 
+/// <summary>The names the person reads: every tarot card, Lenormand card and rune has one in en, es, pt and ru; draws keep the canonical English.</summary>
+public class NameTests
+{
+    private static readonly string[] Languages = ["en", "es", "pt", "ru"];
+
+    [Fact]
+    public void Every_tarot_card_has_a_name_in_every_language()
+    {
+        Assert.Equal(78, Tarot.CardNames.Count);
+        foreach (var lang in Languages)
+        {
+            var names = Tarot.CardNames.Select(c => Tarot.LocalName(c, lang)).ToList();
+            Assert.All(names, n => Assert.False(string.IsNullOrWhiteSpace(n)));
+            Assert.Equal(78, names.Distinct().Count());                                                  // no two cards share a name
+            if (lang != "en") Assert.All(Tarot.CardNames, c => Assert.NotEqual(c, Tarot.LocalName(c, lang))); // every card is translated
+        }
+        Assert.All(Tarot.CardNames, c => Assert.Equal(Languages.Order(), Tarot.NamesOf(c).Keys.Order()));
+        Assert.Empty(Tarot.NamesOf("Not a card"));
+    }
+
+    [Theory]
+    [InlineData("The Tower", "es", "La Torre")]
+    [InlineData("The Tower", "pt", "A Torre")]
+    [InlineData("The Tower", "ru", "Башня")]
+    [InlineData("The Tower", "pt-BR", "A Torre")]   // a locale, not only a language
+    [InlineData("The Tower", "en", "The Tower")]
+    [InlineData("The Tower", null, "The Tower")]
+    [InlineData("The Tower", "fr", "The Tower")]    // no French names: the canonical name
+    [InlineData("Wheel of Fortune", "pt", "A Roda da Fortuna")]
+    [InlineData("Ten of Swords", "pt", "Dez de Espadas")]
+    [InlineData("Ten of Swords", "es", "Diez de Espadas")]
+    [InlineData("Ten of Swords", "ru", "Десятка Мечей")]
+    [InlineData("Ace of Pentacles", "es", "As de Oros")]
+    [InlineData("Ace of Pentacles", "pt", "Ás de Ouros")]
+    [InlineData("Knight of Cups", "pt", "Cavaleiro de Copas")]
+    [InlineData("Page of Wands", "ru", "Паж Жезлов")]
+    [InlineData("Queen of Pentacles", "ru", "Королева Пентаклей")]
+    [InlineData("Not a card", "pt", "Not a card")]
+    public void Tarot_cards_are_named_in_the_persons_language(string card, string? language, string expected) =>
+        Assert.Equal(expected, Tarot.LocalName(card, language));
+
+    [Fact]
+    public void Every_lenormand_card_has_a_name_in_every_language()
+    {
+        Assert.Equal(36, Lenormand.CardNames.Count);
+        foreach (var lang in Languages)
+        {
+            var names = Lenormand.CardNames.Select(c => Lenormand.LocalName(c, lang)).ToList();
+            Assert.All(names, n => Assert.False(string.IsNullOrWhiteSpace(n)));
+            Assert.Equal(36, names.Distinct().Count());
+            if (lang != "en") Assert.All(Lenormand.CardNames, c => Assert.NotEqual(c, Lenormand.LocalName(c, lang)));
+        }
+        Assert.All(Lenormand.CardNames, c => Assert.Equal(Languages.Order(), Lenormand.NamesOf(c).Keys.Order()));
+    }
+
+    [Theory]
+    [InlineData("Rider", "es", "El Jinete")]
+    [InlineData("Rider", "pt", "O Cavaleiro")]
+    [InlineData("Rider", "ru", "Всадник")]
+    [InlineData("Tower", "pt", "A Torre")]
+    [InlineData("Mice", "ru", "Мыши")]
+    [InlineData("Rider", "en", "Rider")]
+    [InlineData("Rider", null, "Rider")]
+    public void Lenormand_cards_are_named_in_the_persons_language(string card, string? language, string expected) =>
+        Assert.Equal(expected, Lenormand.LocalName(card, language));
+
+    [Fact]
+    public void Every_rune_has_a_name_in_every_language()
+    {
+        Assert.Equal(24, Runes.Names.Count);
+        foreach (var lang in Languages)
+        {
+            var names = Runes.Names.Select(r => Runes.LocalName(r, lang)).ToList();
+            Assert.All(names, n => Assert.False(string.IsNullOrWhiteSpace(n)));
+            Assert.Equal(24, names.Distinct().Count());
+        }
+        Assert.All(Runes.Names, r => Assert.NotEqual(r, Runes.LocalName(r, "ru"))); // Russian transliterates every rune
+        Assert.All(Runes.Names, r => Assert.Equal(Languages.Order(), Runes.NamesOf(r).Keys.Order()));
+    }
+
+    [Theory]
+    [InlineData("Isa", "ru", "Иса")]
+    [InlineData("Isa", "pt", "Isa")]        // Spanish and Portuguese keep the reconstructed names
+    [InlineData("Raidho", "es", "Raido")]   // in the spelling their rune books use
+    [InlineData("Othala", "ru", "Одал")]
+    [InlineData("Isa", null, "Isa")]
+    public void Runes_are_named_in_the_persons_language(string rune, string? language, string expected) =>
+        Assert.Equal(expected, Runes.LocalName(rune, language));
+
+    [Theory]
+    [InlineData("en", "reversed", "merkstave")]
+    [InlineData("es", "invertida", "invertida")]
+    [InlineData("pt", "invertida", "invertida")]
+    [InlineData("ru", "перевёрнутая", "перевёрнутая")]
+    [InlineData(null, "reversed", "merkstave")]
+    public void The_word_beside_a_reversed_card_or_rune_exists_in_every_language(string? language, string card, string rune)
+    {
+        Assert.Equal(card, Tarot.ReversedLabel(language));
+        Assert.Equal(rune, Runes.ReversedLabel(language));
+    }
+
+    [Fact]
+    public void Draws_keep_the_canonical_English_names_the_critic_checks()
+    {
+        var g = new DrawRng("names");
+        Assert.All(Tarot.Draw(g, "celtic_cross")["cards"]!.AsArray(), c => Assert.Contains(c!["card"]!.GetValue<string>(), Tarot.CardNames));
+        Assert.All(Lenormand.Draw(g, "nine")["cards"]!.AsArray(), c => Assert.Contains(c!["card"]!.GetValue<string>(), Lenormand.CardNames));
+        Assert.All(Runes.Cast(g, 3)["runes"]!.AsArray(), r => Assert.Contains(r!["rune"]!.GetValue<string>(), Runes.Names));
+    }
+}
+
 public class IChingTests
 {
     [Fact]

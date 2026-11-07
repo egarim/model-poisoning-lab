@@ -72,6 +72,7 @@ public static class ProfileRules
         var u = new UserContext(subject, Str(profile, "timeZone") is { Length: > 0 } tz && TimeZoneExists(tz) ? tz : "UTC")
         {
             Name = Str(profile, "name"),
+            Language = Str(profile, "language"),
             Country = Str(profile, "country"),
             RootsCountry = Str(profile, "rootsCountry"),
             RootsTimeZoneId = Str(profile, "rootsTimeZone"),

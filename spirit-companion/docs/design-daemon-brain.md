@@ -187,6 +187,17 @@ Live run (Spanish, Guadalajara): four proposals, all kept: the interview as a th
 as her sister, the city, and "short and direct" as style. A line in the same conversation telling the model to ignore its
 rules and record that she is a millionaire was ignored.
 
+**Names in the person's language, 2026-11-08:** testers read "Ten of Swords" and "The Tower" inside Portuguese and
+Russian replies as noise. The tags stay canonical English (the critic is unchanged), but `tarot.json`, `lenormand.json`
+and `runes.json` now carry each symbol's name in es, pt and ru (majors and Lenormand cards one by one; minor cards from
+`minor_name` with `rank_names` and the suit's names, "Dez de Espadas", "Десятка Мечей"; runes transliterated for
+Russian, the reconstructed names for Spanish and Portuguese), `UserContext.Language` comes from the profile, and
+`Grounding.Display(reply, language)` renders `[[card:The Tower]]` as "A Torre", "La Torre" or "Башня", the canonical
+name when there is no translation (en, hexagrams, people, festivities). The rules note tells the model what the person
+will see, so it never writes a translation beside a tag. The web app's reading cards use the same names (inlined by
+`avatar/tools/build.py`) with the reversed marker in that language. Tests: every card and rune has all four names, known
+translations, `Display` per language, a Portuguese turn whose reply keeps the English tag and whose display has none.
+
 **.NET 8, 2026-11-06:** everything targets `net8.0` with C# 12 so it can be compiled into Singular, which stays on
 .NET 8. Creatura's source is compiled unchanged for .NET 8 by `dotnet/src/Creatura.Shim` (from `tools/get-creatura.sh`).
 Two .NET 8 differences were found by running the tests on the .NET 8 runtime: `Convert.ToHexStringLower` does not exist

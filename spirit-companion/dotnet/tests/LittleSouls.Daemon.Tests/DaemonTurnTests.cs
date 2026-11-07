@@ -217,6 +217,44 @@ public class EngineRuleTests
     [Fact]
     public void Every_tag_is_stripped_for_the_person() =>
         Assert.Equal("Tomorrow is Beltane and The Star is with you.", Grounding.Display("Tomorrow is [[festivity:Beltane]] and [[card:The Star]] is with you."));
+
+    private const string Tagged = "[[card:The Tower]] · [[card:Ten of Swords]] · [[lenormand:Rider]] · [[rune:Isa]] · [[hexagram:46]] · [[person:Camila]] · [[festivity:Beltane]]";
+
+    [Theory]
+    [InlineData("pt", "A Torre · Dez de Espadas · O Cavaleiro · Isa · 46 · Camila · Beltane")]
+    [InlineData("pt-BR", "A Torre · Dez de Espadas · O Cavaleiro · Isa · 46 · Camila · Beltane")]
+    [InlineData("es", "La Torre · Diez de Espadas · El Jinete · Isa · 46 · Camila · Beltane")]
+    [InlineData("ru", "Башня · Десятка Мечей · Всадник · Иса · 46 · Camila · Beltane")]
+    [InlineData("en", "The Tower · Ten of Swords · Rider · Isa · 46 · Camila · Beltane")]
+    [InlineData(null, "The Tower · Ten of Swords · Rider · Isa · 46 · Camila · Beltane")]
+    public void The_person_reads_each_symbol_by_its_name_in_their_language(string? language, string expected) =>
+        Assert.Equal(expected, Grounding.Display(Tagged, language));
+
+    [Fact]
+    public void A_tag_the_data_cannot_translate_shows_its_canonical_name()
+    {
+        Assert.Equal("Башня today, and Unknown Card.", Grounding.Display("[[card:Башня]] today, and [[card:Unknown Card]].", "ru"));
+        Assert.Equal("46 — O Suave", Grounding.Display("[[hexagram:46]] — O Suave", "pt")); // hexagrams come localized from the model already
+    }
+
+    [Fact]
+    public async Task A_Portuguese_speaker_reads_the_card_in_Portuguese_while_the_critic_still_checks_the_English_tag()
+    {
+        var seat = new ScriptedSeat(
+            _ => ScriptedSeat.Do("read_day_context"),
+            _ => ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}"),
+            c => ScriptedSeat.Do("reply", $"Hoje veio [[card:{ScriptedSeat.LastCard(c)}]]. Respira antes de responder."));
+        var lucas = new UserContext("lucas", "America/Sao_Paulo") { Country = "BR", Language = "pt-BR", Name = "Lucas" };
+        var r = await new DaemonTurn(Oracle, seat, Itzel).RunAsync(lucas, "Como está o meu dia?", 3);
+        string card = r.Readings[0].Result["cards"]![0]!["card"]!.GetValue<string>();
+
+        Assert.True(r.Grounded);
+        Assert.Contains(card, Tarot.CardNames);                                   // the draw and the tag stay canonical English
+        Assert.Contains($"[[card:{card}]]", r.Reply);
+        Assert.Equal($"Hoje veio {Tarot.LocalName(card, "pt")}. Respira antes de responder.", r.Display);
+        Assert.DoesNotContain(card, r.Display);                                    // the person never sees the English name
+        Assert.Contains(seat.Seen[0].Notes, n => n.Contains("reads as A Torre")); // and the model is told what the person will see
+    }
 }
 
 public class CrisisTests

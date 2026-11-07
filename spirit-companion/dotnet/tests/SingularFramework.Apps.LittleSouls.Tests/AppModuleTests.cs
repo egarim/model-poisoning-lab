@@ -64,7 +64,7 @@ public class ProfileRulesTests
     private static readonly DateOnly Today = new(2026, 11, 6);
     private static JsonObject Profile(string birth = "1990-05-01", bool location = false, bool locationConsent = false) => new()
     {
-        ["birthDate"] = birth, ["country"] = "RU", ["rootsCountry"] = "SV", ["timeZone"] = "Europe/Moscow", ["rootsTimeZone"] = "America/El_Salvador",
+        ["birthDate"] = birth, ["language"] = "ru", ["country"] = "RU", ["rootsCountry"] = "SV", ["timeZone"] = "Europe/Moscow", ["rootsTimeZone"] = "America/El_Salvador",
         ["consents"] = new JsonObject { ["terms"] = "2026-11-06T10:00:00Z", ["aiProcessing"] = "2026-11-06T10:00:00Z", ["location"] = locationConsent ? "2026-11-06T10:00:00Z" : null },
         ["location"] = location ? new JsonObject { ["latitude"] = 59.93863, ["longitude"] = 30.31413 } : null,
     };
@@ -109,6 +109,7 @@ public class ProfileRulesTests
         var free = ProfileRules.ToUserContext("u1", Profile(), daemon, null);
         Assert.Equal(new[] { "astrology", "calendar", "iching", "tarot" }, free.Schools!.Order());
         Assert.Equal("SV", free.RootsCountry);
+        Assert.Equal("ru", free.Language); // what the cards are named in for this person
         Assert.Equal(new DateOnly(1990, 5, 1), free.BirthDate);
         Assert.Null(ProfileRules.ToUserContext("u1", Profile(), daemon, new JsonObject { ["plan"] = "pacto", ["person"] = "u1" }).Schools);
         var expired = new JsonObject { ["plan"] = "pacto", ["person"] = "u1", ["until"] = "2020-01-01T00:00:00Z" };
@@ -123,6 +124,7 @@ public class ProfileRulesTests
         var u = ProfileRules.ToUserContext("u1", null, null, null);
         Assert.Equal("UTC", u.TimeZoneId);
         Assert.Null(u.BirthDate);
+        Assert.Null(u.Language);
     }
 }
 

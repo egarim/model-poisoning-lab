@@ -16,6 +16,8 @@ public sealed record UserContext(string UserId, string TimeZoneId = "UTC")
     public double? Longitude { get; init; }
     /// <summary>ISO country code (MX, BR, AR, CO, PE, CL, RU…) for festivities and hemisphere.</summary>
     public string? Country { get; init; }
+    /// <summary>The language the person writes in (es, pt, en, ru): cards and runes are shown to them by their names in it.</summary>
+    public string? Language { get; init; }
     /// <summary>Where the user's roots are, when different from where they live (e.g. lives in RU, roots in SV): festivities and a second clock.</summary>
     public string? RootsCountry { get; init; }
     public string? RootsTimeZoneId { get; init; }

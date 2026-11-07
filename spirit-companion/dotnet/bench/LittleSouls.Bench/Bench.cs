@@ -197,7 +197,7 @@ public static class Runner
         var sw = Stopwatch.StartNew();
         var seat = new ModelPolicy(endpoint, client, null, "little-souls");
         var nb = Spirits.Notebook(s);
-        var user = new UserContext(s.Key, s.TimeZone) { Country = s.Country, Name = s.UserName, BirthDate = s.Birth, Schools = null };
+        var user = new UserContext(s.Key, s.TimeZone) { Country = s.Country, Language = s.Language, Name = s.UserName, BirthDate = s.Birth, Schools = null };
         var turns = new List<TurnLog>();
         try
         {

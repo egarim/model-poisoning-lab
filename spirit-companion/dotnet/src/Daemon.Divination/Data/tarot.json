@@ -1,134 +1,244 @@
 {
- "_format": "major: name, meanings and a reflection question each; minor: rank and meanings per suit, question from question_template with the suit domain and rank theme",
+ "_format": "major: name, names per language (es, pt, ru), meanings and a reflection question each; minor: rank and meanings per suit, question from question_template with the suit domain and rank theme, name per language from minor_name with rank_names and the suit's names (given in the form they take inside a card name: Russian genitive); labels: what the app writes beside a reversed card",
  "major": [
   {
    "name": "The Fool",
+   "names": {
+    "es": "El Loco",
+    "pt": "O Louco",
+    "ru": "Шут"
+   },
    "upright": "new beginnings, spontaneity, a leap of faith",
    "reversed": "recklessness, hesitation, fear of the unknown",
    "question": "What would you try if you weren't afraid of looking foolish?"
   },
   {
    "name": "The Magician",
+   "names": {
+    "es": "El Mago",
+    "pt": "O Mago",
+    "ru": "Маг"
+   },
    "upright": "willpower, skill, making things happen",
    "reversed": "manipulation, untapped talent, scattered energy",
    "question": "What tools do you already have that you're not using?"
   },
   {
    "name": "The High Priestess",
+   "names": {
+    "es": "La Sacerdotisa",
+    "pt": "A Sacerdotisa",
+    "ru": "Верховная Жрица"
+   },
    "upright": "intuition, hidden knowledge, the inner voice",
    "reversed": "secrets, disconnection from intuition, surface noise",
    "question": "What does your quiet inner voice already know?"
   },
   {
    "name": "The Empress",
+   "names": {
+    "es": "La Emperatriz",
+    "pt": "A Imperatriz",
+    "ru": "Императрица"
+   },
    "upright": "abundance, nurturing, creativity, the body",
    "reversed": "dependence, creative block, neglecting self-care",
    "question": "What in your life needs nurturing right now, including you?"
   },
   {
    "name": "The Emperor",
+   "names": {
+    "es": "El Emperador",
+    "pt": "O Imperador",
+    "ru": "Император"
+   },
    "upright": "structure, authority, stability",
    "reversed": "rigidity, control, lack of discipline",
    "question": "Where would a little structure set you free?"
   },
   {
    "name": "The Hierophant",
+   "names": {
+    "es": "El Hierofante",
+    "pt": "O Hierofante",
+    "ru": "Иерофант"
+   },
    "upright": "tradition, learning, mentors, institutions",
    "reversed": "rebellion, breaking convention, personal beliefs",
    "question": "Which teacher or tradition could guide you here, and which one do you need to question?"
   },
   {
    "name": "The Lovers",
+   "names": {
+    "es": "Los Enamorados",
+    "pt": "Os Enamorados",
+    "ru": "Влюблённые"
+   },
    "upright": "love, union, a choice aligned with your values",
    "reversed": "disharmony, misaligned values, avoiding a choice",
    "question": "Which choice is true to your values, not only your wishes?"
   },
   {
    "name": "The Chariot",
+   "names": {
+    "es": "El Carro",
+    "pt": "O Carro",
+    "ru": "Колесница"
+   },
    "upright": "determination, momentum, victory through will",
    "reversed": "lack of direction, scattered effort, aggression",
    "question": "Where are you pulled two ways, and which way do you choose to steer?"
   },
   {
    "name": "Strength",
+   "names": {
+    "es": "La Fuerza",
+    "pt": "A Força",
+    "ru": "Сила"
+   },
    "upright": "courage, gentle power, patience",
    "reversed": "self-doubt, raw emotion, inner weakness",
    "question": "Where could gentleness be stronger than force?"
   },
   {
    "name": "The Hermit",
+   "names": {
+    "es": "El Ermitaño",
+    "pt": "O Eremita",
+    "ru": "Отшельник"
+   },
    "upright": "solitude, introspection, inner guidance",
    "reversed": "isolation, loneliness, withdrawal",
    "question": "What would you hear if you gave yourself an hour of silence?"
   },
   {
    "name": "Wheel of Fortune",
+   "names": {
+    "es": "La Rueda de la Fortuna",
+    "pt": "A Roda da Fortuna",
+    "ru": "Колесо Фортуны"
+   },
    "upright": "cycles, a turning point, change",
    "reversed": "resistance to change, bad timing, repeating patterns",
    "question": "What keeps coming back around, and what is it asking you to learn?"
   },
   {
    "name": "Justice",
+   "names": {
+    "es": "La Justicia",
+    "pt": "A Justiça",
+    "ru": "Справедливость"
+   },
    "upright": "fairness, truth, cause and effect",
    "reversed": "dishonesty, unfairness, avoiding accountability",
    "question": "What would be fair here, including fair to yourself?"
   },
   {
    "name": "The Hanged Man",
+   "names": {
+    "es": "El Colgado",
+    "pt": "O Enforcado",
+    "ru": "Повешенный"
+   },
    "upright": "pause, surrender, a new perspective",
    "reversed": "stalling, needless sacrifice, indecision",
    "question": "What changes if you look at this from the other side?"
   },
   {
    "name": "Death",
+   "names": {
+    "es": "La Muerte",
+    "pt": "A Morte",
+    "ru": "Смерть"
+   },
    "upright": "endings, transformation, transition",
    "reversed": "resisting change, stagnation, fear of letting go",
    "question": "What is ready to end so that something new can begin?"
   },
   {
    "name": "Temperance",
+   "names": {
+    "es": "La Templanza",
+    "pt": "A Temperança",
+    "ru": "Умеренность"
+   },
    "upright": "balance, moderation, patience, healing",
    "reversed": "excess, imbalance, impatience",
    "question": "Where do you need balance instead of extremes?"
   },
   {
    "name": "The Devil",
+   "names": {
+    "es": "El Diablo",
+    "pt": "O Diabo",
+    "ru": "Дьявол"
+   },
    "upright": "attachment, temptation, the shadow, feeling bound",
    "reversed": "release, breaking free, reclaiming power",
    "question": "What holds you that you could actually put down?"
   },
   {
    "name": "The Tower",
+   "names": {
+    "es": "La Torre",
+    "pt": "A Torre",
+    "ru": "Башня"
+   },
    "upright": "sudden change, collapse of false structures, revelation",
    "reversed": "fear of change, delayed upheaval, averting disaster",
    "question": "What false structure is ready to fall?"
   },
   {
    "name": "The Star",
+   "names": {
+    "es": "La Estrella",
+    "pt": "A Estrela",
+    "ru": "Звезда"
+   },
    "upright": "hope, renewal, healing, inspiration",
    "reversed": "discouragement, lost faith, disconnection",
    "question": "What small hope is worth keeping alight?"
   },
   {
    "name": "The Moon",
+   "names": {
+    "es": "La Luna",
+    "pt": "A Lua",
+    "ru": "Луна"
+   },
    "upright": "illusion, fear, the subconscious, uncertainty",
    "reversed": "clarity emerging, fear released, confusion lifting",
    "question": "Which fear is bigger in the dark than it would be in daylight?"
   },
   {
    "name": "The Sun",
+   "names": {
+    "es": "El Sol",
+    "pt": "O Sol",
+    "ru": "Солнце"
+   },
    "upright": "joy, success, vitality, clarity",
    "reversed": "temporary gloom, dimmed enthusiasm, ego",
    "question": "What brings you simple joy, and when did you last make time for it?"
   },
   {
    "name": "Judgement",
+   "names": {
+    "es": "El Juicio",
+    "pt": "O Julgamento",
+    "ru": "Суд"
+   },
    "upright": "awakening, reckoning, a calling",
    "reversed": "self-doubt, harsh self-judgment, ignoring the call",
    "question": "What is calling you, and what would answering look like?"
   },
   {
    "name": "The World",
+   "names": {
+    "es": "El Mundo",
+    "pt": "O Mundo",
+    "ru": "Мир"
+   },
    "upright": "completion, integration, fulfillment",
    "reversed": "incompletion, loose ends, seeking closure",
    "question": "What have you completed that you haven't celebrated yet?"
@@ -136,25 +246,123 @@
  ],
  "suits": {
   "Wands": {
+   "names": {
+    "es": "Bastos",
+    "pt": "Paus",
+    "ru": "Жезлов"
+   },
    "element": "fire",
    "theme": "action, passion, ambition",
    "domain": "your passions and projects"
   },
   "Cups": {
+   "names": {
+    "es": "Copas",
+    "pt": "Copas",
+    "ru": "Кубков"
+   },
    "element": "water",
    "theme": "emotions, love, relationships",
    "domain": "your feelings and relationships"
   },
   "Swords": {
+   "names": {
+    "es": "Espadas",
+    "pt": "Espadas",
+    "ru": "Мечей"
+   },
    "element": "air",
    "theme": "thoughts, conflict, truth",
    "domain": "your thoughts and conflicts"
   },
   "Pentacles": {
+   "names": {
+    "es": "Oros",
+    "pt": "Ouros",
+    "ru": "Пентаклей"
+   },
    "element": "earth",
    "theme": "money, work, the body, home",
    "domain": "your work, money and daily life"
   }
+ },
+ "rank_names": {
+  "Ace": {
+   "es": "As",
+   "pt": "Ás",
+   "ru": "Туз"
+  },
+  "Two": {
+   "es": "Dos",
+   "pt": "Dois",
+   "ru": "Двойка"
+  },
+  "Three": {
+   "es": "Tres",
+   "pt": "Três",
+   "ru": "Тройка"
+  },
+  "Four": {
+   "es": "Cuatro",
+   "pt": "Quatro",
+   "ru": "Четвёрка"
+  },
+  "Five": {
+   "es": "Cinco",
+   "pt": "Cinco",
+   "ru": "Пятёрка"
+  },
+  "Six": {
+   "es": "Seis",
+   "pt": "Seis",
+   "ru": "Шестёрка"
+  },
+  "Seven": {
+   "es": "Siete",
+   "pt": "Sete",
+   "ru": "Семёрка"
+  },
+  "Eight": {
+   "es": "Ocho",
+   "pt": "Oito",
+   "ru": "Восьмёрка"
+  },
+  "Nine": {
+   "es": "Nueve",
+   "pt": "Nove",
+   "ru": "Девятка"
+  },
+  "Ten": {
+   "es": "Diez",
+   "pt": "Dez",
+   "ru": "Десятка"
+  },
+  "Page": {
+   "es": "Sota",
+   "pt": "Valete",
+   "ru": "Паж"
+  },
+  "Knight": {
+   "es": "Caballero",
+   "pt": "Cavaleiro",
+   "ru": "Рыцарь"
+  },
+  "Queen": {
+   "es": "Reina",
+   "pt": "Rainha",
+   "ru": "Королева"
+  },
+  "King": {
+   "es": "Rey",
+   "pt": "Rei",
+   "ru": "Король"
+  }
+ },
+ "minor_name": {
+  "en": "{rank} of {suit}",
+  "es": "{rank} de {suit}",
+  "pt": "{rank} de {suit}",
+  "ru": "{rank} {suit}"
  },
  "minor": {
   "Wands": [
@@ -530,5 +738,13 @@
   "Queen": "inner mastery",
   "King": "outer mastery"
  },
- "question_template": "Where in {domain} are you meeting {theme}?"
+ "question_template": "Where in {domain} are you meeting {theme}?",
+ "labels": {
+  "reversed": {
+   "en": "reversed",
+   "es": "invertida",
+   "pt": "invertida",
+   "ru": "перевёрнутая"
+  }
+ }
 }

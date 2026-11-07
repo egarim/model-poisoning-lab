@@ -40,7 +40,8 @@ public sealed class TurnEvidence
 /// The grounding critic (Creatura's "judge by effect", applied to words): every card, rune, hexagram and person the reply
 /// names must be in this turn's receipts or the notebook. The daemon tags what it names, [[card:The Tower]],
 /// [[lenormand:Rider]], [[rune:Isa]], [[hexagram:46]], [[person:Camila]], in canonical English names whatever the reply's
-/// language; untagged English tarot and rune names are checked too. The app turns tags into chips and plain words.
+/// language; untagged English tarot and rune names are checked too. <see cref="Display"/> then shows each tag as the symbol's
+/// name in the person's language (A Torre, O Cavaleiro, Иса), so the check and the words the person reads never drift apart.
 /// </summary>
 public static partial class Grounding
 {
@@ -98,6 +99,19 @@ public static partial class Grounding
         Regex.IsMatch(text, @"(card|drew|draw|drawn|carta|cartas|arcano)\W+(\w+\W+){0,3}" + Regex.Escape(name) + @"\b", RegexOptions.IgnoreCase) ||
         Regex.IsMatch(text, @"\b" + Regex.Escape(name) + @"\W+(\w+\W+){0,2}(card|reversed|upright)", RegexOptions.IgnoreCase);
 
-    /// <summary>The reply as the person reads it: tags become their plain names.</summary>
-    public static string Display(string reply) => Tag().Replace(reply, m => m.Groups[2].Value.Trim());
+    /// <summary>
+    /// The reply as the person reads it: tags become plain names, in the person's language when the data has them
+    /// ([[card:The Tower]] → "A Torre" for pt, "Башня" for ru), the canonical name otherwise (en, hexagrams, people, festivities).
+    /// </summary>
+    public static string Display(string reply, string? language = null) => Tag().Replace(reply, m =>
+    {
+        string kind = m.Groups[1].Value.ToLowerInvariant(), v = m.Groups[2].Value.Trim();
+        return kind switch
+        {
+            "card" => Tarot.LocalName(v, language),
+            "lenormand" => Lenormand.LocalName(v, language),
+            "rune" => Runes.LocalName(v, language),
+            _ => v,
+        };
+    });
 }

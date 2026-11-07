@@ -111,6 +111,22 @@ internal static class Data
     }
 
     public static string S(JsonNode? n) => n?.GetValue<string>() ?? "";
+
+    /// <summary>"pt-BR" → "pt": the two-letter language a profile or an Accept-Language header gives.</summary>
+    public static string Lang(string? language) =>
+        string.IsNullOrWhiteSpace(language) ? "en" : language.Trim().Split('-', '_')[0].ToLowerInvariant();
+
+    /// <summary>A symbol's name in the given language from its <c>names</c> object, or the canonical English name.</summary>
+    public static string LocalName(JsonNode? names, string canonical, string? language) =>
+        names?[Lang(language)]?.GetValue<string>() is { Length: > 0 } local ? local : canonical;
+
+    /// <summary>The canonical name and every translation in <paramref name="names"/>, keyed by language, "en" first.</summary>
+    public static IReadOnlyDictionary<string, string> AllNames(JsonNode? names, string canonical)
+    {
+        var all = new Dictionary<string, string> { ["en"] = canonical };
+        foreach (var (lang, name) in names?.AsObject() ?? []) all[lang] = S(name);
+        return all;
+    }
 }
 
 internal static class Canonical

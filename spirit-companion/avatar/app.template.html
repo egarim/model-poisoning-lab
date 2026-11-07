@@ -163,6 +163,9 @@ input[type=checkbox], input[type=range] { width: auto; accent-color: var(--candl
 </script>
 <script>
 const FOLK_SPECS = /*SPECS*/;
+// The names of tarot cards, Lenormand cards and runes in es, pt and ru, from the engine's data (inlined by avatar/tools/build.py),
+// and the word written beside a reversed card or rune in each language.
+const NAMES = /*NAMES*/;
 (() => {
   const APP = "littlesouls", TENANT = "souls";
   const $ = id => document.getElementById(id);
@@ -299,6 +302,10 @@ const FOLK_SPECS = /*SPECS*/;
   function bubble(text, who, calm) { const d = document.createElement("div"); d.className = `msg ${who}${calm ? " calm" : ""}`; if (who === "d") inline(d, text); else d.textContent = text; log.append(d); scrollDown(); return d; }
   function sys(text) { const d = document.createElement("div"); d.className = "sys"; d.textContent = text; log.append(d); scrollDown(); }
   const SUITS = { Wands: "♣", Cups: "♥", Swords: "♠", Pentacles: "♦" };
+  // A card or rune as the person reads it: the engine names it in English; the person sees it in their own language.
+  const lang = () => String((state.profile || {}).language || "en").slice(0, 2);
+  const localName = (table, name) => ((NAMES[table] || {})[name] || {})[lang()] || name;
+  const label = key => (NAMES.labels[key] || {})[lang()] || NAMES.labels[key].en;
   function readingCard(card) {
     const r = card.result || {}, box = document.createElement("div"); box.className = "reading";
     const title = { tarot: "Tarot", lenormand: "Lenormand", runes: "Runes", iching: "I Ching", numerology: "Numerology", sky: "The sky", chart: "Birth chart", maya: "Maya day sign", day: "Your day", moon: "Moon", history: "History" }[card.kind] || card.kind;
@@ -309,14 +316,14 @@ const FOLK_SPECS = /*SPECS*/;
         const suit = Object.keys(SUITS).find(s => (c.card || "").includes(s));
         const tc = document.createElement("div"); tc.className = "tc" + (c.reversed ? " rev" : "");
         tc.append(Object.assign(document.createElement("div"), { className: "pos", textContent: c.position || "" }), Object.assign(document.createElement("div"), { className: "art", textContent: suit ? SUITS[suit] : "✶" }),
-          Object.assign(document.createElement("div"), { className: "nm", textContent: c.card + (c.reversed ? " (reversed)" : "") }));
+          Object.assign(document.createElement("div"), { className: "nm", textContent: localName(card.kind === "lenormand" ? "lenormand" : "tarot", c.card) + (c.reversed ? ` (${label("reversed")})` : "") }));
         sp.append(tc);
       }
       box.append(sp);
       const q = r.cards.find(c => c.question); if (q) box.append(Object.assign(document.createElement("p"), { className: "q", textContent: q.question }));
     } else if (Array.isArray(r.runes)) {
       const rows = document.createElement("div"); rows.className = "rows";
-      for (const x of r.runes) { const d = document.createElement("div"); d.append(Object.assign(document.createElement("span"), { textContent: `${x.symbol || ""} ${x.rune}${x.reversed ? " (merkstave)" : ""}` }), Object.assign(document.createElement("span"), { textContent: x.meaning || x.position || "" })); rows.append(d); }
+      for (const x of r.runes) { const d = document.createElement("div"); d.append(Object.assign(document.createElement("span"), { textContent: `${x.symbol || ""} ${localName("runes", x.rune)}${x.reversed ? ` (${label("merkstave")})` : ""}` }), Object.assign(document.createElement("span"), { textContent: x.meaning || x.position || "" })); rows.append(d); }
       box.append(rows);
     } else {
       const rows = document.createElement("div"); rows.className = "rows";
