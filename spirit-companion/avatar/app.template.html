@@ -176,7 +176,7 @@ const FOLK_SPECS = /*SPECS*/;
   async function signInInfo() { info ??= await (await fetch(`/api/public/apps/${APP}/tenants/${TENANT}`)).json(); return info; }
   async function tokenGrant(params) {
     const i = await signInInfo();
-    const r = await fetch(`${i.authority}/protocol/openid-connect/token`, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ client_id: i.clientId, ...params }) });
+    const r = await fetch(`/souls/auth/token`, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ client_id: i.clientId, ...params }) });
     if (!r.ok) throw new Error(r.status === 401 || r.status === 400 ? "That username and password don't match." : "Sign-in failed. Try again.");
     const t = await r.json();
     session = { access: t.access_token, refresh: t.refresh_token, exp: Date.now() + (t.expires_in - 30) * 1000 };
