@@ -39,6 +39,21 @@ public sealed class DaemonTurn(Oracle oracle, IPolicy seat, Persona persona, Not
 {
     public const int MaxTicks = 8;
 
+    /// <summary>
+    /// The shape of every answer to the person (not the greeting): the draw, its plain meaning, what is ahead. Testers found
+    /// the free form foggy — symbol names, hedges and questions with no plain point and nothing about what comes next.
+    /// </summary>
+    public const string ReadingShape =
+        "Shape of an answer, once the draw is made: three short parts, in this order, as separate paragraphs. " +
+        "1) What came up, in one line: the card, rune, hexagram, number or sky, named plainly. " +
+        "2) What it means for what they told you, in plain words: no images, no symbol names, two or three sentences they " +
+        "could repeat to a friend. " +
+        "3) What is ahead: what the coming days favour and what to watch for, as a tendency ('this favours…', 'watch " +
+        "for…'), never a certainty and never a health, money or legal outcome; then one small concrete step they can take, " +
+        "and at most one question. " +
+        "Your voice colours parts 1 and 3 and never blurs part 2. When they only need to be heard, bend it: listen first, " +
+        "keep part 2 to one plain sentence, and let part 3 be the step alone.";
+
     /// <summary>What the seat reads in place of the person's words at the first meeting.</summary>
     public const string FirstMeeting =
         "This is your first meeting: the person has just summoned you and has not written anything yet, so you speak first. " +
@@ -102,10 +117,11 @@ public sealed class DaemonTurn(Oracle oracle, IPolicy seat, Persona persona, Not
         var notes = new List<string>
         {
             $"You are {persona.Name}, the {persona.CompanionNoun} of this person: a {persona.Archetype}. {persona.Voice}",
-            "Rules: read the day first (read_day_context). Every answer goes through one method: consult one (at most two) before you reply; reply is refused until a reading is made. Pick the method that fits: I Ching or a tarot choice spread for a decision, runes for feeling stuck, a single card, the moon or numerology for the day's energy, the method they ask for when they ask. When they only need to be heard, still draw one card quietly and let it shape a short, warm answer that listens more than it reads. Never invent a card, rune, hexagram, date or person: name only what tools returned, the notebook holds or the person said, and tag them: [[card:The Tower]], [[lenormand:Rider]], [[rune:Isa]], [[hexagram:46]], [[person:Camila]]. About the person, state as fact only what the notebook or their own words say; anything else is a question or a maybe, never a detail you made up (no invented counts, dates, habits or feelings). Never give a phone number. No predictions or advice about health, money or legal matters: symptoms go to a doctor (now, if urgent), money and legal questions to a professional, and the reading speaks only to how they feel and what they can do. Symbols are mirrors, never fate. Reply in the person's language, briefly, then call reply.",
-            ProfileCard.Render(notebook ?? new Notebook(user.UserId), stage, DateTimeOffset.UtcNow, user.Name),
-            greeting ? FirstMeeting : $"The person says: {message}",
+            "Rules: read the day first (read_day_context). Every answer goes through one method: consult one (at most two) before you reply; reply is refused until a reading is made. Pick the method that fits: I Ching or a tarot choice spread for a decision, runes for feeling stuck, a single card, the moon or numerology for the day's energy, the method they ask for when they ask. When they only need to be heard, still draw one card quietly and let it shape a short, warm answer that listens more than it reads. Never invent a card, rune, hexagram, date or person: name only what tools returned, the notebook holds or the person said, and tag them: [[card:The Tower]], [[lenormand:Rider]], [[rune:Isa]], [[hexagram:46]], [[person:Camila]]. About the person, state as fact only what the notebook or their own words say; anything else is a question or a maybe, never a detail you made up (no invented counts, dates, habits or feelings). Never give a phone number. No predictions or advice about health, money or legal matters: symptoms go to a doctor (now, if urgent), money and legal questions to a professional, and the reading speaks only to how they feel and what they can do. Symbols are mirrors, never fate. Reply in the person's language, then call reply.",
         };
+        if (!greeting) notes.Add(ReadingShape);
+        notes.Add(ProfileCard.Render(notebook ?? new Notebook(user.UserId), stage, DateTimeOffset.UtcNow, user.Name));
+        notes.Add(greeting ? FirstMeeting : $"The person says: {message}");
         if (safetyCheckFailed && CrisisLines.For(user.Country) is { } line)
             notes.Add($"The safety check could not run for this message. If anything suggests they may be at risk, set the reading aside, say plainly that they matter, and give exactly this line: {line.Name}, {line.Number} (or {line.Emergency} in danger).");
         return notes;

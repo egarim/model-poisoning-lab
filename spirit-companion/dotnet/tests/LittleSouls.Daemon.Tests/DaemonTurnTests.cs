@@ -53,6 +53,7 @@ public class DaemonTurnTests
         Assert.DoesNotContain("[[", r.Display);
         Assert.Empty(r.CriticNotes);
         Assert.Contains(seat.Seen[0].Notes, n => n.Contains("You are Itzel"));
+        Assert.Contains(seat.Seen[0].Notes, n => n == DaemonTurn.ReadingShape);
     }
 
     [Fact]
@@ -70,6 +71,7 @@ public class DaemonTurnTests
         Assert.DoesNotContain("[[", r.Display);
         Assert.Contains(seat.Seen[0].Notes, n => n == DaemonTurn.FirstMeeting);
         Assert.DoesNotContain(seat.Seen[0].Notes, n => n.StartsWith("The person says:"));
+        Assert.DoesNotContain(seat.Seen[0].Notes, n => n == DaemonTurn.ReadingShape);
     }
 
     [Fact]
