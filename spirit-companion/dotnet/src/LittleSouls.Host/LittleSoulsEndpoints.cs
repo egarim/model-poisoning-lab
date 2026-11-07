@@ -155,7 +155,9 @@ public static class LittleSoulsEndpoints
         var models = http.RequestServices.GetRequiredService<TurnModels>();
         var body = await JsonNode.ParseAsync(http.Request.Body, cancellationToken: ct) as JsonObject;
         string message = body?["message"]?.GetValue<string>()?.Trim() ?? "";
-        if (message.Length is 0 or > 4000) { http.Response.StatusCode = 400; return; }
+        // the first meeting ({ greet: true }, no message): the little soul speaks first, once, while the conversation is empty
+        bool greet = body?["greet"] is JsonValue gv && gv.TryGetValue<bool>(out var g) && g;
+        if (greet ? message.Length != 0 : message.Length is 0 or > 4000) { http.Response.StatusCode = 400; return; }
         var daemonDoc = await Own(documents, app, LittleSoulsApp.Daemon, ct);
         var profile = await Own(documents, app, LittleSoulsApp.Profile, ct);
         if (daemonDoc is null || profile is null)
@@ -168,6 +170,13 @@ public static class LittleSoulsEndpoints
         {
             http.Response.StatusCode = 503;
             await http.Response.WriteAsJsonAsync(new { error = "No model", detail = "Assistant:ApiKey is not set on the server." }, ct);
+            return;
+        }
+        if (greet && await documents.GetAsync(app, LittleSoulsApp.Conversations, ConversationKey(app), ct) is { } met
+            && JsonNode.Parse(met.PayloadJson)?["messages"] is JsonArray { Count: > 0 })
+        {
+            http.Response.StatusCode = 409;
+            await http.Response.WriteAsJsonAsync(new { error = "Already met", detail = "The first greeting was given." }, ct);
             return;
         }
 
@@ -189,8 +198,9 @@ public static class LittleSoulsEndpoints
             int stage = daemonDoc["stage"]?.GetValue<int>() ?? 1;
             var oracle = http.RequestServices.GetRequiredService<Oracle>();
             var seat = new ModelPolicy(models.Seat, models.Client, null, "littlesouls");
-            await Emit("tool", new { name = "thinking", label = $"{persona.Name} is listening…" });
-            var result = await new DaemonTurn(oracle, seat, persona, notebook, models.Classifier, models.Checker).RunAsync(user, message, stage, ct);
+            await Emit("tool", new { name = "thinking", label = greet ? $"{persona.Name} is arriving…" : $"{persona.Name} is listening…" });
+            var daemon = new DaemonTurn(oracle, seat, persona, notebook, models.Classifier, models.Checker);
+            var result = greet ? await daemon.GreetAsync(user, stage, ct) : await daemon.RunAsync(user, message, stage, ct);
 
             var cards = new JsonArray();
             foreach (var r in result.Readings)
@@ -210,7 +220,7 @@ public static class LittleSoulsEndpoints
             var conversation = existing is null ? new JsonObject { ["messages"] = new JsonArray() } : (JsonObject)JsonNode.Parse(existing.PayloadJson)!;
             var messages = conversation["messages"] as JsonArray ?? [];
             string now = DateTimeOffset.UtcNow.ToString("O");
-            messages.Add(new JsonObject { ["role"] = "user", ["content"] = message, ["at"] = now });
+            if (!greet) messages.Add(new JsonObject { ["role"] = "user", ["content"] = message, ["at"] = now });
             messages.Add(new JsonObject { ["role"] = "assistant", ["content"] = result.Display, ["at"] = now, ["cards"] = cards.DeepClone(), ["crisis"] = result.CrisisHandoff });
             conversation["messages"] = messages;
             await documents.UpsertAsync(app, LittleSoulsApp.Conversations, ConversationKey(app), conversation.ToJsonString(), ct, existing?.Revision);

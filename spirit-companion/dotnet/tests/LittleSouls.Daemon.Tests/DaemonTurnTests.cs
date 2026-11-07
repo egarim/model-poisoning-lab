@@ -56,6 +56,23 @@ public class DaemonTurnTests
     }
 
     [Fact]
+    public async Task The_first_meeting_is_a_greeting_turn_with_a_reading_and_no_message()
+    {
+        var seat = new ScriptedSeat(
+            _ => ScriptedSeat.Do("read_day_context"),
+            _ => ScriptedSeat.Do("draw_tarot", "{\"spread\":\"single\"}"),
+            c => ScriptedSeat.Do("reply", $"I am Itzel, Valeria, your little soul. Today's card is [[card:{ScriptedSeat.LastCard(c)}]]. Tell me about your day."));
+        var r = await new DaemonTurn(Oracle, seat, Itzel).GreetAsync(Valeria(), stage: 1);
+
+        Assert.True(r.Grounded);
+        Assert.False(r.CrisisHandoff);
+        Assert.Single(r.Receipts);
+        Assert.DoesNotContain("[[", r.Display);
+        Assert.Contains(seat.Seen[0].Notes, n => n == DaemonTurn.FirstMeeting);
+        Assert.DoesNotContain(seat.Seen[0].Notes, n => n.StartsWith("The person says:"));
+    }
+
+    [Fact]
     public async Task An_invented_card_is_caught_and_the_reply_rewritten()
     {
         var seat = new ScriptedSeat(

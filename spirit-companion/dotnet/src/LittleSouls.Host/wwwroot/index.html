@@ -1303,10 +1303,12 @@ const FOLK_SPECS = [{"id":"flame-latam","archetype":"flame","form":"latam","crea
         else await tokenGrant({ grant_type: "password", username, password, scope: "openid" });
       } else await tokenGrant({ grant_type: "password", username, password, scope: "openid" });
       if (signingUp && $("a-name").value.trim()) $("p-name").value = $("a-name").value.trim();
+      $("f-auth").reset(); if (signingUp) $("a-switch").onclick();
       await route();
     } catch (err) { $("a-err").textContent = err.message; } finally { $("a-go").disabled = false; }
   };
-  $("signout").onclick = () => { session = null; store.del("ls.session"); show("s-auth"); };
+  // A reload rather than show("s-auth"): every field, the chat and the animated soul would otherwise stay as this person left them.
+  $("signout").onclick = () => { session = null; store.del("ls.session"); location.reload(); };
 
   // ---------- profile ----------
   const COUNTRIES = Object.keys(DaemonSpecies.COUNTRIES).filter(c => c !== "XX");
@@ -1357,7 +1359,7 @@ const FOLK_SPECS = [{"id":"flame-latam","archetype":"flame","form":"latam","crea
     anims.set(cv, st);
     let last = performance.now() / 1000;
     function frame(now) {
-      if (!cv.isConnected) { anims.delete(cv); return; }
+      if (!cv.isConnected || anims.get(cv) !== st) { if (anims.get(cv) === st) anims.delete(cv); return; }
       const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
       if (cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1424,11 +1426,13 @@ const FOLK_SPECS = [{"id":"flame-latam","archetype":"flame","form":"latam","crea
 
   let av = null;
   function setMode(m) { if (av) av.mode = m; }
-  async function send(text) {
-    bubble(text, "u"); $("text").value = ""; $("send").disabled = true; setMode("listening");
+  // One turn: the person's message, or (body.greet, no message) the soul's own greeting at the first meeting.
+  async function turn(body, text) {
+    if (text) { bubble(text, "u"); $("text").value = ""; }
+    $("send").disabled = true; setMode("listening");
     const typing = document.createElement("div"); typing.className = "typing"; typing.innerHTML = "<i></i><i></i><i></i>"; log.append(typing); scrollDown();
     try {
-      const r = await api("turn", { method: "POST", body: JSON.stringify({ message: text }) });
+      const r = await api("turn", { method: "POST", body: JSON.stringify(body) });
       if (!r.ok) { const b = await r.json().catch(() => ({})); typing.remove(); sys(b.detail || b.error || "Something went wrong."); return; }
       const reader = r.body.getReader(), dec = new TextDecoder(); let buf = "";
       for (;;) {
@@ -1446,6 +1450,7 @@ const FOLK_SPECS = [{"id":"flame-latam","archetype":"flame","form":"latam","crea
     } catch (err) { typing.remove(); if (err.message !== "signed out") sys("The connection dropped. Try again."); }
     finally { $("send").disabled = false; setMode("idle"); $("text").focus(); }
   }
+  const send = text => turn({ message: text }, text);
   $("f-chat").onsubmit = e => { e.preventDefault(); const t = $("text").value.trim(); if (t) send(t); };
 
   // ---------- routing on open ----------
@@ -1454,14 +1459,15 @@ const FOLK_SPECS = [{"id":"flame-latam","archetype":"flame","form":"latam","crea
     const d = state.daemon, p = state.profile || {};
     $("w-name").textContent = d.name; $("w-kind").textContent = `${d.creature} · stage ${d.stage || 1}`;
     const spec = d.look?.spec || DaemonSpecies.summon({ name: p.name || "you", country: p.rootsCountry || p.country || "XX", birthDate: p.birthDate || "2000-01-01" }, FOLK)[0].spec;
-    if (!av) av = animate($("av"), spec, { stage: Math.max(1, d.stage || 1), name: d.name });
+    const key = `${d.name}|${d.stage || 1}|${spec.id}`;
+    if (!av || av.key !== key) { av = animate($("av"), spec, { stage: Math.max(1, d.stage || 1), name: d.name }); av.key = key; }
     log.replaceChildren();
     for (const m of state.messages || []) {
       for (const c of m.cards || []) readingCard(c);
       bubble(m.content, m.role === "user" ? "u" : "d", !!m.crisis);
     }
-    if (!(state.messages || []).length) sys(`${d.name} is here. Tell it about your day.`);
     show("s-chat"); $("text").focus();
+    if (!(state.messages || []).length) turn({ greet: true });
   }
   async function route() {
     if (!await fresh()) { show("s-auth"); return; }

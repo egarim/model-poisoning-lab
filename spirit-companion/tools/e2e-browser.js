@@ -1,6 +1,7 @@
-// End-to-end in a real browser against tools/run-local.sh: sign up, the age gate, profile, summoning, a turn on
-// DeepSeek with a reading and its receipt, the crisis handoff, and the history after a reload. Screenshots go to the
-// directory given (default ./e2e-shots).   node tools/e2e-browser.js [dir]   (Playwright with Chromium installed)
+// End-to-end in a real browser against tools/run-local.sh: sign up, the age gate, profile, summoning, the little soul's
+// greeting, a turn on DeepSeek with a reading and its receipt, the crisis handoff, the history after a reload, then a
+// second person on the same browser (clean forms, their own soul). Screenshots go to the directory given (default
+// ./e2e-shots).   node tools/e2e-browser.js [dir]   (Playwright with Chromium installed)
 const { chromium } = require('playwright');
 const out = process.argv[2] || 'e2e-shots'; require('fs').mkdirSync(out, { recursive: true });
 (async () => {
@@ -29,10 +30,13 @@ const out = process.argv[2] || 'e2e-shots'; require('fs').mkdirSync(out, { recur
   await page.click('#cands .cand:nth-child(1)'); await page.fill('#c-name', 'Brasa');
   await page.click('#c-go');
   await page.waitForSelector('#s-chat:not([hidden])', { timeout: 15000 }); await shot('4-chat-empty');
+  const g0 = Date.now();
+  await page.waitForSelector('.msg.d', { timeout: 240000 });
+  console.log('greeting after', Math.round((Date.now() - g0) / 1000), 's:', (await page.locator('.msg.d').first().textContent()).slice(0, 300)); await shot('4b-greeting');
   await page.fill('#text', 'Oi Brasa! O Rafa disse que tem uma vaga de aprendiz no estúdio de tatuagem dele. Estou com medo de largar o call center.');
   await page.click('#send');
   const t0 = Date.now();
-  await page.waitForSelector('.msg.d', { timeout: 240000 });
+  await page.locator('.msg.d').nth(1).waitFor({ timeout: 240000 });
   console.log('reply after', Math.round((Date.now() - t0) / 1000), 's; cards:', await page.locator('.reading').count());
   await page.evaluate(() => document.getElementById('log').scrollTop = 0); await shot('5-reading');
   await page.evaluate(() => { const l = document.getElementById('log'); l.scrollTop = l.scrollHeight; }); await shot('6-reply');
@@ -42,6 +46,24 @@ const out = process.argv[2] || 'e2e-shots'; require('fs').mkdirSync(out, { recur
   console.log('CRISIS:', await page.locator('.msg.d.calm').last().textContent());
   await page.reload(); await page.waitForSelector('#s-chat:not([hidden])', { timeout: 30000 });
   console.log('after reload: messages', await page.locator('.msg').count(), 'readings', await page.locator('.reading').count());
+  // a second person on the same browser: nothing of the first may remain (fields, soul, animation)
+  await page.click('#signout'); await page.waitForSelector('#s-auth:not([hidden])', { timeout: 15000 });
+  console.log('after sign-out: user field', JSON.stringify(await page.inputValue('#a-user')), 'password field', JSON.stringify(await page.inputValue('#a-pass')));
+  await page.click('#a-switch');
+  await page.fill('#a-user', 'dasha' + Date.now().toString().slice(-5)); await page.fill('#a-pass', 'Dasha-test-2026!'); await page.fill('#a-name', 'Даша');
+  await page.click('#a-go');
+  await page.waitForSelector('#s-profile:not([hidden])', { timeout: 30000 });
+  console.log('second profile form: birth', JSON.stringify(await page.inputValue('#p-birth')), 'name', JSON.stringify(await page.inputValue('#p-name')));
+  await page.selectOption('#p-lang', 'ru'); await page.selectOption('#p-country', 'RU'); await page.fill('#p-tz', 'Europe/Moscow');
+  await page.fill('#p-birth', '1995-11-02'); await page.check('#p-terms'); await page.check('#p-ai');
+  await page.click('#f-profile button');
+  await page.waitForSelector('#s-summon:not([hidden])', { timeout: 15000 }); await page.waitForTimeout(1500);
+  const chosen = await page.locator('#cands .cand:nth-child(3) b').textContent();
+  await page.click('#cands .cand:nth-child(3)'); await page.fill('#c-name', 'Туман'); await page.click('#c-go');
+  await page.waitForSelector('#s-chat:not([hidden])', { timeout: 15000 });
+  console.log('second soul: chose', JSON.stringify(chosen), '| header', JSON.stringify(await page.textContent('#w-kind')), '| messages before its greeting', await page.locator('.msg').count());
+  await page.waitForSelector('.msg.d', { timeout: 240000 }); await shot('8-second-soul');
+  console.log('second greeting:', (await page.locator('.msg.d').first().textContent()).slice(0, 300));
   console.log('console errors:', errors.length ? errors : 'none');
   await browser.close();
 })().catch(e => { console.error('FAILED', e.message); process.exit(1); });
