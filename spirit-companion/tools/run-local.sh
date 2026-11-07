@@ -21,7 +21,13 @@ say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
 
 [ -f "$SF/src/SingularFramework.Api/Program.cs" ] || { echo "Run tools/get-singular.sh first."; exit 1; }
 [ -f "$ROOT/external/creatura/src/Creatura/Core/ReferenceLoop.cs" ] || { echo "Run tools/get-creatura.sh first."; exit 1; }
-docker info >/dev/null 2>&1 || { (dockerd >"$RUN/dockerd.log" 2>&1 &); sleep 8; docker info >/dev/null; }
+if ! docker info >/dev/null 2>&1; then
+  # a pid file left by a previous container points at whatever process has that number now
+  if [ -f /var/run/docker.pid ] && ! grep -q dockerd "/proc/$(cat /var/run/docker.pid)/cmdline" 2>/dev/null; then rm -f /var/run/docker.pid; fi
+  setsid -f dockerd >"$RUN/dockerd.log" 2>&1 < /dev/null
+  for _ in $(seq 1 30); do docker info >/dev/null 2>&1 && break; sleep 2; done
+  docker info >/dev/null || { echo "Docker did not start: see $RUN/dockerd.log"; exit 1; }
+fi
 
 say "Services (Docker)"
 (cd "$SF" && KEYCLOAK_PORT=8082 docker compose -f deploy/docker-compose.yml up -d postgres keycloak s3 imgproxy mailpit >/dev/null)
